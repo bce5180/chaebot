@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chaebot</title>
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Chaebot</h1>
+            <img src="guitar.png" alt="Guitar Icon">
+        </header>
+        <div class="file-upload">
+            <input type="file" id="fileInput" multiple accept=".mp3" hidden>
+            <label for="fileInput" class="drag-area">
+                Drag and drop your .mp3 files here or click to select files
+            </label>
+            <button onclick="uploadFiles()">Find</button>
+        </div>
+        <button id="convertBtn" disabled>Convert</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

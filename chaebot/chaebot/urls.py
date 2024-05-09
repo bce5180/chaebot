@@ -14,9 +14,12 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
+
+# urls.py
 from django.urls import path
+from myapp.views import home
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("", home, name="home"),  # 루트 URL에 대한 처리
+    path("home/", home, name="home"),  # /home/에 대한 처리
 ]
