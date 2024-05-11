@@ -1,19 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MP3 to Drum Sheet Converter</title>
-<link rel="stylesheet" href="../css/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP3 to Drum Sheet Converter</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-<div class="upload-container">
-    <div id="drop-zone" class="drop-zone">
-        <p>Drag and drop your MP3 file here or click to select a file.</p>
-        <input type="file" id="file-input" class="file-input" accept=".mp3" />
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <a href="/"><img src="static/img/logo.png" alt="MP3 to Drum Sheet Converter"></a>
+        </div>
+        <div class="navbar-menu">
+            <a href="convert" class="active">변환</a> <!-- active 클래스 추가 -->
+            <a href="community">Chaetting</a>
+        </div>
+    </nav>
+    
+    <div class="background-animation"></div>
+    <div class="container">
+        <div class="content-wrapper"> <!-- 새로운 래퍼 Div 추가 -->
+            <div class="image-box"> <!-- 이미지를 포함할 새로운 Div -->
+                <img src="{% static 'img/drum.png' %}" alt="Drum Image">
+            </div>
+            <div class="upload-section">
+                <div class="upload-box" id="drop-zone">
+                    <p>.mp3 is available</p>
+                    <input type="file" id="file-input" class="file-input" accept=".mp3">
+                </div>
+                <div class="button-group">
+                    <button id="find-btn">Find</button>
+                    <form action="{% url 'result' %}">
+                        <button type="submit">Convert</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <button id="upload-btn" class="upload-btn">Upload</button>
-</div>
-<script src="../js/script.js"></script>
+     
+{% load static %}
+<script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>

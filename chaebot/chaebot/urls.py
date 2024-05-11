@@ -17,10 +17,11 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from myapp.views import index
+from myapp import views as v
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", index, name="index"),  # 홈페이지로 바로 index 뷰를 연결
+    path("", v.index, name="index"),  # 홈페이지로 바로 index 뷰를 연결
+    path("result/", v.result, name="result"),  # 홈페이지로 바로 index 뷰를 연결
 ]
