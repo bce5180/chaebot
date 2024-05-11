@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var fileInput = document.getElementById("file-input");
   var findBtn = document.getElementById("find-btn");
   var dropZone = document.getElementById("drop-zone"); // drop-zone 사용으로 통일
+  var backgroundAnimation = document.querySelector(".background-animation");
 
   // 파일 이름을 표시하고 drop-zone을 숨기는 함수
   function displayFileName(fileName) {
@@ -55,6 +56,14 @@ document.addEventListener("DOMContentLoaded", function () {
   } else {
     console.log("Drop zone element not found!");
   }
+
+  // 페이지 로드 완료 후 애니메이션 실행
+  window.addEventListener("load", () => {
+    backgroundAnimation.style.clipPath = "circle(75% at 100% 50%)";
+    setTimeout(() => {
+      document.querySelector(".container").style.opacity = 1;
+    }, 2000);
+  });
 });
 
 document.getElementById("drop-zone").addEventListener("click", function () {

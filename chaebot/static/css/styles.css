@@ -33,13 +33,14 @@ body, html {
 .background-animation {
     position: absolute;
     top: 0;
-    right: 0;
+    left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: white;
-    clip-path: circle(0% at 100% 50%);
-    transition: clip-path 2s ease-out;
+    background-color: rgb(255, 255, 255); /* 배경색 검은색 */
+    clip-path: circle(0% at 100% 50%); /* 초기에 화면에 보이지 않음 */
+    transition: clip-path 2s ease-out; /* 부드러운 전환 */
 }
+
 
 .container {
     display: flex;
