@@ -32,7 +32,7 @@
                 </div>
                 <div class="button-group">
                     <button id="find-btn">Find</button>
-                    <form action="{% url 'result' %}">
+                    <form method="post" action="{% url 'file_upload' %}">
                         <button type="button" id="upload-btn">Convert</button>
                     </form>
                 </div>

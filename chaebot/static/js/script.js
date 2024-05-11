@@ -94,25 +94,21 @@ document.getElementById("drop-zone").addEventListener("drop", function (event) {
 document.getElementById("upload-btn").addEventListener("click", function () {
   const file = document.getElementById("file-input").files[0];
   if (file) {
-    console.log("Uploading:", file.name);
-    // Upload logic here
+    const formData = new FormData();
+    formData.append("file", file);
+    fetch("/upload/", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("File successfully uploaded");
+        }
+      })
+      .catch((error) => {
+        console.error("Error uploading file:", error);
+      });
   } else {
     alert("Please select a file to upload.");
   }
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-  var fileInput = document.getElementById("file-input");
-  var findBtn = document.getElementById("find-btn");
-
-  if (findBtn) {
-    findBtn.addEventListener("click", function () {
-      fileInput.click(); // 파일 입력을 트리거합니다.
-    });
-  } else {
-    console.log("Find button not found!");
-  }
-
-  // 기타 드래그 앤 드롭 관련 이벤트는 생략합니다.
-  // 이 부분은 당신의 요구에 따라 조정하세요.
 });

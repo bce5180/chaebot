@@ -24,4 +24,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", v.index, name="index"),  # 홈페이지로 바로 index 뷰를 연결
     path("result/", v.result, name="result"),  # 홈페이지로 바로 index 뷰를 연결
+    path("waiting/", v.file_upload, name="file_upload"),
 ]
