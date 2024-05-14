@@ -6,6 +6,7 @@
     <title>MP3 to Drum Sheet Converter</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
 </head>
 <body>
     <nav class="navbar">
@@ -13,7 +14,7 @@
             <a href="/"><img src="{% static 'img/logo.png' %}" alt="MP3 to Drum Sheet Converter"></a>
         </div>
         <div class="navbar-menu">
-            <a href="convert" class="active">변환</a> <!-- active 클래스 추가 -->
+            <a href="convert" class="active">변환</a>
             <a href="community">Chaetting</a>
         </div>
     </nav>
@@ -25,22 +26,73 @@
                 <img src="{% static 'img/drum.png' %}" alt="Drum Image">
             </div>
             <div class="upload-section" id="upload-section">
-                <div class="upload-box" id="drop-zone"> <!-- 드래그 앤 드롭 영역 추가 -->
+                <div class="upload-box" id="drop-zone">
                     <p>.mp3 is available</p>
-                    <input type="file" id="file-input" class="file-input" accept=".mp3">
-                    <div id="file-name-display" style="margin-top: 10px; font-size: 16px;">No file selected.</div> <!-- 파일 이름을 표시할 요소 추가 -->
+                    <form method="post" action="/upload/" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" id="file-input" class="file-input" name="file" accept=".mp3">
+                    </form>
+                    <div id="file-name-display" style="margin-top: 10px; font-size: 16px;">No file selected.</div>
                 </div>
                 <div class="button-group">
                     <button id="find-btn">Find</button>
-                    <form method="post" action="{% url 'file_upload' %}">
-                        <button type="button" id="upload-btn">Convert</button>
-                    </form>
+                    <button type="button" id="upload-btn">Convert</button>
                 </div>
             </div>
         </div>
     </div>
-     
-{% load static %}
-<script src="{% static 'js/script.js' %}"></script>
+
+    <!-- Footer outside the main container to ensure it's at the bottom -->
+    <div class="footer">
+        <div class="conversion-counter">
+            누 적 변 환 수                   
+            <div class="slots">
+                <div class="slot" id="slot1"></div>
+                <div class="slot" id="slot2"></div>
+                <div class="slot" id="slot3"></div>
+            </div>
+            건
+        </div>
+    </div>
+    
+    
+    
+
+    {% load static %}
+    <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    function animateSlot(slotId, finalNumber) {
+        let slot = document.getElementById(slotId);
+        let currentNumber = Math.floor(Math.random() * 10);  // 랜덤 숫자로 시작
+        slot.textContent = currentNumber;
+        let speed = 100; // 시작 속도 (밀리초)
+        const maxSpeed = 500; // 최대 속도
+        const step = 20; // 속도 감소 단계
+
+        function updateSlot() {
+            currentNumber = Math.floor(Math.random() * 10); // 0-9 무작위 숫자
+            slot.textContent = currentNumber;
+
+            if (speed < maxSpeed) {
+                speed += step; // 속도 점진적 증가
+            }
+
+            if (speed >= maxSpeed && currentNumber === finalNumber) {
+                clearInterval(timer); // 최종 숫자에서 멈춤
+            }
+        }
+
+        let timer = setInterval(updateSlot, speed);
+    }
+
+    // 개별 슬롯에 대한 최종 숫자 설정, 서버나 다른 로직에 의해 결정될 수 있음
+    animateSlot("slot1", 3); // 첫 번째 슬롯 최종 숫자
+    animateSlot("slot2", 7); // 두 번째 슬롯 최종 숫자
+    animateSlot("slot3", 5); // 세 번째 슬롯 최종 숫자
+});
+
+</script>
+    

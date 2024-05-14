@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP3 to Drum Sheet Converter</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <a href="/"><img src="{% static 'img/logo.png' %}" alt="MP3 to Drum Sheet Converter"></a>
+        </div>
+        <div class="navbar-menu">
+            <a href="convert" class="active">변환</a>
+            <a href="community">Chaetting</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="loading-overlay">
+            <div class="loading-spinner"></div>
+            <h2>변환 중입니다. 잠시만 기다려주세요.</h2>
+            <!-- Progress bar element -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var resultUrl = "{% url 'result' %}";
+        // Simple script to simulate progress
+        function updateProgress() {
+            var elem = document.getElementById("progressBar"); 
+            var width = 0;
+            var id = setInterval(frame, 100);
+
+            function frame() {
+                if (width >= 100) {
+                    clearInterval(id);
+                    window.location.href = resultUrl;
+                } else {
+                    width++; 
+                    elem.style.width = width + '%'; 
+                    elem.textContent = width + '%';
+                }
+            }
+        }
+
+        // Start the simulation when the page loads
+        window.onload = updateProgress;
+    </script>
+</body>
+</html>

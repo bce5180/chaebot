@@ -6,20 +6,17 @@
     <title>MP3 to Drum Sheet Converter</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
 </head>
 <body>
     <nav class="navbar">
         <div class="navbar-logo">
-            <a href="/"><img src="static/img/logo.png" alt="MP3 to Drum Sheet Converter"></a>
+            <a href="/"><img src="{% static 'img/logo.png' %}" alt="MP3 to Drum Sheet Converter"></a>
         </div>
         <div class="navbar-menu">
-            <a href="convert" class="active">변환</a> <!-- active 클래스 추가 -->
+            <a href="convert" class="active">변환</a>
             <a href="community">Chaetting</a>
         </div>
     </nav>
-    
-     
-{% load static %}
-<script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>
