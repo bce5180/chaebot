@@ -22,7 +22,8 @@ from myapp import views as v
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", v.index, name="index"),  # 홈페이지로 바로 index 뷰를 연결
+    path("", v.home, name="home"),  # 홈페이지로 바로 index 뷰를 연결
+    path("index/", v.index, name="index"),  # 홈페이지로 바로 index 뷰를 연결
     path("result/", v.result, name="result"),  # 홈페이지로 바로 index 뷰를 연결
     path("waiting/", v.waiting, name="waiting"),
     path("upload/", v.upload_mp3, name="upload_mp3"),

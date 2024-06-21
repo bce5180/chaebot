@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP3 to Drum Sheet Converter</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <a href="/"><img src="{% static 'img/logo.png' %}" alt="MP3 to Drum Sheet Converter"></a>
+        </div>
+        <div class="navbar-menu">
+            <a href="convert" class="active">변환</a>
+            <a href="community">Chaetting</a>
+        </div>
+    </nav>
+
+    <div class="background-animation"></div>
+    
+    <div class="right-panel">
+        <div class="login-container">
+            <p class="login-prompt">채봇이 처음이신가요?</p>
+            <button class="login-btn" id="kakao-login">카카오로 로그인</button>
+            <button class="login-btn" id="naver-login">네이버로 로그인</button>
+        </div>
+    </div>
+    
+    {% load static %}
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
