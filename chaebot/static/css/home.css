@@ -1,0 +1,53 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #000000 0%, #000000 100%);
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+}
+
+#circle {
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+    animation: expand 1.5s ease-out forwards;
+}
+
+@keyframes expand {
+    0% { width: 0; height: 0; opacity: 0; }
+    100% { width: 500px; height: 500px; opacity: 1; }
+}
+
+.content {
+    position: absolute;
+    text-align: center;
+    opacity: 0;
+    animation: fadeIn 2s ease-out 1.5s forwards;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.login-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: transparent;
+    border: 2px solid #fff;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+    background-color: #fff;
+    color: #182848;
+}
