@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP3 to Drum Sheet Converter - Result</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/basic.css' %}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <a href="/"><img src="{% static 'img/logo.png' %}" alt="MP3 to Drum Sheet Converter"></a>
+        </div>
+        <div class="navbar-menu">
+            <a href="convert">Convert</a>
+            <a href="community">Chatting</a>
+        </div>
+    </nav>
+
+    <div class="content-wrapper">
+        <div class="file-display">
+            <strong>Convert.pdf</strong>
+        </div>
+        <div class="buttons">
+            <button onclick="downloadPDF()">Download PDF</button>
+            <button onclick="window.location.href='/'">Go Back to Home</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Thank you for using our converter!</p>
+    </div>
+
+    <script>
+        function downloadPDF() {
+            var a = document.createElement('a');
+            a.href = '{{ url_for_pdf }}';
+            a.download = 'ConvertedDrumSheet.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+</html>
