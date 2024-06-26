@@ -1,53 +1,107 @@
 body, html {
-    height: 100%;
     margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #000000 0%, #000000 100%);
-    color: #fff;
-    font-family: 'Arial', sans-serif;
+    background-color: black;
+    color: white;
+    font-family: Arial, sans-serif;
 }
 
-#circle {
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
-    animation: expand 1.5s ease-out forwards;
-}
-
-@keyframes expand {
-    0% { width: 0; height: 0; opacity: 0; }
-    100% { width: 500px; height: 500px; opacity: 1; }
-}
-
-.content {
+#staff-lines-container {
     position: absolute;
+    width: 100%;  /* 전체 페이지 너비 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;  /* 선 간격을 균등하게 조정 */
+    height: 100px;  /* 전체 컨테이너 높이 */
+}
+
+.staff-line {
+    background-color: white;
+    height: 2px;  /* 선의 두께 */
+    width: 5px;  /* 초기 점의 너비 */
+    margin: auto;  /* 중앙 정렬 */
+    animation: expandLine 1s forwards 1s;  /* 1초 지연 후 1초 동안 선 확장 애니메이션 */
+}
+
+@keyframes expandLine {
+    from { width: 5px; }
+    to { width: 100%; }
+}
+
+.clef, .note {
+    font-size: 90px; /* 음표 크기 대폭 증가 */
+    color: white;
+    position: absolute;
+    display: none; /* 초기에 숨김 */
+    animation: fadeInNote 0.5s forwards 2.1s; /* 음표 등장 애니메이션 */
+}
+
+.clef { left: 2%; top: 50%; transform: translateY(-50%); }
+.note1 { left: 25%; top: 10%; }
+.note2 { left: 45%; top: 30%; }
+.note3 { left: 65%; top: 20%; }
+.note4 { left: 85%; top: 40%; }
+
+@keyframes fadeInNote {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#welcome-box {
+    display: none;
     text-align: center;
-    opacity: 0;
-    animation: fadeIn 2s ease-out 1.5s forwards;
+    padding: 40px;
+    background: #000000;
+    border: 3px solid #ffffff;
+    box-shadow: 0 0 20px #ffffff;
+    border-radius: 15px;
+    max-width: 80%;
+    margin: 20px auto 0;
+    animation: fadeIn 0.1s forwards 2s; /* 지연 시간을 2초로 설정 */
 }
 
 @keyframes fadeIn {
-    0% { opacity: 0; transform: scale(0.9); }
-    100% { opacity: 1; transform: scale(1); }
+    0% { opacity: 0; }
+    100% { opacity: 1; }
 }
 
-.login-btn {
+button {
     margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: transparent;
-    border: 2px solid #fff;
-    border-radius: 20px;
+    padding: 15px 30px;
+    background-color: #226bef;
     color: white;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s;
 }
 
-.login-btn:hover {
-    background-color: #fff;
-    color: #182848;
+button:hover {
+    background-color: #1e5bdb;
 }
+
+.login-button img {
+    width: 100%; /* 이미지의 너비를 버튼 크기에 맞춤 */
+    height: auto; /* 이미지의 높이를 자동으로 조정하여 비율 유지 */
+    max-width: 200px; /* 최대 너비 설정 */
+    max-height: 50px; /* 최대 높이 설정 */
+    display: block; /* 블록 레벨 요소로 설정하여 여백이 없게 함 */
+    margin: auto; /* 이미지를 버튼 내부에서 가운데 정렬 */
+}
+
+.login-button {
+    display: inline-block; /* 링크를 인라인 블록 요소로 설정 */
+    text-decoration: none; /* 텍스트 장식 제거 */
+    width: 200px; /* 링크의 너비 설정 */
+    height: 50px; /* 링크의 높이 설정 */
+    overflow: hidden; /* 이미지가 버튼 크기를 초과할 경우 숨김 처리 */
+    border: none; /* 테두리 제거 */
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2); /* 그림자 효과 추가 */
+    margin: 5px; /* 주변 여백 설정 */
+}
+
