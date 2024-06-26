@@ -4,6 +4,9 @@ __pycache__/
 
 __pycache__/
 *.pyc
+*.txt
+*.pyo
+*.cpython-*.pyc
 
 
 # C extensions
@@ -18,7 +21,6 @@ db.sqlite3-journal
 media/
 
 # Static files
-static/
 
 # Secret keys
 .env

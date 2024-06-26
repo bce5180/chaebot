@@ -16,7 +16,7 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 from myapp import views as v
 
 
@@ -27,4 +27,5 @@ urlpatterns = [
     path("result/", v.result, name="result"),  # 홈페이지로 바로 index 뷰를 연결
     path("waiting/", v.waiting, name="waiting"),
     path("upload/", v.upload_mp3, name="upload_mp3"),
+    path("accounts/", include("allauth.urls")),
 ]

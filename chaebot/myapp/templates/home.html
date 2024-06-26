@@ -3,19 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MP3 to Drum Sheet Converter</title>
+    <title>Chaebot Home</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
-    <meta name="csrf-token" content="{{ csrf_token }}">
-</head>
 <body>
-    <div id="circle"></div>
-    <div class="content">
-        <h1>Chaebot</h1>
-        <p>채봇에 오신 것을 환영합니다!</p>
-        <button class="login-btn">카카오 로그인</button>
-        <button class="login-btn">네이버 로그인</button>
+    <div id="staff-lines-container">
+        <div class="staff-line"></div>
+        <div class="staff-line"></div>
+        <div class="staff-line"></div>
+        <div class="staff-line"></div>
+        <div class="staff-line"></div>
     </div>
-    <script src="{% static 'script.js' %}"></script>
+    <div id="welcome-box">
+        <h1>Chaebot</h1>
+        <p>환영합니다</p>
+        {% load socialaccount %}
+        <a href="{% provider_login_url 'kakao' %}">
+            <img src="{% static 'img/kakao_login.png' %}" alt="카카오 로그인" />
+        </a>
+        <a href="/naver-login" class="login-button">
+            <img src="{% static 'img/naver_login.png' %}" alt="네이버 로그인" />
+        </a>
+    </div>
+    <div class="clef">𝄞</div>
+    <div class="note note1">♪</div>
+    <div class="note note2">♫</div>
+    <div class="note note3">♬</div>
+    <div class="note note4">♭</div>
+    {% load static %}
+    <script src="{% static 'js/home.js' %}"></script>
 </body>
 </html>
