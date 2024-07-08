@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.kakao",
+    "allauth.socialaccount.providers.naver",
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -123,13 +124,21 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
+
 TIME_ZONE = "UTC"
+
 USE_I18N = True
+
 USE_TZ = True
+
 SITE_ID = 3
+
 SOCIALACCOUNT_LOGIN_ON_GET = True
+
 LOGIN_REDIRECT_URL = "index"
+
 ACCOUNT_LOGOUT_REDIRECT_URL = "index"
+
 ACCOUNT_LOGOUT_ON_GET = True
 
 # Static files (CSS, JavaScript, Images)
