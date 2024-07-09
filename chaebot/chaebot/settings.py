@@ -127,11 +127,13 @@ LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
 
+SOCIALACCOUNT_AUTO_SIGNUP = True
+
 USE_I18N = True
 
 USE_TZ = True
 
-SITE_ID = 3
+SITE_ID = 4
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
@@ -139,7 +141,7 @@ LOGIN_REDIRECT_URL = "index"
 
 ACCOUNT_LOGOUT_REDIRECT_URL = "index"
 
-ACCOUNT_LOGOUT_ON_GET = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
