@@ -105,3 +105,15 @@ button:hover {
     margin: 5px; /* 주변 여백 설정 */
 }
 
+.social-login {
+    display: flex;
+    justify-content: center;
+    margin: 1em 0;
+}
+
+.social-login img {
+    width:auto;
+    height: 3.4em;
+    margin: 0 10px;
+    cursor: pointer;
+}

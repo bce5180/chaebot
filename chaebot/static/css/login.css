@@ -1,0 +1,107 @@
+body, html {
+    background-color: black;
+    font-family: Arial, sans-serif;
+}
+
+
+.logo-text {
+    margin: 2em 0 0.5em 0; /* Reduce the margin */
+    text-align: center;
+    font-weight: bold;
+    color: #000000;
+    font-size: 2em; /* Smaller font size */
+}
+
+.form-text h2 {
+    margin: 0.6em 0 0.2em 0; /* Adjust margin */
+    font-weight: bold;
+    font-size: 1.4em; /* Smaller font size */
+}
+
+.form-text p {
+    margin-bottom: 0.8em;
+    font-size: 0.8em; /* Smaller font size */
+    color: #000000;
+}
+
+.login-form {
+    text-align: center;
+    background-color: #ffffff; /* Change to black */
+    padding: 0.8em 4em; /* Adjust padding */
+    border-radius: 12px;
+    width: 650px; /* Smaller width */
+    margin: 0 auto;
+    color: #ffffff; /* Change text color to white for visibility */
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    margin: 0.4em 0;
+    padding: 0.8em;
+    border: 1px solid #9FCBC9;
+    border-radius: 5px;
+    width: 420px; 
+    font-size: 17px; 
+}
+
+.submit {
+    display: flex;
+    justify-content: space-between;
+    margin: 0.4em auto;
+    width: 500px; /* Smaller width */
+}
+
+.login-form button {
+    padding: 0.6em;
+    width: 160px; /* Smaller width */
+    height: 32px; /* Smaller height */
+    font-size: 20px; /* Smaller font size */
+    line-height: 21px; /* Adjust line height */
+}
+
+.signup a {
+    color: #000000;
+    border: 2px solid #E4E2DD;
+    border-radius: 30px;
+    width: 220px; /* Smaller width */
+    height: 50px; /* Smaller height */
+    font-size: 20px; /* Smaller font size */
+    font-weight: bold;
+    line-height: 50px; /* Adjust line height */
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+}
+
+.login button {
+    color: rgb(0, 0, 0);
+    background-color: #E4E2DD;
+    border: 2px solid #E4E2DD;
+    border-radius: 30px;
+    font-weight: bold;
+    width: 220px; /* Smaller width */
+    height: 50px; /* Smaller height */
+    font-size: 20px; /* Smaller font size */
+}
+
+.forgot {
+    margin-top: 1em;
+    color: #D5D5D5;
+    font-size: 0.8em; /* Smaller font size */
+    text-align: end;
+    text-decoration: underline;
+    width: 500px; /* Smaller width */
+}
+
+.social-login {
+    display: flex;
+    justify-content: space-between;
+    margin: 1em auto;
+    width: 500px; /* Smaller width */
+}
+
+.social-login img {
+    width: 230px;
+    height: 60px;
+    cursor: pointer;
+}

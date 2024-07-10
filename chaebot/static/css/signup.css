@@ -1,0 +1,65 @@
+body, html {
+    background-color: black;
+    font-family: Arial, sans-serif;
+}
+
+.logo-text {
+    margin: 2em 0 0.5em 0; /* Adjusted margins */
+    text-align: center;
+    font-weight: bold;
+    color: #048271;
+    font-size: 2em; /* Smaller font size */
+}
+
+.signup-form {
+    text-align: center;
+    background-color: white;
+    padding: 0.8em 2em; /* Reduced padding */
+    border-radius: 12px;
+    width: 650px; /* Reduced width */
+    margin: 0 auto;
+}
+
+.input-section {
+    display: flex;
+    align-items: center;
+    margin: 0.8em 0; /* Reduced margin */
+    justify-content: space-between;
+}
+
+.input-section h1 {
+    margin: 0;
+    white-space: nowrap;
+    flex: 0 0 5em; /* Adjusted size */
+    text-align: left;
+    font-weight: bold;
+    font-size: 17px; /* Smaller font size */
+}
+
+.signup-form input[type="text"],
+.signup-form input[type="password"],
+.signup-form input[type="email"] {
+    margin: 0.4em 0; /* Adjusted margin */
+    padding: 0.8em; /* Reduced padding */
+    border: 1px solid #9FCBC9;
+    border-radius: 5px;
+    width: 450px; /* Reduced width */
+    height: 40px; /* Reduced height */
+}
+
+.signup button {
+    color: #000000;
+    border: 4px solid #e2d9c3;
+    border-radius: 30px;
+    margin-top: 0.8em; /* Adjusted margin */
+    width: 250px; /* Reduced width */
+    height: 55px; /* Reduced height */
+    font-weight: bold;
+    font-size: 20px ; /* Reduced font size */
+    line-height: 26px; /* Adjusted line height */
+}
+
+.signup button:hover {
+    background-color: #dacfb5;
+    color: white;
+}

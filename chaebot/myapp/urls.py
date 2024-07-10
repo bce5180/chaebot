@@ -4,11 +4,13 @@ from myapp.views import upload_mp3
 from django.contrib import admin
 
 urlpatterns = [
-    path("", v.home, name="home"),
-    path("index/", v.index, name="index"),  # 홈페이지로 바로 index 뷰를 연결
+    path("", v.home, name="index"),
     path("waiting/", v.waiting, name="waiting"),
     path("result/", v.result, name="result"),
     path("upload/", v.upload_mp3, name="upload_mp3"),
     path("accounts/", include("allauth.urls")),
+    path("login/", v.show_login, name="login"),
+    path("signup/", v.signup, name="signup"),
+    path("login_view/", v.login_view, name="login_view"),
     path("admin/", admin.site.urls),
 ]
