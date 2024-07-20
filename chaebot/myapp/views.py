@@ -46,10 +46,11 @@ def login_view(request):
         try:
             user = CustomUser.objects.get(user_id=user_id)
             if user.check_password(password):
-                # 명시적으로 backend를 지정합니다.
                 auth_login(
                     request, user, backend="django.contrib.auth.backends.ModelBackend"
                 )
+                request.session["user_id"] = user.id  # 세션에 user_id 저장
+                print(f"Login: user_id {user.id} stored in session.")  # 디버그용 로그
                 return redirect("index")
             else:
                 messages.error(request, "비밀번호가 틀렸습니다.")
@@ -79,10 +80,9 @@ def signup(request):
         user = CustomUser.objects.create_user(
             username=username, password=password, email=email, user_id=user_id
         )
-
-        # 사용자 정보를 세션에 저장
-        request.session["user_id"] = user.id
-
+        auth_login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+        request.session["user_id"] = user.id  # 세션에 user_id 저장
+        print(f"Signup: user_id {user.id} stored in session.")  # 디버그용 로그
         return redirect("age_gender")
 
     return render(request, "signup.html")
@@ -96,14 +96,13 @@ def age_gender(request):
 
         # 세션에서 사용자 ID 가져오기
         user_id = request.session.get("user_id")
+        print(f"Age/Gender: Retrieved user_id {user_id} from session.")  # 디버그용 로그
+
         if user_id:
             user = CustomUser.objects.get(id=user_id)
             user.age_group = age_group
             user.gender = gender
             user.save()
-
-            # 세션에서 사용자 정보 삭제 (필요에 따라)
-            del request.session["user_id"]
 
             return redirect("select_genres")
         else:
@@ -133,14 +132,25 @@ GENRES = [
 # 장르 선택
 def select_genres(request):
     if request.method == "POST":
-        selected_genres = request.POST.get("selected_genres").split(",")
+        selected_genres = request.POST.get("selected_genres", "").split(",")
         user_id = request.session.get("user_id")
+
+        print("Selected genres:", selected_genres)  # 디버그용 로그
+        print("User ID from session:", user_id)  # 디버그용 로그
+
         if user_id:
-            user = CustomUser.objects.get(id=user_id)
-            user.genres = ",".join(selected_genres)
-            user.save()
-            del request.session["user_id"]
-            return redirect("home")
+            try:
+                user = CustomUser.objects.get(id=user_id)
+                user.genres = ",".join(selected_genres)
+                user.save()
+                del request.session["user_id"]
+                print(
+                    f"Select Genres: user_id {user_id} deleted from session."
+                )  # 디버그용 로그
+                return redirect("login")
+            except CustomUser.DoesNotExist:
+                messages.error(request, "User does not exist.")
+                return redirect("login")
         else:
             return redirect("signup")
     return render(request, "select_genres.html", {"genres": GENRES})
