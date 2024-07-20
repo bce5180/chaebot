@@ -143,6 +143,9 @@ ACCOUNT_LOGOUT_REDIRECT_URL = "index"
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
+AUTH_USER_MODEL = "myapp.CustomUser"
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -156,3 +159,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # settings.py
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
+
+# Session settings (optional)
+SESSION_ENGINE = "django.contrib.sessions.backends.db"  # 기본 설정
+SESSION_COOKIE_AGE = 1209600  # 2주, 세션 쿠키의 수명
+SESSION_SAVE_EVERY_REQUEST = True  # 각 요청에 대해 세션 저장

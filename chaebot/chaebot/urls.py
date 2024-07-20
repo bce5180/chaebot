@@ -26,8 +26,11 @@ urlpatterns = [
     path("result/", v.result, name="result"),  # 홈페이지로 바로 index 뷰를 연결
     path("waiting/", v.waiting, name="waiting"),
     path("upload/", v.upload_mp3, name="upload_mp3"),
-    path("login/", v.show_login, name="login"),
+    path("login/", v.login_view, name="login"),
+    path("logout/", v.logout_view, name="logout"),
     path("signup/", v.signup, name="signup"),
+    path("age_gender/", v.age_gender, name="age_gender"),
     path("login_view/", v.login_view, name="login_view"),
     path("accounts/", include("allauth.urls")),
+    path("select_genres/", v.select_genres, name="select_genres"),
 ]
