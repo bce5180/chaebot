@@ -31,6 +31,12 @@ urlpatterns = [
     path("signup/", v.signup, name="signup"),
     path("age_gender/", v.age_gender, name="age_gender"),
     path("login_view/", v.login_view, name="login_view"),
+    path("chaetting/", v.chaetting, name="chaetting"),
+    path("create_post/", v.create_post, name="create_post"),
+    path("like_post/<int:post_id>/", v.like_post, name="like_post"),
+    path("like_comment/<int:comment_id>/", v.like_comment, name="like_commnet"),
+    path("add_comment/<int:post_id>/", v.add_comment, name="add_comment"),
     path("accounts/", include("allauth.urls")),
     path("select_genres/", v.select_genres, name="select_genres"),
+    path("post/<int:post_id>/", v.post_detail, name="post_detail"),
 ]
