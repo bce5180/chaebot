@@ -184,6 +184,7 @@ def add_comment(request, post_id):
             comment = form.save(commit=False)
             comment.post = post
             comment.author = request.user
+            # 대댓글 처리
             if parent_comment_id:
                 parent_comment = get_object_or_404(Comment, id=parent_comment_id)
                 comment.parent = parent_comment
