@@ -61,7 +61,7 @@ body, html {
 
 .signup a {
     color: #000000;
-    border: 2px solid #E4E2DD;
+    border: 2px solid #f3d265;
     border-radius: 30px;
     width: 220px; /* Smaller width */
     height: 50px; /* Smaller height */
@@ -75,8 +75,8 @@ body, html {
 
 .login button {
     color: rgb(0, 0, 0);
-    background-color: #E4E2DD;
-    border: 2px solid #E4E2DD;
+    background-color: #f3d265;
+    border: 2px solid #f3d265;
     border-radius: 30px;
     font-weight: bold;
     width: 220px; /* Smaller width */

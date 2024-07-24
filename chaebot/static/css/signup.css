@@ -49,7 +49,7 @@ body, html {
 
 .signup button {
     color: #000000;
-    border: 4px solid #e2d9c3;
+    border: 4px solid #ffbf00;
     border-radius: 30px;
     margin-top: 0.8em; /* Adjusted margin */
     width: 250px; /* Reduced width */
@@ -60,6 +60,6 @@ body, html {
 }
 
 .signup button:hover {
-    background-color: #dacfb5;
+    background-color: #ffbf00;
     color: white;
 }
