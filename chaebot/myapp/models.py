@@ -1,5 +1,3 @@
-# myapp/models.py
-
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
@@ -12,7 +10,10 @@ class CustomUser(AbstractUser):
     gender = models.CharField(max_length=10, blank=True, null=True)
     genres = models.CharField(max_length=255, blank=True, null=True)  # 새로운 필드 추가
 
-    username = models.CharField(max_length=150, blank=True, null=True)
+    username = models.CharField(max_length=150, unique=True)  # unique=True 추가
+
+    USERNAME_FIELD = "user_id"
+    REQUIRED_FIELDS = ["email"]
 
     def __str__(self):
         return self.email
@@ -48,3 +49,56 @@ class NaverUser(models.Model):
 
     def __str__(self):
         return self.nickname
+
+
+class Post(models.Model):
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    genre = models.CharField(max_length=100)
+    mp3_file = models.FileField(upload_to="mp3s/", blank=True, null=True)
+    sheet_file = models.FileField(upload_to="sheets/", blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    likes = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name="liked_posts", blank=True
+    )
+
+    def total_likes(self):
+        return self.likes.count()
+
+    def __str__(self):
+        return self.title
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, related_name="comments", on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    likes = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name="liked_comments", blank=True
+    )
+
+    def total_likes(self):
+        return self.likes.count()
+
+    def __str__(self):
+        return f"Comment by {self.author} on {self.post}"
+
+
+class Reply(models.Model):
+    comment = models.ForeignKey(
+        Comment, related_name="replies", on_delete=models.CASCADE
+    )
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    likes = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name="liked_replies", blank=True
+    )
+
+    def total_likes(self):
+        return self.likes.count()
+
+    def __str__(self):
+        return f"Reply by {self.author} on {self.comment}"

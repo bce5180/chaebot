@@ -33,4 +33,13 @@ urlpatterns = [
     path("login_view/", v.login_view, name="login_view"),
     path("accounts/", include("allauth.urls")),
     path("select_genres/", v.select_genres, name="select_genres"),
+    # chaetting
+    path("chaetting_view/", v.chaetting_view, name="chaetting_view"),
+    path("create_post/", v.create_post, name="create_post"),
+    path("post/<int:post_id>/", v.post_detail, name="post_detail"),
+    path("post/<int:post_id>/like/", v.like_post, name="like_post"),
+    path("comment/<int:comment_id>/like/", v.like_comment, name="like_comment"),
+    path("reply/<int:reply_id>/like/", v.like_reply, name="like_reply"),
+    path("post/<int:post_id>/comment/", v.add_comment, name="add_comment"),
+    path("comment/<int:comment_id>/reply/", v.add_reply, name="add_reply"),
 ]

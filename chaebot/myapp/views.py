@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect
-from .forms import FileUploadForm
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import FileUploadForm, PostForm
 from django.http import JsonResponse
-from .models import FileUpload, CustomUser
+from .models import FileUpload, CustomUser, Post
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 
 
 # 홈화면
@@ -167,19 +168,36 @@ def upload_mp3(request):
     return JsonResponse({"error": "Invalid request"}, status=400)
 
 
-# Create post view
+# chaetting 페이지 로딩
+@login_required
+def chaetting_view(request):
+    posts = Post.objects.all()
+    popular_posts = Post.objects.order_by("-created_at")[:5]  # 예시로 최신 5개 인기글
+    context = {
+        "posts": posts,
+        "popular_posts": popular_posts,
+        "GENRES": GENRES,
+    }
+    return render(request, "chaetting.html", context)
+
+
+# 포스트 생성
+@login_required
 def create_post(request):
     if request.method == "POST":
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
             post.save()
-            return redirect("chaetting")
-    return redirect("chaetting")
+            messages.success(request, "Post created successfully!")
+            return redirect("chaetting_view")
+        else:
+            messages.error(request, "Error creating post.")
+    return redirect("chaetting_view")
 
 
-# Like post view
+# 포스트 상세보기
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     popular_posts = Post.objects.order_by("-likes")[:5]
@@ -190,44 +208,58 @@ def post_detail(request, post_id):
     return render(request, "post_detail.html", context)
 
 
-def add_comment(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    if request.method == "POST":
-        parent_comment_id = request.POST.get("parent_comment_id")
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.post = post
-            comment.author = request.user
-            # 대댓글 처리
-            if parent_comment_id:
-                parent_comment = get_object_or_404(Comment, id=parent_comment_id)
-                comment.parent = parent_comment
-            comment.save()
-            return redirect("post_detail", post_id=post.id)
-    return redirect("post_detail", post_id=post.id)
-
-
+# 좋아요 기능
+@login_required
 def like_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    if request.user in post.likes.all():
+    if post.likes.filter(id=request.user.id).exists():
         post.likes.remove(request.user)
     else:
         post.likes.add(request.user)
-    return JsonResponse(
-        {"liked": request.user in post.likes.all(), "total_likes": post.likes.count()}
-    )
+    return HttpResponseRedirect(reverse("post_detail", args=[post.id]))
 
 
+# 댓글 좋아요
+@login_required
 def like_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
-    if request.user in comment.likes.all():
+    if comment.likes.filter(id=request.user.id).exists():
         comment.likes.remove(request.user)
     else:
         comment.likes.add(request.user)
-    return JsonResponse(
-        {
-            "liked": request.user in comment.likes.all(),
-            "total_likes": comment.likes.count(),
-        }
-    )
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+
+# 대댓글 좋아요
+@login_required
+def like_reply(request, reply_id):
+    reply = get_object_or_404(Reply, id=reply_id)
+    if reply.likes.filter(id=request.user.id).exists():
+        reply.likes.remove(request.user)
+    else:
+        reply.likes.add(request.user)
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+
+# 댓글 쓰기
+@login_required
+def add_comment(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    if request.method == "POST":
+        content = request.POST.get("content")
+        if content:
+            comment = Comment(post=post, author=request.user, content=content)
+            comment.save()
+    return redirect("post_detail", post_id=post.id)
+
+
+# 대댓글 쓰기
+@login_required
+def add_reply(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    if request.method == "POST":
+        content = request.POST.get("content")
+        if content:
+            reply = Reply(comment=comment, author=request.user, content=content)
+            reply.save()
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
