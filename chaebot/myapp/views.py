@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from .forms import PostForm, CommentForm
+from django.shortcuts import render, redirect
+from .forms import FileUploadForm
 from django.http import JsonResponse
-from .models import Post, CustomUser, Comment
+from .models import FileUpload, CustomUser
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
@@ -9,39 +9,37 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth import logout
-from .constants import GENRES
-from django.contrib.auth.decorators import login_required
 
 
-# Home view
+# 홈화면
 def index(request):
     return render(request, "index.html")
 
 
-# PDF result view
+# pdf나오는 결과화면
 def result(request):
     return render(request, "result.html")
 
 
-# Waiting view
+# 대기화면
 def waiting(request):
     return render(request, "waiting.html")
 
 
-# Logout view
+# 로그아웃
 def logout_view(request):
     logout(request)
     return redirect("index")
 
 
-# Show signup view
-def show_signup(request):
+# 회원가입화면
+def show_signup(request):  # 첫 번째 `signup`을 `show_signup`으로 변경
     return render(request, "signup.html")
 
 
-# Login view
+# 로그인동작
 def login_view(request):
-    form = AuthenticationForm()
+    form = AuthenticationForm()  # 기본 값을 설정합니다.
     if request.method == "POST":
         user_id = request.POST.get("user_id")
         password = request.POST.get("password")
@@ -51,7 +49,8 @@ def login_view(request):
                 auth_login(
                     request, user, backend="django.contrib.auth.backends.ModelBackend"
                 )
-                request.session["user_id"] = user.id
+                request.session["user_id"] = user.id  # 세션에 user_id 저장
+                print(f"Login: user_id {user.id} stored in session.")  # 디버그용 로그
                 return redirect("index")
             else:
                 messages.error(request, "비밀번호가 틀렸습니다.")
@@ -60,7 +59,7 @@ def login_view(request):
     return render(request, "login.html", {"form": form})
 
 
-# Signup view
+# 회원가입
 def signup(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -82,30 +81,22 @@ def signup(request):
             username=username, password=password, email=email, user_id=user_id
         )
         auth_login(request, user, backend="django.contrib.auth.backends.ModelBackend")
-        request.session["user_id"] = user.id
+        request.session["user_id"] = user.id  # 세션에 user_id 저장
+        print(f"Signup: user_id {user.id} stored in session.")  # 디버그용 로그
         return redirect("age_gender")
 
     return render(request, "signup.html")
 
 
-# Chaetting view
-def chaetting(request):
-    posts = Post.objects.all()
-    popular_posts = Post.objects.order_by("-likes")[:5]
-    return render(
-        request,
-        "chaetting.html",
-        {"posts": posts, "popular_posts": popular_posts, "GENRES": GENRES},
-    )
-
-
-# Age and gender view
+# 성별 연령대
 def age_gender(request):
     if request.method == "POST":
         age_group = request.POST.get("age_group")
         gender = request.POST.get("gender")
 
+        # 세션에서 사용자 ID 가져오기
         user_id = request.session.get("user_id")
+        print(f"Age/Gender: Retrieved user_id {user_id} from session.")  # 디버그용 로그
 
         if user_id:
             user = CustomUser.objects.get(id=user_id)
@@ -120,11 +111,32 @@ def age_gender(request):
     return render(request, "age_gender.html")
 
 
-# Select genres view
+GENRES = [
+    "록",
+    "팝 록",
+    "메탈",
+    "재즈",
+    "펑크 록",
+    "소울",
+    "펑크",
+    "얼터너티브 록",
+    "인디 록",
+    "힙합",
+    "레게",
+    "프로그레시브 록",
+    "포스트 록",
+    "하드코어 펑크",
+]
+
+
+# 장르 선택
 def select_genres(request):
     if request.method == "POST":
         selected_genres = request.POST.get("selected_genres", "").split(",")
         user_id = request.session.get("user_id")
+
+        print("Selected genres:", selected_genres)  # 디버그용 로그
+        print("User ID from session:", user_id)  # 디버그용 로그
 
         if user_id:
             try:
@@ -132,6 +144,9 @@ def select_genres(request):
                 user.genres = ",".join(selected_genres)
                 user.save()
                 del request.session["user_id"]
+                print(
+                    f"Select Genres: user_id {user_id} deleted from session."
+                )  # 디버그용 로그
                 return redirect("login")
             except CustomUser.DoesNotExist:
                 messages.error(request, "User does not exist.")
@@ -141,7 +156,7 @@ def select_genres(request):
     return render(request, "select_genres.html", {"genres": GENRES})
 
 
-# MP3 upload view
+# mp3업로드
 @csrf_exempt
 def upload_mp3(request):
     if request.method == "POST" and request.FILES.get("file"):

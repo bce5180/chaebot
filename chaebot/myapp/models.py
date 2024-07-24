@@ -1,8 +1,8 @@
 # myapp/models.py
 
 from django.db import models
-from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 
 
 class CustomUser(AbstractUser):
@@ -48,53 +48,3 @@ class NaverUser(models.Model):
 
     def __str__(self):
         return self.nickname
-
-
-class Post(models.Model):
-    GENRES = [
-        ("록", "록"),
-        ("팝 록", "팝 록"),
-        ("메탈", "메탈"),
-        ("재즈", "재즈"),
-        ("펑크 록", "펑크 록"),
-        ("소울", "소울"),
-        ("펑크", "펑크"),
-        ("얼터너티브 록", "얼터너티브 록"),
-        ("인디 록", "인디 록"),
-        ("힙합", "힙합"),
-        ("레게", "레게"),
-        ("프로그레시브 록", "프로그레시브 록"),
-        ("포스트 록", "포스트 록"),
-        ("하드코어 펑크", "하드코어 펑크"),
-    ]
-
-    author = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="posts"
-    )
-    title = models.CharField(max_length=200)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    likes = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name="liked_posts", blank=True
-    )
-    genre = models.CharField(max_length=20, choices=GENRES)  # 추가된 필드
-
-    @property
-    def total_likes(self):
-        return self.likes.count()
-
-    def __str__(self):
-        return self.title
-
-
-class Comment(models.Model):
-    post = models.ForeignKey(Post, related_name="comments", on_delete=models.CASCADE)
-    parent_comment = models.ForeignKey(
-        "self", null=True, blank=True, related_name="replies", on_delete=models.CASCADE
-    )
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Comment by {self.author} on {self.post}"

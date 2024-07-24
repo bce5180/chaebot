@@ -3,7 +3,7 @@ body, html {
     margin: 0;
     font-family: Arial, sans-serif;
     /* background-color: #000; */
-    background-image: url('../img/drumssss.png'); /* 배경 이미지 설정 */
+    background-image: url('../img/modified_drum.png'); /* 배경 이미지 설정 */
     background-size: cover; /* 이미지가 컨테이너 전체를 덮도록 조정 */
     background-position: center; /* 이미지가 중앙에 위치하도록 조정 */
     background-repeat: no-repeat; /* 이미지가 반복되지 않도록 설정 */
