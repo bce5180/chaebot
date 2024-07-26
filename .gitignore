@@ -2,5 +2,5 @@
 *.pyc
 *.py
 *.mo
-*.html
 myenv/
+/chaebot/chaebot/__pycache__

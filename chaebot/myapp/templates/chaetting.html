@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <title>Chaetting</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .feed {
+            flex: 3;
+            margin-right: 20px;
+        }
+
+        .sidebar {
+            flex: 1;
+            background-color: #f1f1f1;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .search-bar input[type="text"] {
+            width: 60%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+
+        .search-bar select {
+            padding: 10px;
+            margin-left: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .search-bar button {
+            padding: 10px 15px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ebd382;
+            color: rgb(0, 0, 0);
+            cursor: pointer;
+        }
+
+        .new-post-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            border: 3px solid #f1e0a7;
+            background-color: #fbfbfb;
+            color: rgb(0, 0, 0);
+            font-size: 1.2em;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .new-post-btn:hover {
+            background-color: #f1e0a7;
+            color: rgb(0, 0, 0);
+        }
+
+        .post-form {
+            display: none;
+            flex-direction: column;
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .post-form.visible {
+            display: flex;
+        }
+
+        .post-form select,
+        .post-form input[type="text"],
+        .post-form textarea,
+        .post-form input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .post-form label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .post-form button {
+            align-self: flex-end;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ffbf00;
+            color: white;
+            cursor: pointer;
+        }
+
+        .file-input-wrapper {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #000000;
+            cursor: pointer;
+            display: none;
+        }
+
+        .file-input-wrapper label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .file-input-wrapper label:hover {
+            background-color: #e1e1e1;
+        }
+
+        .file-input-wrapper span {
+            margin-left: 10px;
+            font-style: italic;
+            color: #d3cccc;
+        }
+
+        .post {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+
+        .post h3 {
+            margin: 0;
+            font-size: 1.6em;
+            font-weight: bold;
+        }
+
+        .post p {
+            margin: 10px 0;
+        }
+
+        .post small {
+            color: #777;
+        }
+
+        .post-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .post-actions a {
+            text-decoration: none;
+            color: #555;
+            display: flex;
+            align-items: center;
+        }
+
+        .post-actions a i {
+            margin-right: 5px;
+        }
+
+        .sidebar .post {
+            background-color: #fff;
+            border: none;
+            margin-bottom: 10px;
+        }
+
+        .sidebar .post h4 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+
+        .sidebar .post small {
+            color: #777;
+        }
+
+        .like-comment-icons {
+            width: 29px;
+            height: 29px;
+        }
+    </style>
+    <script>
+        function togglePostForm() {
+            const form = document.getElementById('post-form');
+            form.classList.toggle('visible');
+        }
+
+        function searchPosts() {
+            const query = document.getElementById('search-input').value;
+            const type = document.getElementById('search-type').value;
+            window.location.href = `{% url 'chaetting_view' %}?q=${query}&type=${type}`;
+        }
+
+        function updateFileLabel(input, labelId, fileType) {
+            const label = document.getElementById(labelId);
+            if (input.files.length > 0) {
+                label.textContent = `${input.files[0].name}`;
+            } else {
+                label.textContent = `${fileType} 파일을 선택하세요.`;
+            }
+        }
+    </script>
+</head>
+<body>
+    <main>
+        <div class="search-bar">
+            <select id="search-type">
+                <option value="genre">장르</option>
+                <option value="title">제목</option>
+                <option value="content">내용</option>
+            </select>
+            <input type="text" placeholder="검색어를 입력하세요..." id="search-input">
+            <button onclick="searchPosts()">검색</button>
+        </div>
+        <div class="container">
+            <div class="feed">
+                <button class="new-post-btn" onclick="togglePostForm()">새 글을 작성해주세요!</button>
+                <div id="post-form" class="post-form">
+                    <form method="post" action="{% url 'create_post' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <select name="genre">
+                            {% for genre in GENRES %}
+                                <option value="{{ genre }}">{{ genre }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="text" name="title" placeholder="제목을 입력하세요" required>
+                        <textarea name="content" rows="5" placeholder="내용을 입력하세요" required></textarea>
+                        <div class="file-input-wrapper">
+                            <label for="mp3_file">
+                                음악 파일 첨부 
+                                <input type="file" name="mp3_file" id="mp3_file" accept=".mp3" onchange="updateFileLabel(this, 'mp3_file_label', '.mp3')">
+                                <span id="mp3_file_label">(.mp3)</span>
+                            </label>
+                        </div>
+                        <div class="file-input-wrapper">
+                            <label for="sheet_file">
+                                악보 파일 첨부 
+                                <input type="file" name="sheet_file" id="sheet_file" accept=".pdf,.jpg,.jpeg,.png" onchange="updateFileLabel(this, 'sheet_file_label', '.pdf, .jpg, .jpeg, .png')">
+                                <span id="sheet_file_label">(.pdf, .jpg, .jpeg, .png)</span>
+                            </label>
+                        </div>
+                        <button type="submit">작성</button>
+                    </form>
+                </div>
+                {% for post in posts %}
+                <div class="post">
+                    <h3><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h3>
+                    <p>{{ post.content }}</p>
+                    <small>
+                        <img src="{% static 'img/bold_like.png' %}" alt="Like" class="like-comment-icons"> {{ post.total_likes }} |
+                        <img src="{% static 'img/comment.png' %}" alt="Comment" class="like-comment-icons"> {{ post.comments.count }} |
+                        {{ post.created_at|date:"d/m/Y" }} | {{ post.author.username }}
+                    </small>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="sidebar">
+                <h3>실시간 인기글</h3>
+                {% for post in popular_posts %}
+                <div class="post">
+                    <h4>{{ post.title }}</h4>
+                    <small>{{ post.author.username }}</small>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <title>ProReflect</title>
+</head>
+<body> 
+    <main>
+        <div class="logo-text">
+            <img src="{% static 'img/loginLogo.png' %}" width="350px">
+        </div>
+        <form method="post" action="{% url 'login_view' %}" class="login-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <div class="form-text">
+                <h2>환영합니다!</h2>
+            </div>
+            <div class="input-section">
+                <input type="text" name="user_id" placeholder="ID" required />
+            </div>
+            <div class="input-section">
+                <input type="password" name="password" placeholder="PASSWORD" required />
+            </div>
+            <div class="submit">
+                <div class="signup">
+                    <a href="{% url 'signup' %}" class="signup-button">회원가입</a>
+                </div>
+                <div class="login">
+                    <button type="submit" id="submitButton">로그인</button>
+                </div>
+            </div>
+            <div class="forgot">
+                <p>아이디/비밀번호를 잊으셨나요?</p>
+            </div>
+            <div class="social-login">
+                {% load socialaccount %}
+                <img src="{% static 'img/kakao_login.png' %}" alt="카카오 로그인" id="kakao-login-btn">
+                {% load socialaccount %}
+                <img src="{% static 'img/naver_login.png' %}" alt="네이버 로그인" id="naver-login-btn" >
+            </div>
+        </form>
+    </main>
+</body>
+</html>
