@@ -19,7 +19,7 @@
             padding: 20px;
         }
         .post-detail, .sidebar {
-            background-color: #fff;
+            background-color: #f2f2f2;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -32,83 +32,169 @@
             flex: 1;
         }
         .post, .comment {
+            background-color: #fffdfda8;
             border: 1px solid #ccc;
             padding: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 5px;
             border-radius: 10px;
         }
-        .post h1, .sidebar h3, .comments h3 {
+        .reply {
+            background-color: #fcf8e4;
+            border: 1px solid #bbb;
+            padding: 20px;
+            margin-top: 8px;
+            margin-bottom: 20px;
+            margin-left: 30px;
+            border-radius: 10px;
+        }
+        .post h1 {
             color: #333;
+            font-size: 2em;
+            font-weight: bold;
             margin-bottom: 10px;
         }
-        .comment-form textarea, .reply-form textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+        .post small {
+            font-size: 0.9em;
+            color: #777;
+            display: block;
+            margin-bottom: 45px;
+        }
+        .post p {
+            margin-bottom: 70px;
+        }
+        .comments h3 {
+            color: #333;
+        }
+        .comment-header, .reply-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 10px;
         }
-        .comment-form button, .reply-form button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #5C67F2;
-            color: white;
-            cursor: pointer;
+        .comment-author, .reply-author {
+            margin-bottom: 3px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            background-color: #ffffff;
+            padding: 5px 10px;
+            border-radius: 15px;
+            box-shadow: 0 0 3px rgb(0, 0, 0), 0 0 3px rgb(0, 0, 0), 0 0 3px rgb(0, 0, 0), 0 0 3px rgb(0, 0, 0);
         }
-        .reply-form {
-            background-color: #e8e8e8;
-            padding: 10px;
-            border-radius: 8px;
+        .comment-date {
+            font-size: 0.9em;
+            color: #888;
+        }
+        .comment-body, .reply-body {
+            margin-left: 10px;
+        }
+        .comment-action-btns {
+            display: flex;
+            gap: 15px;
             margin-top: 10px;
-            margin-left: 30px; /* Slightly offset from the comment to indicate hierarchy */
         }
         .comment-action-btns button {
             background: none;
             border: none;
             color: #777;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         .comment-action-btns button:hover {
             color: #444;
         }
-        .comment-action-btns i, .comment-action-btns img {
+        .comment-action-btns img {
             margin-right: 5px;
         }
+        .comment-action-btns span {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
         .search-bar {
-            margin-bottom: 20px;
+            margin-bottom: 85px;
             display: flex;
             justify-content: center;
             align-items: center;
+            gap: 10px;
         }
-
         .search-bar input[type="text"] {
-            width: 60%;
-            padding: 10px;
+            width: 600px;
+            padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            margin-left: 10px;
+            font-size: 15px;
         }
-
         .search-bar select {
-            padding: 10px;
-            margin-left: 10px;
+            padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            font-size: 15px;
         }
-
         .search-bar button {
-            padding: 10px 15px;
-            margin-left: 10px;
+            padding: 20px 30px;
             border: none;
             border-radius: 5px;
             background-color: #ebd382;
             color: rgb(0, 0, 0);
             cursor: pointer;
+            font-size: 15px;
         }
         .like-comment-icons {
-            width: 24px;
-            height: 24px;
+            width: 30px;
+            height: 30px;
+        }
+        .attachment {
+            margin-top: 20px;
+        }
+        .attachment a {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            color: #5C67F2;
+            text-decoration: none;
+        }
+        .attachment a img {
+            margin-right: 10px;
+        }
+        .attachment a:hover {
+            text-decoration: underline;
+        }
+        .reply-form, .comment-form {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        .reply-form textarea, .comment-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .reply-form button, .comment-form button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #e8c962;
+            color: white;
+            cursor: pointer;
+        }
+        .post-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .sidebar h3 {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -127,8 +213,20 @@
             <div class="post-detail">
                 <div class="post">
                     <h1>{{ post.title }}</h1>
-                    <small>{{ post.author.username }} | {{ post.created_at|date:"Y-m-d H:i" }}</small>
+                    <small>{{ post.author.username }} | {{ post.created_at|date:"Y.m.d H:i" }}</small>
                     <p>{{ post.content }}</p>
+                    <div class="attachment">
+                        {% if post.mp3_file %}
+                            <a href="{{ post.mp3_file.url }}" download>
+                                <img src="{% static 'img/mp3.png' %}" alt="MP3" class="like-comment-icons"> MP3 파일 다운로드
+                            </a>
+                        {% endif %}
+                        {% if post.sheet_file %}
+                            <a href="{{ post.sheet_file.url }}" download>
+                                <img src="{% static 'img/note.png' %}" alt="Sheet" class="like-comment-icons"> 악보 파일 다운로드
+                            </a>
+                        {% endif %}
+                    </div>
                     <div class="post-actions">
                         <form method="post" action="{% url 'like_post' post.id %}">
                             {% csrf_token %}
@@ -141,10 +239,13 @@
                                 <span>{{ post.total_likes }}</span>
                             </button>
                         </form>
+                        <div>
+                            <img src="{% static 'img/comment.png' %}" alt="Comment" class="like-comment-icons">
+                            <span>{{ total_comments }}</span>
+                        </div>
                     </div>
                 </div>
                 <div id="comments" class="comments">
-                    <h3>댓글</h3>
                     {% for comment in post.comments.all %}
                     <div class="comment">
                         <div class="comment-header">
@@ -155,7 +256,7 @@
                         <div class="comment-action-btns">
                             <form method="post" action="{% url 'like_comment' comment.id %}">
                                 {% csrf_token %}
-                                <button type="submit" style="background: none; border: none;">
+                                <button type="submit">
                                     {% if user in comment.likes.all %}
                                         <img src="{% static 'img/pressed_good.png' %}" alt="Like" class="like-comment-icons">
                                     {% else %}
@@ -168,24 +269,17 @@
                                 <img src="{% static 'img/comment.png' %}" alt="Reply" class="like-comment-icons">
                             </button>
                         </div>
-                        <div id="reply-form-{{ comment.id }}" class="reply-form" style="display: none;">
-                            <form method="post" action="{% url 'add_reply' comment.id %}">
-                                {% csrf_token %}
-                                <textarea name="content" placeholder="답글을 입력하세요..."></textarea>
-                                <button type="submit">답글 작성</button>
-                            </form>
-                        </div>
                         {% for reply in comment.replies.all %}
                         <div class="reply">
-                            <div class="comment-header">
-                                <span class="comment-author">{{ reply.author.username }}</span>
+                            <div class="reply-header">
+                                <span class="reply-author">{{ reply.author.username }}</span>
                                 <span class="comment-date">{{ reply.created_at|date:"Y-m-d H:i" }}</span>
                             </div>
-                            <div class="comment-body">{{ reply.content }}</div>
+                            <div class="reply-body">{{ reply.content }}</div>
                             <div class="comment-action-btns">
                                 <form method="post" action="{% url 'like_reply' reply.id %}">
                                     {% csrf_token %}
-                                    <button type="submit" style="background: none; border: none;">
+                                    <button type="submit">
                                         {% if user in reply.likes.all %}
                                             <img src="{% static 'img/pressed_good.png' %}" alt="Like" class="like-comment-icons">
                                         {% else %}
@@ -197,6 +291,13 @@
                             </div>
                         </div>
                         {% endfor %}
+                        <div id="reply-form-{{ comment.id }}" class="reply-form" style="display: none;">
+                            <form method="post" action="{% url 'add_reply' comment.id %}">
+                                {% csrf_token %}
+                                <textarea name="content" placeholder="답글을 입력하세요..."></textarea>
+                                <button type="submit">답글 작성</button>
+                            </form>
+                        </div>
                     </div>
                     {% endfor %}
                 </div>

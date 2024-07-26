@@ -202,9 +202,13 @@ def create_post(request):
 # 포스트 상세보기
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
+    total_comments = post.comments.count()
+    for comment in post.comments.all():
+        total_comments += comment.replies.count()
     popular_posts = Post.objects.order_by("-likes")[:5]
     context = {
         "post": post,
+        "total_comments": total_comments,
         "popular_posts": popular_posts,
     }
     return render(request, "post_detail.html", context)
