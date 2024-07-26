@@ -76,21 +76,34 @@
             margin-right: 5px;
         }
         .search-bar {
+            margin-bottom: 20px;
             display: flex;
             justify-content: center;
-            margin-bottom: 20px;
+            align-items: center;
         }
-        .search-bar input[type="text"], .search-bar select {
+
+        .search-bar input[type="text"] {
+            width: 60%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            margin-right: 10px;
+            margin-left: 10px;
         }
-        .search-bar button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
+
+        .search-bar select {
+            padding: 10px;
+            margin-left: 10px;
+            border: 1px solid #ccc;
             border-radius: 5px;
+        }
+
+        .search-bar button {
+            padding: 10px 15px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ebd382;
+            color: rgb(0, 0, 0);
             cursor: pointer;
         }
         .like-comment-icons {
@@ -117,11 +130,17 @@
                     <small>{{ post.author.username }} | {{ post.created_at|date:"Y-m-d H:i" }}</small>
                     <p>{{ post.content }}</p>
                     <div class="post-actions">
-                        <button onclick="toggleLikePost({{ post.id }})">
-                            <img id="post-like-icon" src="{% static 'img/like.png' %}" alt="Like" class="like-comment-icons" style="{% if user in post.likes.all %}display:none;{% endif %}">
-                            <img id="post-pressed-like-icon" src="{% static 'img/pressed_like.png' %}" alt="Like" class="like-comment-icons" style="{% if user not in post.likes.all %}display:none;{% endif %}">
-                            <span id="post-like-count">{{ post.total_likes }}</span>
-                        </button>
+                        <form method="post" action="{% url 'like_post' post.id %}">
+                            {% csrf_token %}
+                            <button type="submit" style="background: none; border: none;">
+                                {% if user in post.likes.all %}
+                                    <img src="{% static 'img/pressed_good.png' %}" alt="Like" class="like-comment-icons">
+                                {% else %}
+                                    <img src="{% static 'img/bold_like.png' %}" alt="Like" class="like-comment-icons">
+                                {% endif %}
+                                <span>{{ post.total_likes }}</span>
+                            </button>
+                        </form>
                     </div>
                 </div>
                 <div id="comments" class="comments">
@@ -134,11 +153,17 @@
                         </div>
                         <div class="comment-body">{{ comment.content }}</div>
                         <div class="comment-action-btns">
-                            <button onclick="toggleLikeComment({{ comment.id }})">
-                                <img id="comment-like-icon-{{ comment.id }}" src="{% static 'img/like.png' %}" alt="Like" class="like-comment-icons" style="{% if user in comment.likes.all %}display:none;{% endif %}">
-                                <img id="comment-pressed-like-icon-{{ comment.id }}" src="{% static 'img/pressed_like.png' %}" alt="Like" class="like-comment-icons" style="{% if user not in comment.likes.all %}display:none;{% endif %}">
-                                <span id="comment-like-count-{{ comment.id }}">{{ comment.total_likes }}</span>
-                            </button>
+                            <form method="post" action="{% url 'like_comment' comment.id %}">
+                                {% csrf_token %}
+                                <button type="submit" style="background: none; border: none;">
+                                    {% if user in comment.likes.all %}
+                                        <img src="{% static 'img/pressed_good.png' %}" alt="Like" class="like-comment-icons">
+                                    {% else %}
+                                        <img src="{% static 'img/bold_like.png' %}" alt="Like" class="like-comment-icons">
+                                    {% endif %}
+                                    <span>{{ comment.total_likes }}</span>
+                                </button>
+                            </form>
                             <button onclick="toggleReplyForm({{ comment.id }})">
                                 <img src="{% static 'img/comment.png' %}" alt="Reply" class="like-comment-icons">
                             </button>
@@ -158,11 +183,17 @@
                             </div>
                             <div class="comment-body">{{ reply.content }}</div>
                             <div class="comment-action-btns">
-                                <button onclick="toggleLikeReply({{ reply.id }})">
-                                    <img id="reply-like-icon-{{ reply.id }}" src="{% static 'img/like.png' %}" alt="Like" class="like-comment-icons" style="{% if user in reply.likes.all %}display:none;{% endif %}">
-                                    <img id="reply-pressed-like-icon-{{ reply.id }}" src="{% static 'img/pressed_like.png' %}" alt="Like" class="like-comment-icons" style="{% if user not in reply.likes.all %}display:none;{% endif %}">
-                                    <span id="reply-like-count-{{ reply.id }}">{{ reply.total_likes }}</span>
-                                </button>
+                                <form method="post" action="{% url 'like_reply' reply.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" style="background: none; border: none;">
+                                        {% if user in reply.likes.all %}
+                                            <img src="{% static 'img/pressed_good.png' %}" alt="Like" class="like-comment-icons">
+                                        {% else %}
+                                            <img src="{% static 'img/bold_like.png' %}" alt="Like" class="like-comment-icons">
+                                        {% endif %}
+                                        <span>{{ reply.total_likes }}</span>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                         {% endfor %}
@@ -192,57 +223,7 @@
             const type = document.getElementById('search-type').value;
             window.location.href = `/search?q=${query}&type=${type}`;
         }
-        function toggleLikePost(postId) {
-            fetch(`/like_post/${postId}/`)
-                .then(response => response.json())
-                .then(data => {
-                    const likeIcon = document.getElementById('post-like-icon');
-                    const pressedLikeIcon = document.getElementById('post-pressed-like-icon');
-                    const likeCount = document.getElementById('post-like-count');
-                    if (data.liked) {
-                        likeIcon.style.display = 'none';
-                        pressedLikeIcon.style.display = 'inline';
-                    } else {
-                        likeIcon.style.display = 'inline';
-                        pressedLikeIcon.style.display = 'none';
-                    }
-                    likeCount.textContent = data.total_likes;
-                });
-        }
-        function toggleLikeComment(commentId) {
-            fetch(`/like_comment/${commentId}/`)
-                .then(response => response.json())
-                .then(data => {
-                    const likeIcon = document.getElementById(`comment-like-icon-${commentId}`);
-                    const pressedLikeIcon = document.getElementById(`comment-pressed-like-icon-${commentId}`);
-                    const likeCount = document.getElementById(`comment-like-count-${commentId}`);
-                    if (data.liked) {
-                        likeIcon.style.display = 'none';
-                        pressedLikeIcon.style.display = 'inline';
-                    } else {
-                        likeIcon.style.display = 'inline';
-                        pressedLikeIcon.style.display = 'none';
-                    }
-                    likeCount.textContent = data.total_likes;
-                });
-        }
-        function toggleLikeReply(replyId) {
-            fetch(`/like_reply/${replyId}/`)
-                .then(response => response.json())
-                .then(data => {
-                    const likeIcon = document.getElementById(`reply-like-icon-${replyId}`);
-                    const pressedLikeIcon = document.getElementById(`reply-pressed-like-icon-${replyId}`);
-                    const likeCount = document.getElementById(`reply-like-count-${replyId}`);
-                    if (data.liked) {
-                        likeIcon.style.display = 'none';
-                        pressedLikeIcon.style.display = 'inline';
-                    } else {
-                        likeIcon.style.display = 'inline';
-                        pressedLikeIcon.style.display = 'none';
-                    }
-                    likeCount.textContent = data.total_likes;
-                });
-        }
+
         function toggleReplyForm(commentId) {
             const replyForm = document.getElementById(`reply-form-${commentId}`);
             replyForm.style.display = replyForm.style.display === 'none' ? 'block' : 'none';
