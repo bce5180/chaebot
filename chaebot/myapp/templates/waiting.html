@@ -7,6 +7,58 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/basic.css' %}">
     <meta name="csrf-token" content="{{ csrf_token }}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #111; /* Dark background for the theme */
+            color: #fff; /* Light text color for visibility */
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh; /* Full height minus navbar and some padding */
+        }
+
+        .loading-overlay {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #111; /* Yellow border for visibility */
+            border-radius: 10px;
+            background-color: #222; /* Slightly lighter black for visibility */
+        }
+
+        .loading-spinner {
+            border: 5px solid #333; /* Lighter part of the spinner */
+            border-top: 5px solid #f1c40f; /* Yellow part of the spinner */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .progress-container {
+            background-color: #333; /* Dark background for progress bar */
+            padding: 3px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background-color: #f1c40f; /* Yellow color for the progress */
+            text-align: center;
+            line-height: 20px; /* Center text vertically */
+            width: 0%; /* Initial width */
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -15,9 +67,14 @@
         </div>
         <div class="navbar-menu">
             <a href="convert" class="active">변환</a>
-            <a href="community">Chaetting</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'chaetting_view' %}" class="active">Chaetting</a>
+                <a href="{% url 'logout' %}" class="active">로그아웃</a>
+            {% else %}
+                <a href="login" class="active">로그인</a>
+            {% endif %}
         </div>
-    </nav>
+    </nav>   
     <div class="container">
         <div class="loading-overlay">
             <div class="loading-spinner"></div>

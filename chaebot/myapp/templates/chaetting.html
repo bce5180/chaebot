@@ -26,41 +26,40 @@
 
         .sidebar {
             flex: 1;
-            background-color: #f1f1f1;
+            background-color: #f2f2f2;
             padding: 20px;
             border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .search-bar {
-            margin-bottom: 20px;
+            margin-bottom: 85px;
             display: flex;
             justify-content: center;
             align-items: center;
+            gap: 10px;
         }
-
         .search-bar input[type="text"] {
-            width: 60%;
-            padding: 10px;
+            width: 600px;
+            padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            margin-left: 10px;
+            font-size: 15px;
         }
-
         .search-bar select {
-            padding: 10px;
-            margin-left: 10px;
+            padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            font-size: 15px;
         }
-
         .search-bar button {
-            padding: 10px 15px;
-            margin-left: 10px;
+            padding: 20px 30px;
             border: none;
             border-radius: 5px;
             background-color: #ebd382;
             color: rgb(0, 0, 0);
             cursor: pointer;
+            font-size: 15px;
         }
 
         .new-post-btn {
@@ -145,7 +144,7 @@
             justify-content: center;
             padding: 10px;
             border-radius: 5px;
-            border: 1px solid #ccc;
+            border: 1px solid #bcbcbc;
             background-color: #f1f1f1;
             cursor: pointer;
             transition: background-color 0.3s ease;
@@ -158,14 +157,16 @@
         .file-input-wrapper span {
             margin-left: 10px;
             font-style: italic;
-            color: #d3cccc;
+            color: #b9b5b5;
         }
 
         .post {
-            border: 1px solid #ccc;
+            border: 1px solid #e6e6e6;
             padding: 20px;
             margin-bottom: 10px;
             border-radius: 10px;
+            border-width: 3px;
+            background-color: #e6e6e6;
         }
 
         .post h3 {
@@ -189,7 +190,7 @@
         }
 
         .post-actions a {
-            text-decoration: none;
+            text-decoration:none;
             color: #555;
             display: flex;
             align-items: center;
@@ -199,19 +200,10 @@
             margin-right: 5px;
         }
 
-        .sidebar .post {
-            background-color: #fff;
-            border: none;
-            margin-bottom: 10px;
-        }
-
-        .sidebar .post h4 {
-            margin: 0;
-            font-size: 1.2em;
-        }
-
-        .sidebar .post small {
-            color: #777;
+        .sidebar h3 {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 20px;
         }
 
         .like-comment-icons {
@@ -269,14 +261,14 @@
                             <label for="mp3_file">
                                 음악 파일 첨부 
                                 <input type="file" name="mp3_file" id="mp3_file" accept=".mp3" onchange="updateFileLabel(this, 'mp3_file_label', '.mp3')">
-                                <span id="mp3_file_label">.mp3 파일만 가능합니다.</span>
+                                <span id="mp3_file_label">.mp3</span>
                             </label>
                         </div>
                         <div class="file-input-wrapper">
                             <label for="sheet_file">
                                 악보 파일 첨부 
                                 <input type="file" name="sheet_file" id="sheet_file" accept=".pdf,.jpg,.jpeg,.png" onchange="updateFileLabel(this, 'sheet_file_label', '.pdf, .jpg, .jpeg, .png')">
-                                <span id="sheet_file_label">.pdf, .jpg, .jpeg, .png 파일만 가능합니다.</span>
+                                <span id="sheet_file_label">.pdf .jpg .jpeg .png </span>
                             </label>
                         </div>
                         <button type="submit">작성</button>
