@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+    <title>Additional Information</title>
+    <style>
+        /* 추가된 스타일 */
+        .input-section {
+            margin-bottom: 20px;
+        }
+
+        .input-section label {
+            display: block;
+            font-size: 1.0em;
+            margin-bottom: 10px;
+        }
+
+        .input-section select {
+            width: 80%;
+            padding: 15px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            background-image: url('{% static "img/dropdown-arrow.png" %}'), linear-gradient(to bottom, #f9f9f9, #fff);
+            background-repeat: no-repeat, repeat;
+            background-position: right 10px top 50%, 0 0;
+            background-size: 50px 50px, 100%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            -webkit-appearance: none; /* 크롬, 사파리 */
+            -moz-appearance: none; /* 파이어폭스 */
+            appearance: none; /* 기본 브라우저 스타일 제거 */
+        }
+
+        .input-section select:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 8px rgba(128, 189, 255, 0.5);
+            outline: none;
+        }
+
+        .signup button {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            color: #000000;
+            background-color: #ebd382;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .signup button:hover {
+            background-color: #ffbf00;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="logo-text">
+            <img src="{% static 'img/loginLogo.png' %}" width="350px">
+        </div>
+        <form class="signup-form" method="post" action="{% url 'age_gender' %}">
+            {% csrf_token %}
+            <div class="input-section">
+                <label for="id_age_group">연령대</label>
+                <select name="age_group" id="id_age_group" required>
+                    <option value="">선택하세요</option>
+                    <option value="0-9">0-9</option>
+                    <option value="10-19">10-19</option>
+                    <option value="20-29">20-29</option>
+                    <option value="30-39">30-39</option>
+                    <option value="40-49">40-49</option>
+                    <option value="50-59">50-59</option>
+                    <option value="60-69">60-69</option>
+                    <option value="70-79">70-79</option>
+                    <option value="80-89">80-89</option>
+                    <option value="90-99">90-99</option>
+                </select>
+            </div>
+            <div class="input-section">
+                <label for="id_gender">성별</label>
+                <select name="gender" id="id_gender" required>
+                    <option value="">선택하세요</option>
+                    <option value="male">남성</option>
+                    <option value="female">여성</option>
+                    <option value="none">선택 안 함</option>
+                </select>
+            </div>
+            <div class="signup">
+                <button type="submit" id="submitButton">저장</button>
+            </div>
+        </form>
+    </main>
+</body>
+</html>

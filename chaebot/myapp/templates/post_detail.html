@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <title>{{ post.title }}</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        .post-detail, .sidebar {
+            background-color: #f2f2f2;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .post-detail {
+            flex: 3;
+            margin-right: 20px;
+        }
+        .sidebar {
+            flex: 1;
+        }
+        .post, .comment {
+            background-color: #fffdfda8;
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 5px;
+            border-radius: 10px;
+        }
+        .reply {
+            background-color: #fcf8e4;
+            border: 1px solid #bbb;
+            padding: 20px;
+            margin-top: 8px;
+            margin-bottom: 20px;
+            margin-left: 30px;
+            border-radius: 10px;
+        }
+        .post h1 {
+            color: #333;
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .post small {
+            font-size: 0.9em;
+            color: #777;
+            display: block;
+            margin-bottom: 45px;
+        }
+        .post p {
+            margin-bottom: 70px;
+        }
+        .comments h3 {
+            color: #333;
+        }
+        .comment-header, .reply-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .comment-author, .reply-author {
+            margin-bottom: 3px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            background-color: #ffffff;
+            padding: 5px 10px;
+            border-radius: 15px;
+            box-shadow: 0 0 3px rgb(0, 0, 0), 0 0 3px rgb(0, 0, 0), 0 0 3px rgb(0, 0, 0), 0 0 3px rgb(0, 0, 0);
+        }
+        .comment-date {
+            font-size: 0.9em;
+            color: #888;
+        }
+        .comment-body, .reply-body {
+            margin-left: 10px;
+        }
+        .comment-action-btns {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .comment-action-btns button {
+            background: none;
+            border: none;
+            color: #777;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .comment-action-btns button:hover {
+            color: #444;
+        }
+        .comment-action-btns img {
+            margin-right: 5px;
+        }
+        .comment-action-btns span {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        .search-bar {
+            margin-bottom: 85px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .search-bar input[type="text"] {
+            width: 600px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+        .search-bar select {
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+        .search-bar button {
+            padding: 20px 30px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ebd382;
+            color: rgb(0, 0, 0);
+            cursor: pointer;
+            font-size: 15px;
+        }
+        .like-comment-icons {
+            width: 30px;
+            height: 30px;
+        }
+        .attachment {
+            margin-top: 20px;
+        }
+        .attachment a {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            color: #5C67F2;
+            text-decoration: none;
+        }
+        .attachment a img {
+            margin-right: 10px;
+        }
+        .attachment a:hover {
+            text-decoration: underline;
+        }
+        .reply-form, .comment-form {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        .reply-form textarea, .comment-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .reply-form button, .comment-form button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #e8c962;
+            color: white;
+            cursor: pointer;
+        }
+        .post-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .sidebar h3 {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="search-bar">
+            <select id="search-type">
+                <option value="genre">장르</option>
+                <option value="title">제목</option>
+                <option value="content">내용</option>
+            </select>
+            <input type="text" placeholder="검색어를 입력하세요..." id="search-input">
+            <button onclick="searchPosts()">검색</button>
+        </div>
+        <div class="container">
+            <div class="post-detail">
+                <div class="post">
+                    <h1>{{ post.title }}</h1>
+                    <small>{{ post.author.username }} | {{ post.created_at|date:"Y.m.d H:i" }}</small>
+                    <p>{{ post.content }}</p>
+                    <div class="attachment">
+                        {% if post.mp3_file %}
+                            <a href="{{ post.mp3_file.url }}" download>
+                                <img src="{% static 'img/mp3.png' %}" alt="MP3" class="like-comment-icons"> MP3 파일 다운로드
+                            </a>
+                        {% endif %}
+                        {% if post.sheet_file %}
+                            <a href="{{ post.sheet_file.url }}" download>
+                                <img src="{% static 'img/note.png' %}" alt="Sheet" class="like-comment-icons"> 악보 파일 다운로드
+                            </a>
+                        {% endif %}
+                    </div>
+                    <div class="post-actions">
+                        <form method="post" action="{% url 'like_post' post.id %}">
+                            {% csrf_token %}
+                            <button type="submit" style="background: none; border: none;">
+                                {% if user in post.likes.all %}
+                                    <img src="{% static 'img/pressed_good.png' %}" alt="Like" class="like-comment-icons">
+                                {% else %}
+                                    <img src="{% static 'img/bold_like.png' %}" alt="Like" class="like-comment-icons">
+                                {% endif %}
+                                <span>{{ post.total_likes }}</span>
+                            </button>
+                        </form>
+                        <div>
+                            <img src="{% static 'img/comment.png' %}" alt="Comment" class="like-comment-icons">
+                            <span>{{ total_comments }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="comments" class="comments">
+                    {% for comment in post.comments.all %}
+                    <div class="comment">
+                        <div class="comment-header">
+                            <span class="comment-author">{{ comment.author.username }}</span>
+                            <span class="comment-date">{{ comment.created_at|date:"Y-m-d H:i" }}</span>
+                        </div>
+                        <div class="comment-body">{{ comment.content }}</div>
+                        <div class="comment-action-btns">
+                            <form method="post" action="{% url 'like_comment' comment.id %}">
+                                {% csrf_token %}
+                                <button type="submit">
+                                    {% if user in comment.likes.all %}
+                                        <img src="{% static 'img/pressed_good.png' %}" alt="Like" class="like-comment-icons">
+                                    {% else %}
+                                        <img src="{% static 'img/bold_like.png' %}" alt="Like" class="like-comment-icons">
+                                    {% endif %}
+                                    <span>{{ comment.total_likes }}</span>
+                                </button>
+                            </form>
+                            <button onclick="toggleReplyForm({{ comment.id }})">
+                                <img src="{% static 'img/comment.png' %}" alt="Reply" class="like-comment-icons">
+                            </button>
+                        </div>
+                        {% for reply in comment.replies.all %}
+                        <div class="reply">
+                            <div class="reply-header">
+                                <span class="reply-author">{{ reply.author.username }}</span>
+                                <span class="comment-date">{{ reply.created_at|date:"Y-m-d H:i" }}</span>
+                            </div>
+                            <div class="reply-body">{{ reply.content }}</div>
+                            <div class="comment-action-btns">
+                                <form method="post" action="{% url 'like_reply' reply.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit">
+                                        {% if user in reply.likes.all %}
+                                            <img src="{% static 'img/pressed_good.png' %}" alt="Like" class="like-comment-icons">
+                                        {% else %}
+                                            <img src="{% static 'img/bold_like.png' %}" alt="Like" class="like-comment-icons">
+                                        {% endif %}
+                                        <span>{{ reply.total_likes }}</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div id="reply-form-{{ comment.id }}" class="reply-form" style="display: none;">
+                            <form method="post" action="{% url 'add_reply' comment.id %}">
+                                {% csrf_token %}
+                                <textarea name="content" placeholder="답글을 입력하세요..."></textarea>
+                                <button type="submit">답글 작성</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <form class="comment-form" method="post" action="{% url 'add_comment' post.id %}">
+                    {% csrf_token %}
+                    <textarea name="content" placeholder="댓글을 입력하세요..."></textarea>
+                    <button type="submit">댓글 작성</button>
+                </form>
+            </div>
+            <div class="sidebar">
+                <h3>실시간 인기글</h3>
+                {% for popular_post in popular_posts %}
+                <div class="post">
+                    <h4>{{ popular_post.title }}</h4>
+                    <small>{{ popular_post.author.username }}</small>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+    <script>
+        function searchPosts() {
+            const query = document.getElementById('search-input').value;
+            const type = document.getElementById('search-type').value;
+            window.location.href = `/search?q=${query}&type=${type}`;
+        }
+
+        function toggleReplyForm(commentId) {
+            const replyForm = document.getElementById(`reply-form-${commentId}`);
+            replyForm.style.display = replyForm.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>

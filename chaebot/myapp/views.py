@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import FileUploadForm, PostForm
 from django.http import JsonResponse
-from .models import FileUpload, CustomUser, Post
+from .models import FileUpload, CustomUser, Post, Comment, Reply
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
@@ -10,6 +10,8 @@ from django.contrib.auth import authenticate, login as auth_login
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 
 # 홈화면
@@ -200,9 +202,13 @@ def create_post(request):
 # 포스트 상세보기
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
+    total_comments = post.comments.count()
+    for comment in post.comments.all():
+        total_comments += comment.replies.count()
     popular_posts = Post.objects.order_by("-likes")[:5]
     context = {
         "post": post,
+        "total_comments": total_comments,
         "popular_posts": popular_posts,
     }
     return render(request, "post_detail.html", context)
