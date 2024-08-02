@@ -12,6 +12,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.db.models import Count
 
 
 # 홈화면
@@ -173,8 +174,12 @@ def upload_mp3(request):
 # chaetting 페이지 로딩
 @login_required
 def chaetting_view(request):
-    posts = Post.objects.all()
+    posts = Post.objects.annotate(
+        comment_count=Count("comments", distinct=True)
+        + Count("comments__replies", distinct=True)
+    )
     popular_posts = Post.objects.order_by("-created_at")[:5]  # 예시로 최신 5개 인기글
+
     context = {
         "posts": posts,
         "popular_posts": popular_posts,

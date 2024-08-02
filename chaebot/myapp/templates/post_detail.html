@@ -11,7 +11,64 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
+            margin-top: 100px; /* body의 상단 마진을 늘려서 검색창이 보이도록 함 */
         }
+
+        .navbar-logo img {
+            max-height: 140px; /* 이미지의 최대 높이 설정 */
+            max-width: 320px;
+            /* 원하는 이미지 크기 및 스타일 조정 */
+        }
+
+        /* Navbar 스타일링 */
+        .navbar {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0px; /* 좌우 패딩을 줄임 */
+            position: fixed;
+            top: 0;
+            left: 0; /* 수정: 위치를 화면 왼쪽 가장자리에 맞춤 */
+            z-index: 2000;
+            height: auto; /* 수정: 높이를 auto로 설정 */
+            min-height: 60px; /* 추가: 최소 높이 설정 */
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 10px 15px; /* 수정: 모바일에서 패딩 조정 */
+            }
+            body {
+                margin-top: 60px; /* 수정: 모바일에서 body 상단 마진 조정 */
+            }
+        }
+
+        .navbar-logo a {
+            text-decoration: none;
+            color: #007BFF;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .navbar-menu a.active {
+            color: #000;
+            font-weight: bold;
+        }
+
+        .navbar-menu a {
+            text-decoration: none;
+            color: #666;
+            padding: 8px 10px;
+            font-size: 1.4rem;
+        }
+
+        .navbar-menu a:hover {
+            color: #007BFF;
+        }
+
         .container {
             display: flex;
             justify-content: space-between;
@@ -198,16 +255,21 @@
     </style>
 </head>
 <body>
-    <main>
-        <div class="search-bar">
-            <select id="search-type">
-                <option value="genre">장르</option>
-                <option value="title">제목</option>
-                <option value="content">내용</option>
-            </select>
-            <input type="text" placeholder="검색어를 입력하세요..." id="search-input">
-            <button onclick="searchPosts()">검색</button>
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <a href="/"><img src="{% static 'img/logo.png' %}" alt="MP3 to Drum Sheet Converter"></a>
         </div>
+        <div class="navbar-menu">
+            <a href="{% url 'index' %}" class="active">변환</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'chaetting_view' %}" class="active">Chaetting</a>
+                <a href="{% url 'logout' %}" class="active">로그아웃</a>
+            {% else %}
+                <a href="login" class="active" action="{% url 'logout' %}">로그인</a>
+            {% endif %}
+        </div>
+    </nav>   
+    <main>
         <div class="container">
             <div class="post-detail">
                 <div class="post">

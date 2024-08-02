@@ -5,12 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/reset.css' %}">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <title>Chaetting</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin-top: 150px; /* body의 상단 마진을 늘려서 검색창이 보이도록 함 */
+        }
+
+        .navbar-logo img {
+            max-height: 140px; /* 이미지의 최대 높이 설정 */
+            max-width: 320px;
+            /* 원하는 이미지 크기 및 스타일 조정 */
+        }
+
+        /* Navbar 스타일링 */
+        .navbar {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0px; /* 좌우 패딩을 줄임 */
+            position: fixed;
+            top: 0;
+            left: 0; /* 수정: 위치를 화면 왼쪽 가장자리에 맞춤 */
+            z-index: 2000;
+            height: auto; /* 수정: 높이를 auto로 설정 */
+            min-height: 60px; /* 추가: 최소 높이 설정 */
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 10px 15px; /* 수정: 모바일에서 패딩 조정 */
+            }
+            body {
+                margin-top: 60px; /* 수정: 모바일에서 body 상단 마진 조정 */
+            }
+        }
+
+        .navbar-logo a {
+            text-decoration: none;
+            color: #007BFF;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .navbar-menu a.active {
+            color: #000;
+            font-weight: bold;
+        }
+
+        .navbar-menu a {
+            text-decoration: none;
+            color: #666;
+            padding: 8px 10px;
+            font-size: 1.4rem;
+        }
+
+        .navbar-menu a:hover {
+            color: #007BFF;
         }
 
         .container {
@@ -26,7 +81,7 @@
 
         .sidebar {
             flex: 1;
-            background-color: #f2f2f2;
+            background-color: #f8f7d7;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -51,12 +106,19 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 15px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background: url("{% static 'img/dropdown-arrow.png' %}") no-repeat right 20px center;
+            background-size: 20px;
+            width: 200px; /* 드롭다운 크기 조정 */
+            padding-right: 40px; /* 아이콘과 글씨가 겹치지 않도록 패딩 조정 */
         }
         .search-bar button {
             padding: 20px 30px;
             border: none;
             border-radius: 5px;
-            background-color: #ebd382;
+            background-color: #f6f0b4;
             color: rgb(0, 0, 0);
             cursor: pointer;
             font-size: 15px;
@@ -68,11 +130,11 @@
             padding: 15px;
             margin-bottom: 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 20px;
             border: 3px solid #f1e0a7;
             background-color: #fbfbfb;
             color: rgb(0, 0, 0);
-            font-size: 1.2em;
+            font-size: 1.3em;
             cursor: pointer;
             text-align: center;
             transition: background-color 0.3s ease, color 0.3s ease;
@@ -90,7 +152,7 @@
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 10px;
-            background-color: #f9f9f9;
+            background-color: #e1e1e1;
         }
 
         .post-form.visible {
@@ -99,13 +161,30 @@
 
         .post-form select,
         .post-form input[type="text"],
-        .post-form textarea,
         .post-form input[type="file"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            height: 60px;
+            font-size: 1.1rem;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background: url("{% static 'img/dropdown-arrow.png' %}") no-repeat right 20px center;
+            background-size: 20px;
+            padding-right: 40px; /* 아이콘과 글씨가 겹치지 않도록 패딩 조정 */
+        }
+
+        .post-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            height: 200px;
+            font-size: 1.0rem;
         }
 
         .post-form label {
@@ -114,12 +193,13 @@
         }
 
         .post-form button {
-            align-self: flex-end;
+            align-self: flex-end; /* 수정: 게시하기 버튼을 오른쪽으로 정렬 */
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
-            background-color: #ffbf00;
-            color: white;
+            background-color: #000000;
+            color: rgb(255, 255, 255);
+            font-size: 1.0rem;
             cursor: pointer;
         }
 
@@ -160,6 +240,28 @@
             color: #b9b5b5;
         }
 
+        .popular-post {
+            border: 1px solid #b4b4b4;
+            height: 100px;
+            padding: 20px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border-width: 1.5px;
+            background-color: #ffffff;
+        }
+
+        .popular-post h4 {
+            margin: 0;
+            font-size: 1.3em;
+            font-weight: bolder;
+        }
+
+        .popular-post small {
+            color: #5e5e5e;
+            margin-top: 10px;
+            display: block;
+        }
+
         .post {
             border: 1px solid #e6e6e6;
             padding: 20px;
@@ -170,7 +272,7 @@
         }
 
         .post h3 {
-            margin: 0;
+            margin: 0 0 20px 0; /* 제목과 내용 사이의 간격을 늘림 */
             font-size: 1.6em;
             font-weight: bold;
         }
@@ -234,6 +336,20 @@
     </script>
 </head>
 <body>
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <a href="/"><img src="{% static 'img/logo.png' %}" alt="MP3 to Drum Sheet Converter"></a>
+        </div>
+        <div class="navbar-menu">
+            <a href="convert" class="active">변환</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'chaetting_view' %}" class="active">Chaetting</a>
+                <a href="{% url 'logout' %}" class="active">로그아웃</a>
+            {% else %}
+                <a href="login" class="active" action="{% url 'logout' %}">로그인</a>
+            {% endif %}
+        </div>
+    </nav>   
     <main>
         <div class="search-bar">
             <select id="search-type">
@@ -271,7 +387,7 @@
                                 <span id="sheet_file_label">.pdf .jpg .jpeg .png </span>
                             </label>
                         </div>
-                        <button type="submit">작성</button>
+                        <button type="submit">게시하기</button>
                     </form>
                 </div>
                 {% for post in posts %}
@@ -280,8 +396,8 @@
                     <p>{{ post.content }}</p>
                     <small>
                         <img src="{% static 'img/bold_like.png' %}" alt="Like" class="like-comment-icons"> {{ post.total_likes }} |
-                        <img src="{% static 'img/comment.png' %}" alt="Comment" class="like-comment-icons"> {{ post.comments.count }} |
-                        {{ post.created_at|date:"d/m/Y" }} | {{ post.author.username }}
+                        <img src="{% static 'img/comment.png' %}" alt="Comment" class="like-comment-icons"> {{ post.comment_count }} |
+                        {{ post.created_at|date:"Y/m/d" }} | {{ post.author.username }}
                     </small>
                 </div>
                 {% endfor %}
@@ -289,7 +405,7 @@
             <div class="sidebar">
                 <h3>실시간 인기글</h3>
                 {% for post in popular_posts %}
-                <div class="post">
+                <div class="popular-post">
                     <h4>{{ post.title }}</h4>
                     <small>{{ post.author.username }}</small>
                 </div>
