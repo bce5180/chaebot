@@ -7,7 +7,7 @@ from .models import FileUpload, Post
 class FileUploadForm(forms.ModelForm):
     class Meta:
         model = FileUpload
-        fields = ["mp3_file"]
+        fields = ["song_name", "mp3_file", "pdf_file"]
 
 
 class PostForm(forms.ModelForm):

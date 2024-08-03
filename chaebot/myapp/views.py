@@ -160,14 +160,14 @@ def select_genres(request):
     return render(request, "select_genres.html", {"genres": GENRES})
 
 
-# mp3업로드
 @csrf_exempt
 def upload_mp3(request):
     if request.method == "POST" and request.FILES.get("file"):
+        song_name = request.POST.get("song_name")
         mp3_file = request.FILES["file"]
-        file_upload = FileUpload(mp3_file=mp3_file)
+        file_upload = FileUpload(song_name=song_name, mp3_file=mp3_file)
         file_upload.save()
-        return render(request, "waiting.html")
+        return redirect("/")
     return JsonResponse({"error": "Invalid request"}, status=400)
 
 

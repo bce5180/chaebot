@@ -7,6 +7,119 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/basic.css' %}">
     <meta name="csrf-token" content="{{ csrf_token }}">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #ffd700; /* 노란색 글자 */
+            overflow: auto;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            padding-top: 70px; /* 상단바 높이만큼 패딩 추가 */
+        }
+
+        .file-display {
+            font-size: 2rem; /* 텍스트 크기 증가 */
+            font-weight: bold; /* 텍스트를 굵게 */
+            text-align: center; /* 텍스트를 중앙 정렬 */
+            margin: 30px 0; /* 상하 여백 증가 */
+            padding: 20px; /* 패딩 증가 */
+            background-color: #333; /* 짙은 회색 배경 */
+            color: #ffd700; /* 노란색 글자 */
+            border: 2px solid #ffd700; /* 테두리 두께 증가 */
+            position: relative;
+            width: 60%; /* 너비 조정 */
+            border-radius: 15px; /* 테두리 둥글게 */
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); /* 밝은 흰색 그림자 추가 */
+            letter-spacing: 1px; /* 글자 간격 */
+            transition: all 0.3s ease;
+        }
+
+        .file-display:hover {
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.8); /* 호버시 밝은 노란색 그림자 */
+        }
+
+        .file-info {
+            display: flex;
+            justify-content: space-between;
+            width: 60%;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #222;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .file-info div {
+            flex: 1;
+            text-align: center;
+        }
+
+        .file-info div:not(:last-child) {
+            border-right: 1px solid #ffd700;
+        }
+
+        .file-info:hover {
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); /* 호버시 밝은 노란색 그림자 */
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* 버튼 간격 */
+            width: 60%; /* 버튼 컨테이너 너비 조정 */
+            margin-top: 20px; /* 상단 여백 추가 */
+        }
+
+        button {
+            padding: 15px 30px; /* 패딩 증가 */
+            font-size: 1.2rem; /* 글씨 크기 증가 */
+            cursor: pointer;
+            background-color: #ffd700; /* 노란색 배경 */
+            color: black; /* 검은색 글자 */
+            border: none;
+            border-radius: 10px; /* 둥근 테두리 */
+            box-shadow: 0 5px #666;
+            transition: all 0.3s ease 0s;
+            text-transform: uppercase; /* 대문자로 변환 */
+        }
+
+        button:hover {
+            background-color: #fff56b; /* 호버시 밝은 노란색 */
+            box-shadow: 0 5px 15px rgba(255, 255, 0, 0.5); /* 노란색 그림자 */
+        }
+
+        button:active {
+            background-color: #ffea00; /* 클릭시 더 밝은 노란색 */
+            box-shadow: 0 3px #666;
+            transform: translateY(4px);
+        }
+
+        /* 추가된 애니메이션 */
+        .animated {
+            animation: fadeInUp 1s ease-in-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translate3d(0, 40px, 0);
+            }
+            to {
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+            }
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -14,18 +127,33 @@
             <a href="/"><img src="{% static 'img/logo.png' %}" alt="MP3 to Drum Sheet Converter"></a>
         </div>
         <div class="navbar-menu">
-            <a href="convert">Convert</a>
-            <a href="community">Chatting</a>
+            <a href="convert" class="active">변환</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'chaetting_view' %}" class="active">Chaetting</a>
+                <a href="{% url 'logout' %}" class="active">로그아웃</a>
+            {% else %}
+                <a href="login" class="active" action="{% url 'logout' %}">로그인</a>
+            {% endif %}
         </div>
-    </nav>
-
-    <div class="content-wrapper">
+    </nav>  
+    <div class="content-wrapper animated">
         <div class="file-display">
             <strong>Convert.pdf</strong>
         </div>
+        <div class="file-info">
+            <div>
+                <strong>File Size:</strong> 1.2 MB
+            </div>
+            <div>
+                <strong>Pages:</strong> 12
+            </div>
+            <div>
+                <strong>Format:</strong> PDF
+            </div>
+        </div>
         <div class="buttons">
-            <button onclick="downloadPDF()">Download PDF</button>
-            <button onclick="window.location.href='/'">Go Back to Home</button>
+            <button onclick="downloadPDF()">PDF 다운로드</button>
+            <button onclick="window.location.href='/'">홈으로 돌아가기</button>
         </div>
     </div>
 

@@ -315,8 +315,8 @@ body {
     position: fixed;  /* 화면 하단에 고정 */
     height: 30px;
     bottom: 0;
-    background-color: #0c0d39;
-    color: rgb(245, 245, 245);
+    background-color: #ebd382;
+    color: rgb(0, 0, 0);
     text-align: center;
     padding-top: 3px;
     padding-bottom: 55px;
