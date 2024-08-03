@@ -11,16 +11,18 @@
     <style>
         .input-section {
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
         }
 
         .input-section label {
-            display: block;
-            margin-bottom: 5px;
+            width: 100px; /* Adjust the width of the label */
+            margin-right: 10px;
             font-weight: bold;
         }
 
-        .input-section .id-input-group {
-            width: calc(102% - 120px);
+        .input-section .input-group {
+            flex: 1;
             display: flex;
             align-items: center;
         }
@@ -28,29 +30,30 @@
         .input-section input[type="text"],
         .input-section input[type="password"],
         .input-section input[type="email"] {
-            width: calc(100% - 120px);
+            flex: 1;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
             margin-right: 10px;
+            box-sizing: border-box;
         }
 
         .input-section button {
-            width: 100px;
             padding: 10px;
             background-color: #f1c40f;
             color: black;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            box-sizing: border-box;
+            height: 42px; /* Match the height of the input fields */
         }
 
         .input-section button:hover {
             background-color: #d4ac0d;
         }
 
-        #idCheckMessage {
-            margin-right: 180px;
+        #idCheckMessage, #usernameCheckMessage, #emailCheckMessage {
             margin-top: 5px;
             font-weight: bold;
         }
@@ -89,11 +92,15 @@
             {% endif %}
             <div class="input-section">
                 <label for="id_username">이름</label>
-                <input type="text" name="username" id="id_username" required>
+                <div class="input-group">
+                    <input type="text" name="username" id="id_username" required>
+                    <button type="button" onclick="checkUsername()">중복 검사</button>
+                </div>
             </div>
+            <p id="usernameCheckMessage" style="color: red; display: none;"></p>
             <div class="input-section">
                 <label for="id_id">아이디</label>
-                <div class="id-input-group">
+                <div class="input-group">
                     <input type="text" name="id" id="id_id" required>
                     <button type="button" onclick="checkId()">중복 검사</button>
                 </div>
@@ -109,8 +116,12 @@
             </div>
             <div class="input-section">
                 <label for="id_email">이메일</label>
-                <input type="email" name="email" id="id_email" required>
+                <div class="input-group">
+                    <input type="email" name="email" id="id_email" required>
+                    <button type="button" onclick="checkEmail()">중복 검사</button>
+                </div>
             </div>
+            <p id="emailCheckMessage" style="color: red; display: none;"></p>
             <div class="signup">
                 <button type="submit" id="submitButton">회원가입</button>
             </div>
@@ -118,6 +129,8 @@
     </main>
     <script>
         let idChecked = false;
+        let usernameChecked = false;
+        let emailChecked = false;
 
         function checkId() {
             var userId = document.getElementById('id_id').value;
@@ -146,9 +159,73 @@
             .catch(error => console.error('Error:', error));
         }
 
+        function checkUsername() {
+            var username = document.getElementById('id_username').value;
+            fetch('/check_username/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({ username: username })
+            })
+            .then(response => response.json())
+            .then(data => {
+                var messageElement = document.getElementById('usernameCheckMessage');
+                if (data.exists) {
+                    messageElement.textContent = "이름이 이미 사용 중입니다.";
+                    messageElement.style.color = 'red';
+                    usernameChecked = false;
+                } else {
+                    messageElement.textContent = "사용 가능한 이름입니다.";
+                    messageElement.style.color = 'green';
+                    usernameChecked = true;
+                }
+                messageElement.style.display = 'block';
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function checkEmail() {
+            var email = document.getElementById('id_email').value;
+            fetch('/check_email/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({ email: email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                var messageElement = document.getElementById('emailCheckMessage');
+                if (data.exists) {
+                    messageElement.textContent = "이메일이 이미 사용 중입니다.";
+                    messageElement.style.color = 'red';
+                    emailChecked = false;
+                } else {
+                    messageElement.textContent = "사용 가능한 이메일입니다.";
+                    messageElement.style.color = 'green';
+                    emailChecked = true;
+                }
+                messageElement.style.display = 'block';
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
         function validateForm() {
+            let errorMessage = "";
             if (!idChecked) {
-                alert("아이디 중복 검사를 하지 않았습니다.");
+                errorMessage += "아이디 중복 검사를 하지 않았습니다.\n";
+            }
+            if (!usernameChecked) {
+                errorMessage += "이름 중복 검사를 하지 않았습니다.\n";
+            }
+            if (!emailChecked) {
+                errorMessage += "이메일 중복 검사를 하지 않았습니다.\n";
+            }
+            if (errorMessage) {
+                alert(errorMessage);
                 return false;
             }
             return true;

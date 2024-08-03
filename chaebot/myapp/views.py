@@ -67,42 +67,57 @@ def login_view(request):
 # 회원가입
 def signup(request):
     if request.method == "POST":
-        username = request.POST.get("username")
-        user_id = request.POST.get("id")
-        password = request.POST.get("password")
-        password2 = request.POST.get("password2")
-        email = request.POST.get("email")
+        data = json.loads(request.body)
+        username = data.get("username")
+        user_id = data.get("id")
+        password = data.get("password")
+        password2 = data.get("password2")
+        email = data.get("email")
 
         if password != password2:
             return render(request, "signup.html", {"error": "Passwords do not match"})
 
-        if CustomUser.objects.filter(user_id=user_id).exists():
-            return render(request, "signup.html", {"error": "User ID already exists"})
-
-        if CustomUser.objects.filter(email=email).exists():
-            return render(request, "signup.html", {"error": "Email already exists"})
-
-        user = CustomUser.objects.create_user(
-            username=username, password=password, email=email, user_id=user_id
-        )
-        auth_login(request, user, backend="django.contrib.auth.backends.ModelBackend")
-        request.session["user_id"] = user.id  # 세션에 user_id 저장
-        print(f"Signup: user_id {user.id} stored in session.")  # 디버그용 로그
-        return redirect("age_gender")
-
+        try:
+            user = CustomUser.objects.create_user(
+                username=username, user_id=user_id, email=email, password=password
+            )
+            user.save()
+            user = authenticate(request, user_id=user_id, password=password)
+            auth_login(
+                request, user, backend="django.contrib.auth.backends.ModelBackend"
+            )
+            return redirect("index")
+        except IntegrityError:
+            return render(
+                request,
+                "signup.html",
+                {"error": "Username, ID or Email already exists"},
+            )
     return render(request, "signup.html")
 
 
-@csrf_exempt
 def check_id(request):
     if request.method == "POST":
         data = json.loads(request.body)
         user_id = data.get("user_id")
-        if CustomUser.objects.filter(user_id=user_id).exists():
-            return JsonResponse({"exists": True})
-        else:
-            return JsonResponse({"exists": False})
-    return JsonResponse({"error": "Invalid request"}, status=400)
+        exists = CustomUser.objects.filter(user_id=user_id).exists()
+        return JsonResponse({"exists": exists})
+
+
+def check_username(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        username = data.get("username")
+        exists = CustomUser.objects.filter(username=username).exists()
+        return JsonResponse({"exists": exists})
+
+
+def check_email(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        email = data.get("email")
+        exists = CustomUser.objects.filter(email=email).exists()
+        return JsonResponse({"exists": exists})
 
 
 # 성별 연령대
