@@ -73,6 +73,7 @@
             display: flex;
             justify-content: space-between;
             padding: 20px;
+            margin-top: 100px;
         }
 
         .feed {
@@ -118,6 +119,7 @@
             width: 140px;
             padding-right: 50px; /* 화살표와 글자가 겹치지 않도록 패딩을 조정 */
             margin-bottom: 65px;
+            background-color: #fff;
         }
 
         .search-bar button {
@@ -131,6 +133,31 @@
             margin-bottom: 65px;
         }
 
+        .slider-background-container {
+            width: 100%;
+            background-color: #e9e8e8;
+            position: relative;
+            margin: 0 auto;
+            padding: 40px 0; /* Adjusted padding for more spacing */
+            box-sizing: border-box;
+            overflow: hidden;
+            box-shadow: 0 10px 10px rgba(0.3, 0.3, 0.3, 0.3); 
+            padding: 40px 0;
+        }
+
+        .username-banner {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            z-index: 10; /* Ensure banner is above other elements */
+        }
+
         .slider-container {
             position: relative;
             width: 80%;
@@ -138,21 +165,8 @@
             overflow: hidden;
             border-radius: 15px;
             background-color: #ffffff;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             padding: 20px 0;
-            margin-top: 50px; /* 슬라이드와 검색창 사이 간격 */
-            margin-bottom: 70px; /* 슬라이드와 아래 요소들 사이 간격 */
-        }
-
-        .slider-background {
-            width: 100%;
-            background-color: #4c78a8;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 0;
-            height: 100%;
-            border-radius: 15px;
         }
 
         .slider {
@@ -161,8 +175,6 @@
             transition: all 0.5s ease;
             text-align: center;
             padding: 20px;
-            z-index: 1;
-            position: relative;
         }
 
         .slider.active {
@@ -171,8 +183,10 @@
 
         .slider h2 {
             margin-bottom: 20px;
-            font-size: 1.5rem;
-            color: white;
+            font-size: 1.8rem; /* Larger font size */
+            color: #333; /* Darker color for better contrast */
+            font-weight: bold; /* Make the text bold */
+            text-transform: uppercase; /* Uppercase text for a modern look */
         }
 
         .slider .items {
@@ -185,8 +199,9 @@
         }
 
         .slider .items div {
-            background-color: #007BFF;
-            color: white;
+            background-color: #ffffff;
+            border-color: #000;
+            color: rgb(0, 0, 0);
             padding: 40px;
             border: none;
             border-radius: 10px;
@@ -294,7 +309,7 @@
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
-            background-color: #007BFF;
+            background-color: #000000;
             color: #fff;
             font-size: 1.0rem;
             cursor: pointer;
@@ -475,7 +490,7 @@
             <a href="/"><img src="{% static 'img/logo.png' %}" alt="MP3 to Drum Sheet Converter"></a>
         </div>
         <div class="navbar-menu">
-            <a href="convert" class="active">변환</a>
+            <a href="{% url 'index' %}" class="active">변환</a>
             {% if user.is_authenticated %}
                 <a href="{% url 'chaetting_view' %}" class="active">Chaetting</a>
                 <a href="{% url 'logout' %}" class="active">로그아웃</a>
@@ -483,7 +498,7 @@
                 <a href="login" class="active" action="{% url 'logout' %}">로그인</a>
             {% endif %}
         </div>
-    </nav>   
+    </nav>    
     <main>
         <div class="search-bar">
             <select id="search-type">
@@ -493,34 +508,40 @@
             </select>
             <input type="text" placeholder="검색어를 입력하세요..." id="search-input">
             <button onclick="searchPosts()">검색</button>
-        </div>      
-        <div class="slider-container">
-            <div class="slider-background"></div>
-            <div id="slider-1" class="slider">
-                <h2>20대 여성을 위한 추천</h2>
-                <div class="items">
-                    <!-- 아이템들이 들어갈 위치 -->
-                </div>
-                <a class="arrow left" onclick="previousSlide()">&#10094;</a>
-                <a class="arrow right" onclick="nextSlide()">&#10095;</a>
-            </div>
-            <div id="slider-2" class="slider">
-                <h2>요즘 록은 이런게 핫해</h2>
-                <div class="items">
-                    <!-- 아이템들이 들어갈 위치 -->
-                </div>
-                <a class="arrow left" onclick="previousSlide()">&#10094;</a>
-                <a class="arrow right" onclick="nextSlide()">&#10095;</a>
-            </div>
-            <div id="slider-3" class="slider">
-                <h2>요즘 재즈는 이런게 핫해</h2>
-                <div class="items">
-                    <!-- 아이템들이 들어갈 위치 -->
-                </div>
-                <a class="arrow left" onclick="previousSlide()">&#10094;</a>
-                <a class="arrow right" onclick="nextSlide()">&#10095;</a>
-            </div>
         </div>
+        <div class="slider-background-container">
+            <div class="username-banner">
+                {% if user.is_authenticated %}
+                    {{ user.username }}님을 위한 추천
+                {% endif %}
+            </div>
+            <div class="slider-container">
+                <div id="slider-1" class="slider">
+                    <h2>트렌디한 20대 여성들을 위한 필수 추천곡</h2>
+                    <div class="items">
+                        <!-- 아이템들이 들어갈 위치 -->
+                    </div>
+                    <a class="arrow left" onclick="previousSlide()">&#10094;</a>
+                    <a class="arrow right" onclick="nextSlide()">&#10095;</a>
+                </div>
+                <div id="slider-2" class="slider">
+                    <h2>요즘 핫한 록 음악 모음</h2>
+                    <div class="items">
+                        <!-- 아이템들이 들어갈 위치 -->
+                    </div>
+                    <a class="arrow left" onclick="previousSlide()">&#10094;</a>
+                    <a class="arrow right" onclick="nextSlide()">&#10095;</a>
+                </div>
+                <div id="slider-3" class="slider">
+                    <h2>최신 트렌드 재즈 선곡</h2>
+                    <div class="items">
+                        <!-- 아이템들이 들어갈 위치 -->
+                    </div>
+                    <a class="arrow left" onclick="previousSlide()">&#10094;</a>
+                    <a class="arrow right" onclick="nextSlide()">&#10095;</a>
+                </div>
+            </div>
+        </div> 
         <div class="container">
             <div class="feed">
                 <button class="new-post-btn" onclick="togglePostForm()">새 글을 작성해주세요!</button>
