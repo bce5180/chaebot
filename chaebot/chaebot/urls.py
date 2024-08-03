@@ -33,6 +33,7 @@ urlpatterns = [
     path("login_view/", v.login_view, name="login_view"),
     path("accounts/", include("allauth.urls")),
     path("select_genres/", v.select_genres, name="select_genres"),
+    path("check_id/", v.check_id, name="check_id"),
     # chaetting
     path("chaetting_view/", v.chaetting_view, name="chaetting_view"),
     path("create_post/", v.create_post, name="create_post"),

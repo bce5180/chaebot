@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.db.models import Count
+import json
 
 
 # 홈화면
@@ -90,6 +91,18 @@ def signup(request):
         return redirect("age_gender")
 
     return render(request, "signup.html")
+
+
+@csrf_exempt
+def check_id(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        user_id = data.get("user_id")
+        if CustomUser.objects.filter(user_id=user_id).exists():
+            return JsonResponse({"exists": True})
+        else:
+            return JsonResponse({"exists": False})
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
 
 # 성별 연령대

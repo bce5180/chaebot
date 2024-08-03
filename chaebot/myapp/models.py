@@ -10,7 +10,7 @@ class CustomUser(AbstractUser):
     gender = models.CharField(max_length=10, blank=True, null=True)
     genres = models.CharField(max_length=255, blank=True, null=True)  # 새로운 필드 추가
 
-    username = models.CharField(max_length=150, unique=True)  # unique=True 추가
+    username = models.CharField(max_length=150)
 
     USERNAME_FIELD = "user_id"
     REQUIRED_FIELDS = ["email"]

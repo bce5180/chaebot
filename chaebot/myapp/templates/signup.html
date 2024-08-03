@@ -3,18 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/reset.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/signup.css' %}">
-    <title>Signup</title>
+    <style>
+        .input-section {
+            margin-bottom: 10px;
+        }
+
+        .input-section label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .input-section .id-input-group {
+            width: calc(102% - 120px);
+            display: flex;
+            align-items: center;
+        }
+
+        .input-section input[type="text"],
+        .input-section input[type="password"],
+        .input-section input[type="email"] {
+            width: calc(100% - 120px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .input-section button {
+            width: 100px;
+            padding: 10px;
+            background-color: #f1c40f;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .input-section button:hover {
+            background-color: #d4ac0d;
+        }
+
+        #idCheckMessage {
+            margin-right: 180px;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        .signup {
+            text-align: center;
+        }
+
+        .signup button {
+            background-color: #f1c40f;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .signup button:hover {
+            background-color: #d4ac0d;
+        }
+    </style>
 </head>
 <body>
     <main>
         <div class="logo-text">
             <img src="{% static 'img/loginLogo.png' %}" width="350px">
         </div>
-        <form class="signup-form" method="post" action="{% url 'signup' %}">
+        <form class="signup-form" method="post" action="{% url 'signup' %}" onsubmit="return validateForm()">
             {% csrf_token %}
             {% if error %}
             <div class="form-messages">
@@ -27,8 +93,12 @@
             </div>
             <div class="input-section">
                 <label for="id_id">아이디</label>
-                <input type="text" name="id" id="id_id" required>
+                <div class="id-input-group">
+                    <input type="text" name="id" id="id_id" required>
+                    <button type="button" onclick="checkId()">중복 검사</button>
+                </div>
             </div>
+            <p id="idCheckMessage" style="color: red; display: none;"></p>
             <div class="input-section">
                 <label for="id_password">비밀번호</label>
                 <input type="password" name="password" id="id_password" required>
@@ -46,5 +116,43 @@
             </div>
         </form>
     </main>
+    <script>
+        let idChecked = false;
+
+        function checkId() {
+            var userId = document.getElementById('id_id').value;
+            fetch('/check_id/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({ user_id: userId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                var messageElement = document.getElementById('idCheckMessage');
+                if (data.exists) {
+                    messageElement.textContent = "아이디가 이미 사용 중입니다.";
+                    messageElement.style.color = 'red';
+                    idChecked = false;
+                } else {
+                    messageElement.textContent = "사용 가능한 아이디입니다.";
+                    messageElement.style.color = 'green';
+                    idChecked = true;
+                }
+                messageElement.style.display = 'block';
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function validateForm() {
+            if (!idChecked) {
+                alert("아이디 중복 검사를 하지 않았습니다.");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </body>
 </html>
