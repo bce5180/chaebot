@@ -11,6 +11,7 @@
         body {
             font-family: Arial, sans-serif;
             margin-top: 150px; /* body의 상단 마진을 늘려서 검색창이 보이도록 함 */
+            background-color: #f5f5f5;
         }
 
         .navbar-logo img {
@@ -88,19 +89,22 @@
         }
 
         .search-bar {
-            margin-bottom: 85px;
+            margin-bottom: 50px;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 10px;
         }
+
         .search-bar input[type="text"] {
             width: 600px;
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 15px;
+            margin-bottom: 65px;
         }
+
         .search-bar select {
             padding: 20px;
             border: 1px solid #ccc;
@@ -113,7 +117,9 @@
             background-size: 40px; /* 화살표 크기를 30px로 조정 */
             width: 140px;
             padding-right: 50px; /* 화살표와 글자가 겹치지 않도록 패딩을 조정 */
+            margin-bottom: 65px;
         }
+
         .search-bar button {
             padding: 20px 30px;
             border: none;
@@ -122,6 +128,108 @@
             color: rgb(0, 0, 0);
             cursor: pointer;
             font-size: 15px;
+            margin-bottom: 65px;
+        }
+
+        .slider-container {
+            position: relative;
+            width: 80%;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 15px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            padding: 20px 0;
+            margin-top: 50px; /* 슬라이드와 검색창 사이 간격 */
+            margin-bottom: 70px; /* 슬라이드와 아래 요소들 사이 간격 */
+        }
+
+        .slider-background {
+            width: 100%;
+            background-color: #4c78a8;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            height: 100%;
+            border-radius: 15px;
+        }
+
+        .slider {
+            display: none;
+            width: 100%;
+            transition: all 0.5s ease;
+            text-align: center;
+            padding: 20px;
+            z-index: 1;
+            position: relative;
+        }
+
+        .slider.active {
+            display: block;
+        }
+
+        .slider h2 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .slider .items {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            padding: 20px;
+        }
+
+        .slider .items div {
+            background-color: #007BFF;
+            color: white;
+            padding: 40px;
+            border: none;
+            border-radius: 10px;
+            flex: 0 0 auto;
+            scroll-snap-align: center;
+            width: 200px;
+            text-align: center;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        .slider .items div:hover {
+            transform: scale(1.1);
+        }
+
+        .slider-container .arrow {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 16px;
+            margin-top: -22px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            transition: 0.6s ease;
+            user-select: none;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .slider-container .arrow.left {
+            left: 10px; /* 화살표를 슬라이드 박스 내부로 이동 */
+        }
+
+        .slider-container .arrow.right {
+            right: 10px; /* 화살표를 슬라이드 박스 내부로 이동 */
+        }
+
+        .slider-container .arrow:hover {
+            background-color: rgba(0, 0, 0, 0.8);
         }
 
         .new-post-btn {
@@ -152,63 +260,28 @@
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 10px;
-            background-color: #e1e1e1;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .post-form.visible {
             display: flex;
         }
 
-        .post-form select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            height: 60px;
-            font-size: 1.1rem;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background: none; /* 제목 입력란의 배경 화살표 제거 */
-            padding-right: 10px; /* 아이콘과 글씨가 겹치지 않도록 패딩 조정 */
-        }
-
-        .post-form input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            height: 60px;
-            font-size: 1.1rem;
-            background: none; /* 배경 이미지 제거 */
-        }
-
-        .post-form input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            height: 60px;
-            font-size: 1.1rem;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background: url("{% static 'img/dropdown-arrow.png' %}") no-repeat right 20px center;
-            background-size: 20px;
-            padding-right: 40px; /* 아이콘과 글씨가 겹치지 않도록 패딩 조정 */
-        }
-
+        .post-form select,
+        .post-form input[type="text"],
+        .post-form input[type="file"],
         .post-form textarea {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            font-size: 1.1rem;
+        }
+
+        .post-form textarea {
             height: 200px;
-            font-size: 1.0rem;
         }
 
         .post-form label {
@@ -221,8 +294,8 @@
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
-            background-color: #000000;
-            color: rgb(255, 255, 255);
+            background-color: #007BFF;
+            color: #fff;
             font-size: 1.0rem;
             cursor: pointer;
         }
@@ -234,11 +307,6 @@
         }
 
         .file-input-wrapper input[type="file"] {
-            padding: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            background-color: #000000;
-            cursor: pointer;
             display: none;
         }
 
@@ -266,12 +334,11 @@
 
         .popular-post {
             border: 1px solid #b4b4b4;
-            height: 100px;
             padding: 20px;
             margin-bottom: 10px;
             border-radius: 10px;
-            border-width: 1.5px;
-            background-color: #ffffff;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .popular-post h4 {
@@ -291,12 +358,12 @@
             padding: 20px;
             margin-bottom: 10px;
             border-radius: 10px;
-            border-width: 3px;
-            background-color: #e6e6e6;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .post h3 {
-            margin: 0 0 20px 0; /* 제목과 내용 사이의 간격을 늘림 */
+            margin: 0 0 20px 0;
             font-size: 1.6em;
             font-weight: bold;
         }
@@ -316,7 +383,7 @@
         }
 
         .post-actions a {
-            text-decoration:none;
+            text-decoration: none;
             color: #555;
             display: flex;
             align-items: center;
@@ -336,30 +403,51 @@
             width: 29px;
             height: 29px;
         }
-        .slider-container {
-            position: relative;
-            width: 100%;
-            overflow: hidden;
-        }
-
-        .slider {
-            display: none;
-            width: 100%;
-            transition: all 0.5s ease;
-        }
-
-        .slider.active {
-            display: block;
-        }
-
-        .items div {
-            margin: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
     </style>
     <script>
+        let currentSlide = 1;
+        const totalSlides = 3;
+
+        function showSlide(slideIndex) {
+            const slides = document.getElementsByClassName('slider');
+            if (slideIndex > totalSlides) {
+                currentSlide = 1;
+            } else if (slideIndex < 1) {
+                currentSlide = totalSlides;
+            } else {
+                currentSlide = slideIndex;
+            }
+
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].classList.remove('active');
+            }
+            slides[currentSlide - 1].classList.add('active');
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        window.onload = function() {
+            showSlide(currentSlide);
+            fillItems('slider-1', ['곡 1', '곡 2', '곡 3', '곡 4', '곡 5', '곡 6', '곡 7', '곡 8', '곡 9', '곡 10']);
+            fillItems('slider-2', ['곡 11', '곡 12', '곡 13', '곡 14', '곡 15', '곡 16', '곡 17', '곡 18', '곡 19', '곡 20']);
+            fillItems('slider-3', ['곡 21', '곡 22', '곡 23', '곡 24', '곡 25', '곡 26', '곡 27', '곡 28', '곡 29', '곡 30']);
+        };
+
+        function fillItems(sliderId, items) {
+            const slider = document.getElementById(sliderId).getElementsByClassName('items')[0];
+            items.forEach(item => {
+                let div = document.createElement('div');
+                div.textContent = item;
+                slider.appendChild(div);
+            });
+        }
+
         function togglePostForm() {
             const form = document.getElementById('post-form');
             form.classList.toggle('visible');
@@ -406,6 +494,33 @@
             <input type="text" placeholder="검색어를 입력하세요..." id="search-input">
             <button onclick="searchPosts()">검색</button>
         </div>      
+        <div class="slider-container">
+            <div class="slider-background"></div>
+            <div id="slider-1" class="slider">
+                <h2>20대 여성을 위한 추천</h2>
+                <div class="items">
+                    <!-- 아이템들이 들어갈 위치 -->
+                </div>
+                <a class="arrow left" onclick="previousSlide()">&#10094;</a>
+                <a class="arrow right" onclick="nextSlide()">&#10095;</a>
+            </div>
+            <div id="slider-2" class="slider">
+                <h2>요즘 록은 이런게 핫해</h2>
+                <div class="items">
+                    <!-- 아이템들이 들어갈 위치 -->
+                </div>
+                <a class="arrow left" onclick="previousSlide()">&#10094;</a>
+                <a class="arrow right" onclick="nextSlide()">&#10095;</a>
+            </div>
+            <div id="slider-3" class="slider">
+                <h2>요즘 재즈는 이런게 핫해</h2>
+                <div class="items">
+                    <!-- 아이템들이 들어갈 위치 -->
+                </div>
+                <a class="arrow left" onclick="previousSlide()">&#10094;</a>
+                <a class="arrow right" onclick="nextSlide()">&#10095;</a>
+            </div>
+        </div>
         <div class="container">
             <div class="feed">
                 <button class="new-post-btn" onclick="togglePostForm()">새 글을 작성해주세요!</button>
