@@ -105,14 +105,14 @@
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            font-size: 15px;
+            font-size: 17px;
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
-            background: url("{% static 'img/dropdown-arrow.png' %}") no-repeat right 20px center;
-            background-size: 20px;
-            width: 200px; /* 드롭다운 크기 조정 */
-            padding-right: 40px; /* 아이콘과 글씨가 겹치지 않도록 패딩 조정 */
+            background: url("{% static 'img/dropdown-arrow.png' %}") no-repeat right 5px center;
+            background-size: 40px; /* 화살표 크기를 30px로 조정 */
+            width: 140px;
+            padding-right: 50px; /* 화살표와 글자가 겹치지 않도록 패딩을 조정 */
         }
         .search-bar button {
             padding: 20px 30px;
@@ -159,8 +159,32 @@
             display: flex;
         }
 
-        .post-form select,
-        .post-form input[type="text"],
+        .post-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            height: 60px;
+            font-size: 1.1rem;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background: none; /* 제목 입력란의 배경 화살표 제거 */
+            padding-right: 10px; /* 아이콘과 글씨가 겹치지 않도록 패딩 조정 */
+        }
+
+        .post-form input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            height: 60px;
+            font-size: 1.1rem;
+            background: none; /* 배경 이미지 제거 */
+        }
+
         .post-form input[type="file"] {
             width: 100%;
             padding: 10px;
@@ -312,6 +336,28 @@
             width: 29px;
             height: 29px;
         }
+        .slider-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .slider {
+            display: none;
+            width: 100%;
+            transition: all 0.5s ease;
+        }
+
+        .slider.active {
+            display: block;
+        }
+
+        .items div {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
     </style>
     <script>
         function togglePostForm() {
@@ -359,7 +405,7 @@
             </select>
             <input type="text" placeholder="검색어를 입력하세요..." id="search-input">
             <button onclick="searchPosts()">검색</button>
-        </div>
+        </div>      
         <div class="container">
             <div class="feed">
                 <button class="new-post-btn" onclick="togglePostForm()">새 글을 작성해주세요!</button>
