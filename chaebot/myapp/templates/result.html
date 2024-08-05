@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MP3 to Drum Sheet Converter - Result</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/basic.css' %}">
-    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>PDF and Spotify Integration</title>
     <style>
         body, html {
             height: 100%;
@@ -14,120 +11,207 @@
             font-family: Arial, sans-serif;
             background-color: #000;
             color: #ffd700; /* 노란색 글자 */
-            overflow: auto;
+            margin-top: 70px;
         }
-
         .content-wrapper {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 80vh;
-            padding-top: 70px; /* 상단바 높이만큼 패딩 추가 */
-        }
-
-        .file-display {
-            font-size: 2rem; /* 텍스트 크기 증가 */
-            font-weight: bold; /* 텍스트를 굵게 */
-            text-align: center; /* 텍스트를 중앙 정렬 */
-            margin: 30px 0; /* 상하 여백 증가 */
-            padding: 20px; /* 패딩 증가 */
-            background-color: #333; /* 짙은 회색 배경 */
-            color: #ffd700; /* 노란색 글자 */
-            border: 2px solid #ffd700; /* 테두리 두께 증가 */
-            position: relative;
-            width: 60%; /* 너비 조정 */
-            border-radius: 15px; /* 테두리 둥글게 */
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); /* 밝은 흰색 그림자 추가 */
-            letter-spacing: 1px; /* 글자 간격 */
-            transition: all 0.3s ease;
-        }
-
-        .file-display:hover {
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.8); /* 호버시 밝은 노란색 그림자 */
-        }
-
-        .file-info {
-            display: flex;
             justify-content: space-between;
-            width: 60%;
-            margin-bottom: 20px;
-            padding: 10px 20px;
-            background-color: #222;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-            transition: all 0.3s ease;
+            align-items: flex-start;
+            height: 100vh; /* Full height */
+            padding: 20px;
+            box-sizing: border-box;
         }
+    .section {
+        flex: 1;
+        padding: 20px;
+        margin: 10px;
+        border: 3px solid #fff1a3; /* 노란색 테두리 */
+        border-radius: 10px;
+        background-color: #222;
+        text-align: center;
+        overflow: hidden;
+    }
+.file-display {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #333;
+    color: #ffd700;
+    border: 2px solid #ffd700;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+}
 
-        .file-info div {
-            flex: 1;
-            text-align: center;
-        }
+.file-display:hover {
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.8);
+}
 
-        .file-info div:not(:last-child) {
-            border-right: 1px solid #ffd700;
-        }
+.file-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background-color: #222;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
 
-        .file-info:hover {
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); /* 호버시 밝은 노란색 그림자 */
-        }
+.file-info div {
+    flex: 1;
+    text-align: center;
+}
 
-        .buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px; /* 버튼 간격 */
-            width: 60%; /* 버튼 컨테이너 너비 조정 */
-            margin-top: 20px; /* 상단 여백 추가 */
-        }
+.file-info div:not(:last-child) {
+    border-right: 1px solid #ffd700;
+}
 
-        button {
-            padding: 15px 30px; /* 패딩 증가 */
-            font-size: 1.2rem; /* 글씨 크기 증가 */
-            cursor: pointer;
-            background-color: #ffd700; /* 노란색 배경 */
-            color: black; /* 검은색 글자 */
-            border: none;
-            border-radius: 10px; /* 둥근 테두리 */
-            box-shadow: 0 5px #666;
-            transition: all 0.3s ease 0s;
-            text-transform: uppercase; /* 대문자로 변환 */
-        }
+.file-info:hover {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+}
 
-        button:hover {
-            background-color: #fff56b; /* 호버시 밝은 노란색 */
-            box-shadow: 0 5px 15px rgba(255, 255, 0, 0.5); /* 노란색 그림자 */
-        }
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
 
-        button:active {
-            background-color: #ffea00; /* 클릭시 더 밝은 노란색 */
-            box-shadow: 0 3px #666;
-            transform: translateY(4px);
-        }
+button {
+    padding: 10px 20px; /* 버튼 크기 줄임 */
+    font-size: 1rem; /* 글씨 크기 줄임 */
+    cursor: pointer;
+    background-color: #ffd700;
+    color: black;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 5px #666;
+    transition: all 0.3s ease 0s;
+    text-transform: uppercase;
+}
 
-        /* 추가된 애니메이션 */
-        .animated {
-            animation: fadeInUp 1s ease-in-out;
-        }
+button:hover {
+    background-color: #fff56b;
+    box-shadow: 0 5px 15px rgba(255, 255, 0, 0.5);
+}
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translate3d(0, 40px, 0);
-            }
-            to {
-                opacity: 1;
-                transform: translate3d(0, 0, 0);
-            }
-        }
-    </style>
+button:active {
+    background-color: #ffea00;
+    box-shadow: 0 3px #666;
+    transform: translateY(4px);
+}
+
+.save-container {
+    margin-top: 25px;
+    text-align: center;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #222;
+    margin-bottom: 30px;
+}
+
+.save-container input[type="text"] {
+    width: 70%;
+    padding: 10px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+}
+
+.footer {
+    width: 100%;  /* 너비를 화면 전체로 설정 */
+    position: fixed;  /* 화면 하단에 고정 */
+    height: 20px;
+    bottom: 0;
+    background-color: #ebd382;
+    color: rgb(255, 255, 255);
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 55px;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
+    border-top: 1px solid #6c6a65;  /* 위쪽 테두리만 검은색으로 설정 */
+}
+
+.conversion-counter {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;  /*요소들을 수직 중앙 정렬*/
+    justify-content: center;  /*요소들을 가로 중앙 정렬*/
+    font-size: 30px;  /*글씨 크기*/
+    color: #000000;  /*글씨 색상*/
+    font-weight: bold;  /*글씨 굵기*/
+}
+.navbar-logo img {
+    max-height: 140px; /* 이미지의 최대 높이 설정 */
+    max-width: 320px;
+    /* 원하는 이미지 크기 및 스타일 조정 */
+}
+
+.navbar {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0px; /* 좌우 패딩을 줄임 */
+    position: fixed;
+    top: 0;
+    left: 0; /* 수정: 위치를 화면 왼쪽 가장자리에 맞춤 */
+    z-index: 2000;
+    height: auto; /* 수정: 높이를 auto로 설정 */
+    min-height: 60px; /* 추가: 최소 높이 설정 */
+}
+
+body {
+    margin-top: 70px; /* 수정: body의 상단 마진 추가 */
+}
+
+@media (max-width: 600px) {
+    .navbar {
+        padding: 10px 15px; /* 수정: 모바일에서 패딩 조정 */
+    }
+    body {
+        margin-top: 60px; /* 수정: 모바일에서 body 상단 마진 조정 */
+    }
+}
+
+.navbar-logo a {
+    text-decoration: none;
+    color: #007BFF;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.navbar-menu a.active {
+    color: #000;
+    font-weight: bold;
+}
+
+.navbar-menu a {
+    text-decoration: none;
+    color: #666;
+    padding: 8px 10px;
+    font-size: 1.5rem;
+}
+
+.navbar-menu a:hover {
+    color: #007BFF;
+}
+</style>
 </head>
 <body>
     <nav class="navbar">
         <div class="navbar-logo">
+            {% load static %}
             <a href="/"><img src="{% static 'img/logo.png' %}" alt="MP3 to Drum Sheet Converter"></a>
         </div>
         <div class="navbar-menu">
-            <a href="convert" class="active">변환</a>
+            <a href="{% url 'index' %}" class="active">변환</a>
             {% if user.is_authenticated %}
                 <a href="{% url 'chaetting_view' %}" class="active">Chaetting</a>
                 <a href="{% url 'logout' %}" class="active">로그아웃</a>
@@ -135,41 +219,66 @@
                 <a href="login" class="active" action="{% url 'logout' %}">로그인</a>
             {% endif %}
         </div>
-    </nav>  
-    <div class="content-wrapper animated">
-        <div class="file-display">
-            <strong>Convert.pdf</strong>
-        </div>
-        <div class="file-info">
-            <div>
-                <strong>File Size:</strong> 1.2 MB
-            </div>
-            <div>
-                <strong>Pages:</strong> 12
-            </div>
-            <div>
-                <strong>Format:</strong> PDF
+    </nav>   
+    <div class="content-wrapper">
+        <div class="section">
+            <embed src="convert.pdf" type="application/pdf" width="100%" height="400px" />
+            <div class="buttons">
+                <button onclick="downloadPDF()">PDF 다운로드</button>
             </div>
         </div>
-        <div class="buttons">
-            <button onclick="downloadPDF()">PDF 다운로드</button>
-            <button onclick="window.location.href='/'">홈으로 돌아가기</button>
+        <div class="section">
+            <div class="save-container">
+                <h3>파일 저장명을 알려주세요!</h3>
+                <input type="text" id="filename" name="filename">
+                <button onclick="saveFile()">저장</button>
+            </div>
+            <div class="save-container">
+                <h3>변환하신 음악이 무엇인지 알려주세요!</h3>
+                <input type="text" id="spotify-search" placeholder="음악 제목을 입력하세요...">
+                <button onclick="searchSpotify()">찾기</button>
+                <div class="search-results" id="search-results"></div>
+            </div>
         </div>
     </div>
-
     <div class="footer">
-        <p>Thank you for using our converter!</p>
+        <div class="conversion-counter">
+            Thank you for using our Converter !
+        </div>
     </div>
+<script>
+    function downloadPDF() {
+        window.location.href = 'convert.pdf';
+    }
+function goHome() {
+    window.location.href = 'home.html';
+}
 
-    <script>
-        function downloadPDF() {
-            var a = document.createElement('a');
-            a.href = '{{ url_for_pdf }}';
-            a.download = 'ConvertedDrumSheet.pdf';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-    </script>
+function saveFile() {
+    const filename = document.getElementById('filename').value;
+    if (filename) {
+        document.getElementById('saveAlert').style.display = 'block';
+        setTimeout(() => {
+            document.getElementById('saveAlert').style.display = 'none';
+        }, 3000);
+    }
+}
+
+function searchSpotify() {
+    var query = document.getElementById("spotify-search").value;
+    fetch(`/search_spotify/?q=${query}`)
+        .then(response => response.json())
+        .then(data => {
+            var results = document.getElementById("search-results");
+            results.innerHTML = '<ul>' + data.tracks.items.map(track => 
+                `<li onclick="selectTrack('${track.name}')">${track.name} - ${track.artists.map(artist => artist.name).join(', ')}</li>`).join('') + '</ul>';
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function selectTrack(trackName) {
+    document.getElementById("filename").value = trackName;
+}
+</script>
 </body>
 </html>
