@@ -45,4 +45,6 @@ urlpatterns = [
     path("reply/<int:reply_id>/like/", v.like_reply, name="like_reply"),
     path("post/<int:post_id>/comment/", v.add_comment, name="add_comment"),
     path("comment/<int:comment_id>/reply/", v.add_reply, name="add_reply"),
+    #스포티파이
+    path('search_spotify/', v.search_spotify, name='search_spotify'),
 ]

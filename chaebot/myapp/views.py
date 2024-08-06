@@ -14,6 +14,11 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.db.models import Count
 import json
+import requests
+import base64
+import os
+import logging
+from dotenv import load_dotenv
 
 
 # 홈화면
@@ -302,3 +307,47 @@ def add_reply(request, comment_id):
             reply = Reply(comment=comment, author=request.user, content=content)
             reply.save()
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+logger = logging.getLogger(__name__)
+
+def get_spotify_token():
+    load_dotenv()  # 환경 변수 로드
+    client_id = os.getenv('SPOTIFY_CLIENT_ID')
+    client_secret = os.getenv('SPOTIFY_CLIENT_SECRET')
+    client_creds = f"{client_id}:{client_secret}"
+    client_creds_b64 = base64.b64encode(client_creds.encode()).decode()
+
+    auth_response = requests.post(
+        'https://accounts.spotify.com/api/token',
+        data={'grant_type': 'client_credentials'},
+        headers={'Authorization': f'Basic {client_creds_b64}'}
+    )
+    auth_data = auth_response.json()
+    if auth_response.status_code != 200:
+        logger.error(f"Failed to retrieve access token: {auth_data}")
+        raise Exception(f"Failed to retrieve access token: {auth_data}")
+    return auth_data['access_token']
+
+def search_spotify(request):
+    try:
+        token = get_spotify_token()
+        artist = request.GET.get('artist', '').strip()
+        track = request.GET.get('track', '').strip()
+        
+        # 가수와 제목을 이용한 검색 쿼리 구성
+        query = ''
+        if artist and track:
+            query = f'artist:{artist} track:{track}'
+        elif artist:
+            query = f'artist:{artist}'
+        elif track:
+            query = f'track:{track}'
+        else:
+            return JsonResponse({'error': 'Artist or track parameter is required'}, status=400)
+
+        headers = {'Authorization': f'Bearer {token}'}
+        response = requests.get(f'https://api.spotify.com/v1/search?type=track&q={query}', headers=headers)
+        return JsonResponse(response.json(), safe=False)
+    except Exception as e:
+        logger.error(f"Error in search_spotify: {str(e)}")
+        return JsonResponse({'error': str(e)}, status=500)
