@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import FileUploadForm, PostForm
 from django.http import JsonResponse
-from .models import FileUpload, CustomUser, Post, Comment, Reply
+from .models import FileUpload, CustomUser, Post, Comment, Reply, Track, UserTrack
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
@@ -70,14 +70,14 @@ def login_view(request):
 
 
 # 회원가입
+@csrf_exempt  
 def signup(request):
     if request.method == "POST":
-        data = json.loads(request.body)
-        username = data.get("username")
-        user_id = data.get("id")
-        password = data.get("password")
-        password2 = data.get("password2")
-        email = data.get("email")
+        username = request.POST.get("username")
+        user_id = request.POST.get("id")
+        password = request.POST.get("password")
+        password2 = request.POST.get("password2")
+        email = request.POST.get("email")
 
         if password != password2:
             return render(request, "signup.html", {"error": "Passwords do not match"})
@@ -91,7 +91,8 @@ def signup(request):
             auth_login(
                 request, user, backend="django.contrib.auth.backends.ModelBackend"
             )
-            return redirect("index")
+            request.session['user_id'] = user.id  # 세션에 사용자 ID 저장
+            return redirect("age_gender")
         except IntegrityError:
             return render(
                 request,
@@ -351,3 +352,52 @@ def search_spotify(request):
     except Exception as e:
         logger.error(f"Error in search_spotify: {str(e)}")
         return JsonResponse({'error': str(e)}, status=500)
+
+#실제음악 선택하면 그거 저장시키기
+@csrf_exempt
+def save_selected_track(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            if not data:
+                raise ValueError("No data provided")
+
+            artist = data.get('artist')
+            track_name = data.get('track')
+            spotify_track_id = data.get('spotify_track_id')
+            album_image_url = data.get('album_image_url')
+
+            # 필수 필드 확인
+            if not artist:
+                return JsonResponse({'status': 'error', 'message': 'Artist is required'}, status=400)
+            if not track_name:
+                return JsonResponse({'status': 'error', 'message': 'Track name is required'}, status=400)
+            if not spotify_track_id:
+                return JsonResponse({'status': 'error', 'message': 'Spotify track ID is required'}, status=400)
+            if not album_image_url:
+                return JsonResponse({'status': 'error', 'message': 'Album image URL is required'}, status=400)
+
+            # 트랙이 이미 존재하는지 확인
+            track, created = Track.objects.get_or_create(
+                spotify_track_id=spotify_track_id,
+                defaults={'name': track_name, 'artist': artist, 'album_image_url': album_image_url}
+            )
+
+            if not created:
+                # 트랙이 이미 존재하면 selection_count를 증가시킴
+                track.selection_count += 1
+                track.save()
+            else:
+                # 새로 생성된 트랙이면 selection_count는 1로 설정됨
+                track.selection_count = 1
+                track.save()
+
+            return JsonResponse({'status': 'success'}, status=200)
+        except ValueError as ve:
+            return JsonResponse({'status': 'error', 'message': str(ve)}, status=400)
+        except Exception as e:
+            # 여기에서 오류 메시지를 로그로 출력
+            print(f"Error: {e}")
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)

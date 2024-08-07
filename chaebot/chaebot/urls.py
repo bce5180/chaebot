@@ -47,4 +47,5 @@ urlpatterns = [
     path("comment/<int:comment_id>/reply/", v.add_reply, name="add_reply"),
     #스포티파이
     path('search_spotify/', v.search_spotify, name='search_spotify'),
+    path('save_selected_track/', v.save_selected_track, name='save_selected_track'),
 ]

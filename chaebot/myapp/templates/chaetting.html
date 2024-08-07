@@ -138,24 +138,10 @@
             background-color: #e9e8e8;
             position: relative;
             margin: 0 auto;
-            padding: 40px 0; /* Adjusted padding for more spacing */
+            padding: 20px 0; /* Adjusted padding for more spacing */
             box-sizing: border-box;
             overflow: hidden;
             box-shadow: 0 10px 10px rgba(0.3, 0.3, 0.3, 0.3); 
-            padding: 40px 0;
-        }
-
-        .username-banner {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.5);
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            z-index: 10; /* Ensure banner is above other elements */
         }
 
         .slider-container {
@@ -166,7 +152,7 @@
             border-radius: 15px;
             background-color: #ffffff;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px 0;
+            padding: 0px 0;
         }
 
         .slider {
@@ -187,6 +173,7 @@
             color: #333; /* Darker color for better contrast */
             font-weight: bold; /* Make the text bold */
             text-transform: uppercase; /* Uppercase text for a modern look */
+            line-height: 1.5; /* 줄 간격을 1.5로 설정 */
         }
 
         .slider .items {
@@ -207,7 +194,7 @@
             border-radius: 10px;
             flex: 0 0 auto;
             scroll-snap-align: center;
-            width: 200px;
+            width: 180px;
             text-align: center;
             font-size: 1.2rem;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -510,14 +497,9 @@
             <button onclick="searchPosts()">검색</button>
         </div>
         <div class="slider-background-container">
-            <div class="username-banner">
-                {% if user.is_authenticated %}
-                    {{ user.username }}님을 위한 추천
-                {% endif %}
-            </div>
             <div class="slider-container">
                 <div id="slider-1" class="slider">
-                    <h2>트렌디한 20대 여성들을 위한 필수 추천곡</h2>
+                    <h2>{{ user.username }}님을 위한<br>트렌디한 20대 여성들을 위한 필수 추천곡</h2>
                     <div class="items">
                         <!-- 아이템들이 들어갈 위치 -->
                     </div>
@@ -525,7 +507,7 @@
                     <a class="arrow right" onclick="nextSlide()">&#10095;</a>
                 </div>
                 <div id="slider-2" class="slider">
-                    <h2>요즘 핫한 록 음악 모음</h2>
+                    <h2>{{ user.username }}님을 위한<br>요즘 핫한 록 음악 모음</h2>
                     <div class="items">
                         <!-- 아이템들이 들어갈 위치 -->
                     </div>
@@ -533,7 +515,7 @@
                     <a class="arrow right" onclick="nextSlide()">&#10095;</a>
                 </div>
                 <div id="slider-3" class="slider">
-                    <h2>최신 트렌드 재즈 선곡</h2>
+                    <h2>{{ user.username }}님을 위한<br>최신 트렌드 재즈 선곡</h2>
                     <div class="items">
                         <!-- 아이템들이 들어갈 위치 -->
                     </div>

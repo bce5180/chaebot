@@ -103,3 +103,15 @@ class Reply(models.Model):
 
     def __str__(self):
         return f"Reply by {self.author} on {self.comment}"
+
+class Track(models.Model):
+    spotify_track_id = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=255)
+    artist = models.CharField(max_length=255)
+    album_image_url = models.URLField()
+    selection_count = models.PositiveIntegerField(default=0)  # 선택 횟수 추가
+
+class UserTrack(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    track = models.ForeignKey(Track, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
