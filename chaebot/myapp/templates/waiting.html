@@ -86,9 +86,19 @@
         </div>
     </div>
 
+    <!-- CSRF 토큰을 추가 -->
+    <form id="csrfForm">
+        {% csrf_token %}
+    </form>
+
     <script>
+        var processUrl = "{% url 'process_conversion' %}";
         var resultUrl = "{% url 'result' %}";
-        // Simple script to simulate progress
+
+        function getCsrfToken() {
+            return document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+        }
+
         function updateProgress() {
             var elem = document.getElementById("progressBar"); 
             var width = 0;
@@ -97,7 +107,6 @@
             function frame() {
                 if (width >= 100) {
                     clearInterval(id);
-                    window.location.href = resultUrl;
                 } else {
                     width++; 
                     elem.style.width = width + '%'; 
@@ -106,8 +115,29 @@
             }
         }
 
-        // Start the simulation when the page loads
-        window.onload = updateProgress;
+        function startConversion() {
+            fetch(processUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = resultUrl;
+                } else {
+                    alert('Error during conversion.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Start the progress bar and conversion process when the page loads
+        window.onload = function() {
+            updateProgress();
+            startConversion();
+        };
     </script>
 </body>
 </html>

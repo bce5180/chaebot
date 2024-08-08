@@ -20,14 +20,25 @@ class CustomUser(AbstractUser):
 
 
 class FileUpload(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     song_name = models.CharField(max_length=255, null=True, blank=True)
     mp3_file = models.FileField(upload_to="mp3s/", null=True, blank=True)
     pdf_file = models.FileField(upload_to="pdfs/", null=True, blank=True)
     upload_date = models.DateTimeField(auto_now_add=True)
     processed_date = models.DateTimeField(null=True, blank=True)
+    note = models.TextField(null=True, blank=True)  # 메모 필드 추가
 
     def __str__(self):
-        return f"{self.song_name} - Uploaded on {self.upload_date.strftime('%Y-%m-%d %H:%M:%S')}"
+        return f"{self.song_name} - Uploaded by {self.user.username} on {self.upload_date.strftime('%Y-%m-%d %H:%M:%S')}"
+
+    def save(self, *args, **kwargs):
+        # 노트: super().save() 호출 전 song_name과 pdf_file을 사용하여 이름을 설정
+        initial = not self.pk  # 처음 저장인지 확인
+
+        super().save(*args, **kwargs)  # First save to get a file path
+        if initial and self.song_name and self.pdf_file:
+            self.rename_pdf_file()
+        super().save(*args, **kwargs)  # Save again to update file path
 
 
 class KakaoUser(models.Model):

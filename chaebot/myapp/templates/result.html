@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <title>PDF and Spotify Integration</title>
     <style>
         body, html {
@@ -240,11 +241,6 @@
         </div>
         <div class="section">
             <div class="save-container">
-                <h3>파일 저장명을 알려주세요!</h3>
-                <input type="text" id="filename" name="filename">
-                <button onclick="saveFile()">저장</button>
-            </div>
-            <div class="save-container">
                 <h3>변환하신 음악 정보를 입력해주세요:</h3>
                 <div class="input-container">
                     <input type="text" id="artist" placeholder="가수 이름을 입력하세요...">
@@ -263,26 +259,10 @@
     <script>
         let lastSelectedTrack = null;
 
-        function openSpotifySearch() {
-            const spotifyUrl = "https://www.spotify.com";
-            const windowFeatures = "height=600,width=800,resizable=yes,scrollbars=yes,status=yes";
-            window.open(spotifyUrl, 'SpotifySearch', windowFeatures);
-        }
-
         function downloadPDF() {
             window.location.href = 'convert.pdf';
         }
 
-        function goHome() {
-            window.location.href = 'home.html';
-        }
-
-        function saveFile() {
-            const filename = document.getElementById('filename').value;
-            if (filename) {
-                alert(filename + ' has been saved.');
-            }
-        }
 
         function selectTrack(trackId, trackName, artistNames, albumImageUrl) {
             document.getElementById('artist').value = artistNames;
@@ -362,6 +342,6 @@
                 navigator.sendBeacon('/save_selected_track/', JSON.stringify(data));
             }
         });
-        </script>
+    </script>
 </body>
 </html>

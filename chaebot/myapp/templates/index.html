@@ -30,16 +30,16 @@
             <div class="upload-section">
                 <div class="upload-box" id="drop-zone">
                     <p>.mp3 is available</p>
-                    <form method="post" action="/upload/" enctype="multipart/form-data">
+                    <form method="post" action="/upload/" enctype="multipart/form-data" id="upload-form">
                         {% csrf_token %}
                         <input type="file" id="file-input" class="file-input" name="file" accept=".mp3">
                     </form>
                     <div id="file-name-display" style="margin-top: 10px; font-size: 16px;">No file selected.</div>
-            </div>
-            <div class="button-group">
-                <a class="button" id="find-btn">Find</a>
-                <a href="{% url 'waiting' %}" class="button">변환</a>
-            </div>
+                </div>
+                <div class="button-group">
+                    <button class="button" id="find-btn" type="button">Find</button>
+                    <button class="button" id="convert-btn" type="button">변환</button>
+                </div>
             </div>
         </div>
     </div>
@@ -56,16 +56,13 @@
             건
         </div>
     </div>
-    
-    
-    
 
     {% load static %}
     <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
     function animateSlot(slotId, finalNumber) {
         let slot = document.getElementById(slotId);
         let currentNumber = Math.floor(Math.random() * 10);  // 랜덤 숫자로 시작
@@ -90,11 +87,19 @@
         let timer = setInterval(updateSlot, speed);
     }
 
-    // 개별 슬롯에 대한 최종 숫자 설정, 서버나 다른 로직에 의해 결정될 수 있음
-    animateSlot("slot1", 3); // 첫 번째 슬롯 최종 숫자
-    animateSlot("slot2", 7); // 두 번째 슬롯 최종 숫자
-    animateSlot("slot3", 5); // 세 번째 슬롯 최종 숫자
-});
+    animateSlot("slot1", 3);
+    animateSlot("slot2", 7);
+    animateSlot("slot3", 5);
 
+    // 파일 선택 시 파일명을 표시
+    document.getElementById('file-input').addEventListener('change', function() {
+        const fileName = this.files[0] ? this.files[0].name : 'No file selected.';
+        document.getElementById('file-name-display').textContent = fileName;
+    });
+
+    // 변환 버튼 클릭 시 폼 제출
+    document.getElementById('convert-btn').addEventListener('click', function() {
+        document.getElementById('upload-form').submit();
+    });
+});
 </script>
-    

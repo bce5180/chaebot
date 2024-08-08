@@ -19,6 +19,9 @@ import base64
 import os
 import logging
 from dotenv import load_dotenv
+from django.conf import settings
+from .ai_model import convert_mp3_to_pdf
+import time
 
 
 # 홈화면
@@ -26,14 +29,14 @@ def index(request):
     return render(request, "index.html")
 
 
-# pdf나오는 결과화면
-def result(request):
-    return render(request, "result.html")
-
-
 # 대기화면
+@login_required
 def waiting(request):
-    return render(request, "waiting.html")
+    file_upload_id = request.session.get('file_upload_id')
+    if not file_upload_id:
+        return JsonResponse({"error": "No file upload ID in session"}, status=400)
+
+    return render(request, 'waiting.html', {'file_upload_id': file_upload_id})
 
 
 # 로그아웃
@@ -194,15 +197,54 @@ def select_genres(request):
     return render(request, "select_genres.html", {"genres": GENRES})
 
 
-@csrf_exempt
+@login_required
 def upload_mp3(request):
-    if request.method == "POST" and request.FILES.get("file"):
-        song_name = request.POST.get("song_name")
-        mp3_file = request.FILES["file"]
-        file_upload = FileUpload(song_name=song_name, mp3_file=mp3_file)
-        file_upload.save()
-        return redirect("/")
+    if request.method == 'POST':
+        form = FileUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            file_upload = form.save(commit=False)
+            file_upload.user = request.user
+            mp3_file = request.FILES['file']
+            
+            # 파일 이름에서 확장자를 제외한 부분만 저장
+            file_name, file_extension = os.path.splitext(mp3_file.name)
+            file_upload.song_name = file_name
+            file_upload.mp3_file = mp3_file
+            file_upload.save()
+
+            request.session['file_upload_id'] = file_upload.id
+            return redirect('waiting')
     return JsonResponse({"error": "Invalid request"}, status=400)
+
+
+@login_required
+@csrf_exempt
+def process_conversion(request):
+    if request.method == 'POST':
+        file_upload_id = request.session.get('file_upload_id')
+        if not file_upload_id:
+            return JsonResponse({"error": "No file upload ID in session"}, status=400)
+
+        file_upload = get_object_or_404(FileUpload, id=file_upload_id, user=request.user)
+
+        # PDF 파일명 설정
+        pdf_file_name = f"{file_upload.song_name}.pdf"
+        pdf_file_path = os.path.join(settings.MEDIA_ROOT, 'pdfs', pdf_file_name)
+
+        # AI 모델 실행
+        convert_mp3_to_pdf(file_upload.mp3_file.path, pdf_file_path)
+
+        # 파일 경로를 모델에 저장
+        file_upload.pdf_file.name = os.path.join('pdfs', pdf_file_name)
+        file_upload.save()
+
+        # 인위적으로 지연 시간을 추가하여 로딩 화면이 충분히 표시되도록 함
+        time.sleep(5)  # 5초 지연
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
 
 
 # chaetting 페이지 로딩
@@ -353,8 +395,8 @@ def search_spotify(request):
         logger.error(f"Error in search_spotify: {str(e)}")
         return JsonResponse({'error': str(e)}, status=500)
 
-#실제음악 선택하면 그거 저장시키기
 @csrf_exempt
+@login_required
 def save_selected_track(request):
     if request.method == 'POST':
         try:
@@ -392,6 +434,17 @@ def save_selected_track(request):
                 track.selection_count = 1
                 track.save()
 
+            # UserTrack에 정보 저장
+            user_track, user_track_created = UserTrack.objects.get_or_create(
+                user=request.user,
+                track=track
+            )
+
+            if not user_track_created:
+                # 이미 존재하면 시간 업데이트 (선택 시간 갱신)
+                user_track.timestamp = timezone.now()
+                user_track.save()
+
             return JsonResponse({'status': 'success'}, status=200)
         except ValueError as ve:
             return JsonResponse({'status': 'error', 'message': str(ve)}, status=400)
@@ -401,3 +454,47 @@ def save_selected_track(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+@login_required
+def result(request):
+    file_upload_id = request.session.get('file_upload_id')
+    if not file_upload_id:
+        return JsonResponse({"error": "No file upload ID in session"}, status=400)
+
+    file_upload = get_object_or_404(FileUpload, id=file_upload_id, user=request.user)
+    initial_pdf_name = os.path.splitext(os.path.basename(file_upload.pdf_file.name))[0]
+
+    return render(request, 'result.html', {'initial_pdf_name': initial_pdf_name})
+
+
+
+@login_required
+
+#파일 이름 사용자 정보대로 수정
+@login_required
+@csrf_exempt
+def save_filename(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        filename = data.get('filename')
+        file_upload_id = request.session.get('file_upload_id')
+        if filename and file_upload_id:
+            file_upload = get_object_or_404(FileUpload, id=file_upload_id, user=request.user)
+
+            # 기존 PDF 파일 경로
+            old_pdf_file_path = file_upload.pdf_file.path
+            
+            # 새로운 PDF 파일 경로
+            new_pdf_file_path = os.path.join(settings.MEDIA_ROOT, 'pdfs', f"{filename}.pdf")
+            
+            # 파일명 변경
+            os.rename(old_pdf_file_path, new_pdf_file_path)
+            
+            # 모델에 새 파일 경로 저장
+            file_upload.pdf_file.name = os.path.join('pdfs', f"{filename}.pdf")
+            file_upload.song_name = filename
+            file_upload.save()
+            
+            return JsonResponse({'message': 'Filename saved successfully.'})
+        return JsonResponse({'error': 'Invalid request.'}, status=400)
+    return JsonResponse({'error': 'Invalid request method.'}, status=405)

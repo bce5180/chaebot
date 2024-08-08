@@ -23,19 +23,18 @@ from myapp import views as v
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", v.index, name="index"),  # 홈페이지로 바로 index 뷰를 연결
-    path("result/", v.result, name="result"),  # 홈페이지로 바로 index 뷰를 연결
-    path("waiting/", v.waiting, name="waiting"),
-    path("upload/", v.upload_mp3, name="upload_mp3"),
+    #user관리
+    path("signup/", v.signup, name="signup"),
     path("login/", v.login_view, name="login"),
     path("logout/", v.logout_view, name="logout"),
-    path("signup/", v.signup, name="signup"),
-    path("age_gender/", v.age_gender, name="age_gender"),
-    path("login_view/", v.login_view, name="login_view"),
     path("accounts/", include("allauth.urls")),
-    path("select_genres/", v.select_genres, name="select_genres"),
     path("check_id/", v.check_id, name="check_id"),
     path("check_username/", v.check_username, name="check_username"),
     path("check_email/", v.check_email, name="check_email"),
+    #좋아하는 장르 선택
+    path("select_genres/", v.select_genres, name="select_genres"),
+    #나이 성별 선택
+    path("age_gender/", v.age_gender, name="age_gender"),
     # chaetting
     path("chaetting_view/", v.chaetting_view, name="chaetting_view"),
     path("create_post/", v.create_post, name="create_post"),
@@ -48,4 +47,12 @@ urlpatterns = [
     #스포티파이
     path('search_spotify/', v.search_spotify, name='search_spotify'),
     path('save_selected_track/', v.save_selected_track, name='save_selected_track'),
+    #파일저장
+    path("upload/", v.upload_mp3, name="upload_mp3"),
+    path('result/', v.result, name='result'),
+    path('save_filename/', v.save_filename, name='save_filename'),
+    #대기화면
+    path("waiting/", v.waiting, name="waiting"),
+    #모델 백그라운드 재생
+    path('process_conversion/', v.process_conversion, name='process_conversion'),
 ]
