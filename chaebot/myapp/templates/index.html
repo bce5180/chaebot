@@ -29,18 +29,17 @@
         <div class="content-wrapper">
             <div class="upload-section">
                 <div class="upload-box" id="drop-zone">
-                    <p>.mp3 is available</p>
+                    <p id="drop-zone-text">.mp3 is available</p>
                     <form method="post" action="/upload/" enctype="multipart/form-data" id="upload-form">
-                        {% csrf_token %}
                         <input type="file" id="file-input" class="file-input" name="file" accept=".mp3">
                     </form>
-                    <div id="file-name-display" style="margin-top: 10px; font-size: 16px;">No file selected.</div>
                 </div>
+                <div id="file-name-display" class="neon-box"></div>                               
                 <div class="button-group">
-                    <button class="button" id="find-btn" type="button">Find</button>
+                    <button class="button" id="find-btn" type="button">파일 찾기</button>
                     <button class="button" id="convert-btn" type="button">변환</button>
                 </div>
-            </div>
+            </div>                                                        
         </div>
     </div>
 
@@ -91,15 +90,36 @@ document.addEventListener("DOMContentLoaded", function() {
     animateSlot("slot2", 7);
     animateSlot("slot3", 5);
 
-    // 파일 선택 시 파일명을 표시
-    document.getElementById('file-input').addEventListener('change', function() {
-        const fileName = this.files[0] ? this.files[0].name : 'No file selected.';
-        document.getElementById('file-name-display').textContent = fileName;
-    });
+    // 파일 선택 시 파일명 표시 및 박스 전환
+    const fileInput = document.getElementById('file-input');
+    const dropZone = document.getElementById('drop-zone');
+    const neonBox = document.getElementById('file-name-display');
+
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            const fileName = this.files[0] ? this.files[0].name : '선택된 파일 없음';
+
+            // innerHTML을 사용하여 이미지와 텍스트 함께 표시
+            if (neonBox) {
+                neonBox.innerHTML = `<img src="{% static 'img/music_upload.png' %}" alt="Music Upload Icon" class="upload-icon"> ${fileName}`;
+                neonBox.style.display = 'block';
+            }
+
+            if (dropZone) {
+                dropZone.style.display = 'none';
+            }
+        });
+    }
 
     // 변환 버튼 클릭 시 폼 제출
-    document.getElementById('convert-btn').addEventListener('click', function() {
-        document.getElementById('upload-form').submit();
-    });
+    const convertBtn = document.getElementById('convert-btn');
+    if (convertBtn) {
+        convertBtn.addEventListener('click', function() {
+            const uploadForm = document.getElementById('upload-form');
+            if (uploadForm) {
+                uploadForm.submit();
+            }
+        });
+    }
 });
 </script>

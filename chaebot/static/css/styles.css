@@ -1,7 +1,26 @@
+@font-face {
+    font-family: 'Cafe24Meongi-W-v1.0';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-3@1.1/Cafe24Meongi-W-v1.0.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'TheJamsil5Bold';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face{
+    font-family:'DNFBitBitv2';
+    font-style:normal;font-weight:400;src:url('//cdn.df.nexon.com/img/common/font/DNFBitBitv2.otf')format('opentype')}
+
 body, html {
     height: 100%;
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Cafe24Meongi-W-v1.0', Arial, sans-serif;
     /* background-color: #000; */
     background-image: url('../img/front.png'); /* 배경 이미지 설정 */
     background-size: cover; /* 이미지가 컨테이너 전체를 덮도록 조정 */
@@ -32,8 +51,8 @@ body, html {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgb(255, 255, 255); /* 배경색 검은색 */
-    clip-path: circle(0% at 100% 50%); /* 초기에 화면에 보이지 않음 */
+    background-color: rgb(255, 255, 255); 
+    clip-path: circle(0% at 100% 50%);
     transition: clip-path 2s ease-out; /* 부드러운 전환 */
 }
 
@@ -77,9 +96,7 @@ body, html {
     right: 5%; /* 오른쪽 정렬 */
     width: 40%; /* 너비 설정 */
     height: 400px; /* 높이 설정 */
-    background: #FFF; /* 배경색 */
-    border-radius: 10px; /* 모서리 둥글게 */
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1); /* 그림자 효과 */
+    border-radius: 15px; /* 모서리 둥글게 */
 }
 
 .upload-box {
@@ -95,12 +112,18 @@ body, html {
     text-align: center;
     color: #ccc; /* 연한 회색 */
     box-sizing: border-box; /* 테두리와 패딩을 너비와 높이에 포함 */
+    transition: opacity 0.3s ease-in-out;
 }
 
 .upload-box p {
-    font-size: 1.5rem; /* 글자 크기 조정 */
+    font-family: 'Cafe24Meongi-W-v1.0', Arial, sans-serif;
+    font-size: 2.0rem; /* 글자 크기 조정 */
     font-weight: bold; /* 굵은 글씨 */
     margin-bottom: 20px; /* input과의 간격 */
+}
+
+.upload-box.hidden {
+    display: none; /* 업로드 박스 완전히 숨기기 */
 }
 
 .file-input {
@@ -117,28 +140,29 @@ body, html {
 }
 
 .button-group {
-    width: 100%; /* 너비를 .upload-box에 맞춤 */
+    width: 60%; /* 너비를 .upload-box에 맞춤 */
     display: flex;
     justify-content: space-between; /* 버튼을 컨테이너의 양 끝에 배치 */
-    gap: 10px; /* 버튼 사이의 간격, 필요에 따라 조절 가능 */
-    margin-top: 20px; /* .upload-box와의 간격 */
+    gap: 30px; /* 버튼 사이의 간격, 필요에 따라 조절 가능 */
+    margin-top: 40px; /* .upload-box와의 간격 */
 }
 
 .button-group .button {
+    width: 20px;
     padding: 10px 20px; /* 버튼 패딩 */
     flex-grow: 1; /* 각 버튼이 가능한 많은 공간을 차지하도록 설정 */
     background-color: #000000; /* 배경 색상 설정 */
     color: white; /* 글자 색상 */
-    font-size: 1.5rem; /* 글자 크기 */
+    font-size: 1.2rem; /* 글자 크기 */
+    font-family: 'TheJamsil5Bold', Arial, sans-serif;
     border: none; /* 테두리 제거 */
-    border-radius: 9px; /* 모서리 둥글게 */
+    border-radius: 15px; /* 모서리 둥글게 */
     cursor: pointer; /* 마우스 오버 시 커서 변경 */
     transition: background-color 0.3s ease, box-shadow 0.3s ease; /* 부드러운 색상 및 그림자 변화 */
     box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* 그림자 추가 */
     text-decoration: none; /* 텍스트 밑줄 제거 */
     display: inline-block; /* 인라인 블록으로 설정 */
     text-align: center; /* 텍스트 가운데 정렬 */
-    width: 100%; /* 전체 너비 사용 */
 }
 
 .button-group .button:hover {
@@ -199,9 +223,8 @@ body {
     text-decoration: none;
     color: #666;
     padding: 8px 10px;
-    /* margin-left: 10px; */
     font-size: 1.4rem;
-    /* transition: color 0.3s; */
+    font-family: 'TheJamsil5Bold', Arial, sans-serif;
 }
 
 .navbar-menu a:hover {
@@ -235,51 +258,43 @@ body {
 .drop-zone {
     border: 2px dashed #ccc;
     border-radius: 10px;
-    padding: 50px;
+    padding: 70px;
     text-align: center;
     cursor: pointer;
-}
-
-
-.container {
-    opacity: 1;
-    transition: opacity 2s;
+    font-family: 'TTTogether', Arial, sans-serif;
 }
 
 
 .conversion-counter {
     display: flex;
-    align-items: center;  /*요소들을 수직 중앙 정렬*/
-    justify-content: center;  /*요소들을 가로 중앙 정렬*/
-    font-size: 30px;  /*글씨 크기*/
-    color: #000000;  /*글씨 색상*/
-    font-weight: bold;  /*글씨 굵기*/
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    font-family: 'DNFBitBitv2', Arial, sans-serif;
+    
 }
 
 .slots {
     display: flex;
-    margin-left: 55px; 
-    margin-right: 10px; 
+    margin-left: 15px; 
+    margin-right: 15px;
     align-items: center;
+    gap: 15px;  /* 슬롯 간의 간격을 조정 */
 }
 
 .slot {
-    width: 40px;
-    height: 60px;
-    padding: 1px;
-    border: 4px solid #000000;
-    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);  
-    overflow: hidden;
+    width: 50px;
+    height: 50px;
+    background-color: #ffffff;  /* 슬롯 배경을 흰색으로 설정 */
+    border-radius: 50px;  /* 모서리를 둥글게 */
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 10px;
-    font-size: 35px;
-    color: #000000;  
-    position: relative;
-    border-radius: 10px;  
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); 
-    transition: transform 0.3s ease-in-out;  
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-size: 25px;  /* 슬롯 내부 숫자 크기 */
+    font-weight: bold;
+    color: #000000;
 }
 
 .slot:hover {
@@ -289,18 +304,45 @@ body {
 
 
 .footer {
-    width: 100%;  /* 너비를 화면 전체로 설정 */
-    position: fixed;  /* 화면 하단에 고정 */
-    height: 20px;
+    width: 100%;
+    position: fixed;
+    height: 50px;
     bottom: 0;
-    /* background-color: #14164b; */
     background-color: #ebd382;
-    color: rgb(255, 255, 255);
+    color: #000000;
     text-align: center;
-    padding-top: 3px;
-    padding-bottom: 55px;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
-    border-top: 1px solid #6c6a65;  /* 위쪽 테두리만 검은색으로 설정 */
+    padding-top: 10px;
+    padding-bottom: 10px;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
+    border-top: 1px solid #6c6a65;
+}
+
+.slot:before,
+.slot:not(:last-child):after {
+    content: none; /* 불필요한 선 제거 */
+}
+
+
+.neon-box {
+    width: 100%;
+    padding: 15px;
+    margin-top: 10px;
+    background-color: #ffffff;
+    color: #000000;
+    font-size: 19px;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 15px;
+    box-shadow: 0 0 25px #b8b8b8, 0 0 25px #b8b8b8, 0 0 25px #b8b8b8;
+    font-family: 'TheJamsil5Bold', Arial, sans-serif;
+    display: none; /* 기본적으로 숨김 */
+}
+
+.upload-icon {
+    width: 38px; /* 원하는 크기로 조정 */
+    height: 38px;
+    margin-right: 10px;
+    vertical-align: middle;
 }
 
 

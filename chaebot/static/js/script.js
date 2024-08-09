@@ -13,17 +13,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const countElement = document.getElementById("conversion-count");
   const targetCount = 924; // 최종 변환수, 서버로부터 받아올 수도 있음
 
-  function displayFileName(fileName) {
-    dropZone.style.display = "none";
-    var fileNameDisplay = document.createElement("div");
-    fileNameDisplay.textContent = fileName;
-    fileNameDisplay.style.color = "black";
-    fileNameDisplay.style.fontWeight = "bold";
-    fileNameDisplay.style.textAlign = "center";
-    fileNameDisplay.style.fontSize = "20px";
-    dropZone.parentNode.insertBefore(fileNameDisplay, dropZone.nextSibling);
-  }
-
   function isMP3File(file) {
     return file.type === "audio/mp3" || file.name.endsWith(".mp3");
   }
