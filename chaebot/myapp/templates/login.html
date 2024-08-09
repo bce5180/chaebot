@@ -12,7 +12,7 @@
 <body> 
     <main>
         <div class="logo-text">
-            <img src="{% static 'img/loginLogo.png' %}" width="350px">
+            <img src="{% static 'img/loginLogo.png' %}" width="300px">
         </div>
         <form method="post" action="{% url 'login' %}" class="login-form">
             {% csrf_token %}

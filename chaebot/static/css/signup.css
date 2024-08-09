@@ -1,10 +1,24 @@
+@font-face {
+    font-family: 'TheJamsil5Bold';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'NEXON Lv1 Gothic OTF';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/NEXON Lv1 Gothic OTF.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
 body, html {
     background-color: black;
-    font-family: Arial, sans-serif;
+    font-family: 'NEXON Lv1 Gothic OTF', Arial, sans-serif;
 }
 
 .logo-text {
-    margin: 2em 0 0.5em 0; /* Adjusted margins */
+    margin: 0.5em 0 1em 0; /* Reduce the margin */
     text-align: center;
     font-weight: bold;
     color: #048271;
@@ -21,45 +35,75 @@ body, html {
 }
 
 .input-section {
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
-    margin: 0.8em 0; /* Reduced margin */
-    justify-content: space-between;
+    justify-content: space-between; /* 레이블과 입력 필드를 양 끝에 배치 */
 }
 
-.input-section h1 {
-    margin: 0;
-    white-space: nowrap;
-    flex: 0 0 5em; /* Adjusted size */
-    text-align: left;
+.input-section label {
+    width: 100px; /* 레이블의 고정된 너비 */
+    margin-right: 10px;
     font-weight: bold;
-    font-size: 17px; /* Smaller font size */
+    text-align: left; /* 레이블 텍스트를 왼쪽으로 정렬 */
 }
 
-.signup-form input[type="text"],
-.signup-form input[type="password"],
-.signup-form input[type="email"] {
-    margin: 0.4em 0; /* Adjusted margin */
-    padding: 0.8em; /* Reduced padding */
-    border: 1px solid #9FCBC9;
+.input-section .input-group {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.input-section input[type="text"],
+.input-section input[type="password"],
+.input-section input[type="email"] {
+    flex: 1; /* 입력 필드가 가능한 최대 너비를 차지하도록 설정 */
+    padding: 10px;
+    border: 1px solid #ccc;
     border-radius: 5px;
-    width: 450px; /* Reduced width */
-    height: 40px; /* Reduced height */
+    margin-right: 10px;
+    box-sizing: border-box;
+    width: calc(100% - 110px); /* 레이블과 간격을 제외한 너비 */
+}
+
+.input-section button {
+    padding: 10px;
+    background-color: #fddc6e;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-sizing: border-box;
+    height: 42px; /* 입력 필드와 높이를 맞춤 */
+    font-family: 'NEXON Lv1 Gothic OTF', Arial, sans-serif;
+}
+
+.input-section button:hover {
+    background-color: #fddc6e;
+}
+
+#idCheckMessage, #usernameCheckMessage, #emailCheckMessage {
+    margin-top: 5px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.signup {
+    text-align: center;
 }
 
 .signup button {
-    color: #000000;
-    border: 4px solid #ffbf00;
-    border-radius: 30px;
-    margin-top: 0.8em; /* Adjusted margin */
-    width: 250px; /* Reduced width */
-    height: 55px; /* Reduced height */
-    font-weight: bold;
-    font-size: 20px ; /* Reduced font size */
-    line-height: 26px; /* Adjusted line height */
+    background-color: #fddc6e;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-family: 'TheJamsil5Bold', Arial, sans-serif;
 }
 
 .signup button:hover {
-    background-color: #ffbf00;
-    color: white;
+    background-color: #fddc6e;
 }

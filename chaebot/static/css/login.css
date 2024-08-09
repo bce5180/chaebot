@@ -1,11 +1,18 @@
+@font-face {
+    font-family: 'TheJamsil5Bold';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
 body, html {
     background-color: black;
-    font-family: Arial, sans-serif;
+    font-family: 'TheJamsil5Bold', Arial, sans-serif;
 }
 
 
 .logo-text {
-    margin: 0.5em 0 0.5em 0; /* Reduce the margin */
+    margin: 0.5em 0 1em 0; /* Reduce the margin */
     text-align: center;
     font-weight: bold;
     color: #000000;
@@ -57,11 +64,12 @@ body, html {
     height: 32px; /* Smaller height */
     font-size: 20px; /* Smaller font size */
     line-height: 21px; /* Adjust line height */
+    font-family: 'TheJamsil5Bold', Arial, sans-serif;
 }
 
 .signup a {
     color: #000000;
-    border: 2px solid #f3d265;
+    border: 2px solid #ebd382;
     border-radius: 30px;
     width: 220px; /* Smaller width */
     height: 50px; /* Smaller height */
@@ -71,17 +79,19 @@ body, html {
     display: inline-block;
     text-align: center;
     text-decoration: none;
+    font-family: 'TheJamsil5Bold', Arial, sans-serif;
 }
 
 .login button {
     color: rgb(0, 0, 0);
-    background-color: #f3d265;
-    border: 2px solid #f3d265;
+    background-color: #ebd382;
+    border: 2px solid #ebd382;
     border-radius: 30px;
     font-weight: bold;
     width: 220px; /* Smaller width */
     height: 50px; /* Smaller height */
     font-size: 20px; /* Smaller font size */
+    font-family: 'TheJamsil5Bold', Arial, sans-serif;
 }
 
 .forgot {

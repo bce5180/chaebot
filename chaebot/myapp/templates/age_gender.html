@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="{% static 'css/signup.css' %}">
     <title>Additional Information</title>
     <style>
-        /* 추가된 스타일 */
         .input-section {
             margin-bottom: 20px;
         }
@@ -49,7 +48,7 @@
             padding: 15px;
             font-size: 1.2em;
             color: #000000;
-            background-color: #ebd382;
+            background-color: #fddc6e;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -64,7 +63,7 @@
 <body>
     <main>
         <div class="logo-text">
-            <img src="{% static 'img/loginLogo.png' %}" width="350px">
+            <img src="{% static 'img/loginLogo.png' %}" width="300px">
         </div>
         <form class="signup-form" method="post" action="{% url 'age_gender' %}">
             {% csrf_token %}

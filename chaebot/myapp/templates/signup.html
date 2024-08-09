@@ -8,80 +8,11 @@
     <link rel="stylesheet" href="{% static 'css/reset.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/signup.css' %}">
-    <style>
-        .input-section {
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-section label {
-            width: 100px; /* Adjust the width of the label */
-            margin-right: 10px;
-            font-weight: bold;
-        }
-
-        .input-section .input-group {
-            flex: 1;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-section input[type="text"],
-        .input-section input[type="password"],
-        .input-section input[type="email"] {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-right: 10px;
-            box-sizing: border-box;
-        }
-
-        .input-section button {
-            padding: 10px;
-            background-color: #f1c40f;
-            color: black;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            box-sizing: border-box;
-            height: 42px; /* Match the height of the input fields */
-        }
-
-        .input-section button:hover {
-            background-color: #d4ac0d;
-        }
-
-        #idCheckMessage, #usernameCheckMessage, #emailCheckMessage {
-            margin-top: 5px;
-            font-weight: bold;
-        }
-
-        .signup {
-            text-align: center;
-        }
-
-        .signup button {
-            background-color: #f1c40f;
-            color: black;
-            border: none;
-            border-radius: 5px;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        .signup button:hover {
-            background-color: #d4ac0d;
-        }
-    </style>
 </head>
 <body>
     <main>
         <div class="logo-text">
-            <img src="{% static 'img/loginLogo.png' %}" width="350px">
+            <img src="{% static 'img/loginLogo.png' %}" width="300px">
         </div>
         <form class="signup-form" method="post" action="{% url 'signup' %}" onsubmit="return validateForm()">
             {% csrf_token %}
