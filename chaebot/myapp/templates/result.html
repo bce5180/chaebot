@@ -6,123 +6,176 @@
     <meta name="csrf-token" content="{{ csrf_token }}">
     <title>PDF and Spotify Integration</title>
     <style>
+        @font-face {
+            font-family: 'Cafe24Moyamoya-Regular-v1.0';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_231029@1.1/Cafe24Moyamoya-Regular-v1.0.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'TheJamsil5Bold';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'KIMM_Bold';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2212@1.0/KIMM_Bold.woff2') format('woff2');
+            font-weight: 300;
+            font-style: normal;
+        }
+
         body, html {
             height: 100%;
             margin: 0;
             font-family: Arial, sans-serif;
             background-color: #000;
-            color: #ffd700; /* 노란색 글자 */
+            color: #ebd382; /* 노란색 글자 */
             margin-top: 70px;
         }
+
         .content-wrapper {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            height: 100vh; /* Full height */
+            height: calc(100vh - 70px); /* Adjust height */
             padding: 20px;
             box-sizing: border-box;
+            overflow-y: auto;
         }
+
         .section {
             flex: 1;
             padding: 20px;
             margin: 10px;
-            border: 3px solid #fff1a3; /* 노란색 테두리 */
+            border: 3px solid #ebd382; /* 노란색 테두리 */
             border-radius: 10px;
-            background-color: #222;
+            background-color: #000;
             text-align: center;
             overflow: hidden;
         }
+
+        .pdf-title {
+            font-size: 2.5rem; /* PDF 제목 크기 증가 */
+            margin-bottom: 15px;
+            color: #ebd382; /* PDF 제목 색상 */
+            text-align: left;
+            font-family: 'Cafe24Moyamoya-Regular-v1.0', Arial, sans-serif;
+        }
+
         .file-display {
             font-size: 1.5rem;
             font-weight: bold;
             margin: 20px 0;
             padding: 20px;
-            background-color: #333;
-            color: #ffd700;
-            border: 2px solid #ffd700;
+            background-color: #000;
+            color: #ebd382;
+            border: 2px solid #ebd382;
             border-radius: 15px;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
             transition: all 0.3s ease;
+            text-align: left;
         }
+
         .file-display:hover {
             box-shadow: 0 0 25px rgba(255, 215, 0, 0.8);
         }
+
         .file-info {
             display: flex;
             justify-content: space-between;
             margin-bottom: 20px;
             padding: 10px 20px;
-            background-color: #222;
+            background-color: #000;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
             transition: all 0.3s ease;
         }
+
         .file-info div {
             flex: 1;
             text-align: center;
         }
+
         .file-info div:not(:last-child) {
-            border-right: 1px solid #ffd700;
+            border-right: 1px solid #ebd382;
         }
+
         .file-info:hover {
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
         }
+
         .buttons {
             display: flex;
             justify-content: center;
             gap: 20px;
             margin-top: 20px;
         }
+
         button {
-            padding: 10px 20px;
-            font-size: 1rem;
+            padding: 12px 25px; /* 크기 조정 */
+            font-size: 1.3rem; /* 글씨 크기 약간 키움 */
             cursor: pointer;
-            background-color: #ffd700;
-            color: black;
+            background-color: #ebd382;
+            color: #000;
             border: none;
-            border-radius: 10px;
-            box-shadow: 0 5px #666;
+            border-radius: 8px; /* 둥근 모서리 */
             transition: all 0.3s ease 0s;
             text-transform: uppercase;
+            font-family: 'TheJamsil5Bold', Arial, sans-serif; /* 글꼴 적용 */
+            font-weight: bold; /* 버튼 글씨 두껍게 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
+
         button:hover {
-            background-color: #fff56b;
-            box-shadow: 0 5px 15px rgba(255, 255, 0, 0.5);
+            background-color: #f1c40f; /* 호버 시 색 약간 변경 */
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4);
         }
+
         button:active {
-            background-color: #ffea00;
-            box-shadow: 0 3px #666;
-            transform: translateY(4px);
+            background-color: #ebd382;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            transform: translateY(2px);
         }
+
         .input-container {
             margin: 20px 0;
         }
+
         input[type="text"] {
             width: 70%;
+            height: 20px;
+            font-size: 15px;
             padding: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             border: none;
             border-radius: 5px;
-            background-color: #333;
-            color: #fff;
+            background-color: #ffffff;
+            color: #000000;
             transition: background-color 0.3s ease;
         }
+
         input[type="text"].readonly {
             background-color: #555;
         }
+
         .footer {
             width: 100%;
             position: fixed;
-            height: 20px;
+            height: 50px;
             bottom: 0;
             background-color: #ebd382;
-            color: rgb(255, 255, 255);
+            color: #000000;
             text-align: center;
-            padding-top: 3px;
-            padding-bottom: 55px;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
+            padding-top: 10px;
+            padding-bottom: 10px;
+            box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
             border-top: 1px solid #6c6a65;
+            z-index: 1000;
         }
+
         .conversion-counter {
             margin-top: 15px;
             display: flex;
@@ -131,11 +184,14 @@
             font-size: 30px;
             color: #000000;
             font-weight: bold;
+            font-family: 'KIMM_Bold', Arial, sans-serif;
         }
+
         .navbar-logo img {
             max-height: 140px;
             max-width: 320px;
         }
+
         .navbar {
             width: 100%;
             background-color: rgba(255, 255, 255, 0.98);
@@ -151,25 +207,31 @@
             height: auto;
             min-height: 60px;
         }
+
         .navbar-logo a {
             text-decoration: none;
             color: #007BFF;
             font-size: 1.2rem;
             font-weight: bold;
         }
+
         .navbar-menu a.active {
             color: #000;
             font-weight: bold;
         }
+
         .navbar-menu a {
             text-decoration: none;
             color: #666;
             padding: 8px 10px;
             font-size: 1.5rem;
+            font-family: 'TheJamsil5Bold', Arial, sans-serif;
         }
+
         .navbar-menu a:hover {
-            color: #007BFF;
+            color: #3a3a3a;
         }
+
         @media (max-width: 600px) {
             .navbar {
                 padding: 10px 15px;
@@ -178,73 +240,92 @@
                 margin-top: 60px;
             }
         }
+
         .search-result {
             display: flex;
             align-items: center;
             margin-top: 10px;
             padding: 10px;
-            background-color: #333;
-            color: #fff;
+            background-color: #ffffff;
+            color: #000000;
             border-radius: 5px;
             cursor: pointer;
         }
+
         .search-result img {
             width: 50px;
             height: 50px;
             border-radius: 25px;
             margin-right: 15px;
         }
+
         .search-result-text {
             flex-grow: 1;
             display: flex;
             align-items: center;
+            font-family: 'NEXON Lv1 Gothic OTF', Arial, sans-serif;
         }
+
         .search-result-divider {
+            padding-top: 15px;
             width: 2px;
-            background-color: #ffd700;
+            background-color: #ebd382;
             height: 30px;
             margin: 0 10px;
         }
+
         .artist-name {
             white-space: nowrap;
         }
+
         .default-album-art {
             width: 50px;
             height: 50px;
             background-color: #cccccc;
             border-radius: 25px;
         }
+
+        .scrollable-section {
+            max-height: calc(100vh - 200px); /* Footer and other sections height adjusted */
+            overflow-y: auto;
+        }
+
+        h3 {
+            font-family: 'TheJamsil5Bold', Arial, sans-serif;
+            font-size: 2.0rem; /* "변환하신 음악이 무엇인가요 ?" 폰트 크기 증가 */
+        }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="navbar-logo">
-            {% load static %}
             <a href="/"><img src="{% static 'img/logo.png' %}" alt="MP3 to Drum Sheet Converter"></a>
         </div>
         <div class="navbar-menu">
             <a href="{% url 'index' %}" class="active">변환</a>
+            <a href="{% url 'chaetting_view' %}" class="active">Chaetting</a>
             {% if user.is_authenticated %}
-                <a href="{% url 'chaetting_view' %}" class="active">Chaetting</a>
-                <a href="{% url 'logout' %}" class="active">로그아웃</a>
+                <a href="{% url 'mypage' %}">Mypage</a>
+                <a href="{% url 'logout' %}">로그아웃</a>
             {% else %}
-                <a href="login" class="active" action="{% url 'logout' %}">로그인</a>
+                <a href="{% url 'login' %}">로그인</a>
             {% endif %}
         </div>
-    </nav>
+    </nav> 
     <div class="content-wrapper">
         <div class="section">
+            <div class="pdf-title">convert.pdf</div> <!-- PDF 파일 이름 추가 및 왼쪽 정렬 -->
             <embed src="convert.pdf" type="application/pdf" width="100%" height="400px" />
             <div class="buttons">
                 <button onclick="downloadPDF()">PDF 다운로드</button>
             </div>
         </div>
-        <div class="section">
+        <div class="section scrollable-section">
             <div class="save-container">
-                <h3>변환하신 음악 정보를 입력해주세요:</h3>
+                <h3>변환하신 음악이 무엇인지 알려주세요.</h3>
                 <div class="input-container">
-                    <input type="text" id="artist" placeholder="가수 이름을 입력하세요...">
-                    <input type="text" id="track" placeholder="노래 제목을 입력하세요...">
+                    <input type="text" id="artist" placeholder="가수 이름">
+                    <input type="text" id="track" placeholder="노래 제목">
                 </div>
                 <button id="searchButton" onclick="searchSpotify()">검색</button>
                 <div id="search-results"></div>
@@ -253,7 +334,7 @@
     </div>
     <div class="footer">
         <div class="conversion-counter">
-            Thank you for using our Converter!
+            Chaebot을 이용해 주셔서 감사합니다.
         </div>
     </div>
     <script>
@@ -262,7 +343,6 @@
         function downloadPDF() {
             window.location.href = 'convert.pdf';
         }
-
 
         function selectTrack(trackId, trackName, artistNames, albumImageUrl) {
             document.getElementById('artist').value = artistNames;

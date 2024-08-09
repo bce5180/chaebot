@@ -1,0 +1,109 @@
+@font-face {
+    font-family: 'NEXON Lv1 Gothic OTF';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/NEXON Lv1 Gothic OTF.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TheJamsil5Bold';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #000;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    align-items: flex-start; /* 상단에 고정 */
+    padding-top: 10px;
+}
+
+.genre-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    max-width: 800px; /* 최대 너비 제한 */
+    margin: 0 auto; /* 중앙 정렬 */
+}
+
+.genre-box {
+    padding: 15px 25px;
+    border: 2px solid #efff92;
+    border-radius: 10px;
+    text-align: center;
+    color: #fff;
+    cursor: pointer;
+    background-color: transparent;
+    font-size: 1.2em;
+    white-space: nowrap;
+    flex: 0 1 auto;
+    transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, color 0.3s ease;
+    font-family: 'NEXON Lv1 Gothic OTF', Arial, sans-serif;
+}
+
+.genre-box.selected {
+    background-color: #f3d265;
+    border-color: #f3d265;
+    color: black;
+    transform: scale(1.1);
+}
+
+.genre-box:hover {
+    border-color: #ff00ff;
+    color: #ff00ff;
+    transform: scale(1.05);
+}
+
+.header {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-size: 2em;
+    color: #fff;
+    font-family: 'TheJamsil5Bold', Arial, sans-serif;
+}
+
+.submit-btn {
+    margin-top: 20px;
+    display: block;
+    width: 250px;
+    margin: 30px auto;
+    padding: 15px;
+    font-size: 1.2em;
+    color: #000;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family: 'TheJamsil5Bold', Arial, sans-serif;
+}
+
+.submit-btn:hover {
+    background-color: #ffbf00;
+}
+
+.genre-form {
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 2em;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.logo-text {
+    text-align: center;
+    margin-bottom: 50px;
+}

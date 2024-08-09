@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import FileUploadForm, PostForm
 from django.http import JsonResponse
-from .models import FileUpload, CustomUser, Post, Comment, Reply, Track, UserTrack
+from .models import FileUpload, CustomUser, Post, Comment, Reply, Track, UserTrack, FileUpload
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
@@ -38,6 +38,54 @@ def waiting(request):
 
     return render(request, 'waiting.html', {'file_upload_id': file_upload_id})
 
+
+@login_required
+def mypage(request):
+    uploaded_files = FileUpload.objects.filter(user=request.user).order_by('-upload_date')
+    return render(request, 'mypage.html', {'uploaded_files': uploaded_files})
+
+@login_required
+def update_profile(request):
+    if request.method == 'POST':
+        user = request.user
+        profile = user.profile
+        user.email = request.POST.get('email')
+        profile.age = request.POST.get('age')
+        profile.gender = request.POST.get('gender')
+        profile.interests = request.POST.get('interests')
+        if request.POST.get('password'):
+            user.set_password(request.POST.get('password'))
+            update_session_auth_hash(request, user)
+        user.save()
+        profile.save()
+        messages.success(request, '프로필이 업데이트되었습니다.')
+        return redirect('mypage')
+
+@login_required
+def delete_account(request):
+    user = request.user
+    user.delete()
+    messages.success(request, '회원 탈퇴가 완료되었습니다.')
+    return redirect('index')
+
+@login_required
+def download_pdf(request, file_id):
+    file = FileUpload.objects.get(id=file_id, user=request.user)
+    file_path = file.pdf_file.path
+    if os.path.exists(file_path):
+        return FileResponse(open(file_path, 'rb'), content_type='application/pdf')
+    else:
+        messages.error(request, 'PDF 파일이 존재하지 않습니다.')
+        return redirect('mypage')
+
+@login_required
+def update_note(request, file_id):
+    file = FileUpload.objects.get(id=file_id, user=request.user)
+    if request.method == 'POST':
+        file.note = request.POST.get('note')
+        file.save()
+        messages.success(request, '메모가 저장되었습니다.')
+    return redirect('mypage')
 
 # 로그아웃
 def logout_view(request):

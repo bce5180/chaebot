@@ -9,18 +9,23 @@
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <title>{{ post.title }}</title>
     <style>
+        @font-face {
+            font-family: 'NEXON Lv1 Gothic OTF';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/NEXON Lv1 Gothic OTF.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'NEXON Lv1 Gothic OTF', Arial, sans-serif;
             margin-top: 100px; /* body의 상단 마진을 늘려서 검색창이 보이도록 함 */
         }
 
         .navbar-logo img {
-            max-height: 140px; /* 이미지의 최대 높이 설정 */
-            max-width: 320px;
-            /* 원하는 이미지 크기 및 스타일 조정 */
+            max-height: 100px;
+            max-width: 240px;
         }
 
-        /* Navbar 스타일링 */
         .navbar {
             width: 100%;
             background-color: rgba(255, 255, 255, 0.98);
@@ -28,13 +33,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 0px; /* 좌우 패딩을 줄임 */
+            padding: 10px 0px;
             position: fixed;
             top: 0;
-            left: 0; /* 수정: 위치를 화면 왼쪽 가장자리에 맞춤 */
+            left: 0;
             z-index: 2000;
-            height: auto; /* 수정: 높이를 auto로 설정 */
-            min-height: 60px; /* 추가: 최소 높이 설정 */
+            height: auto;
+            min-height: 50px;
         }
 
         @media (max-width: 600px) {
@@ -49,7 +54,7 @@
         .navbar-logo a {
             text-decoration: none;
             color: #007BFF;
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: bold;
         }
 
@@ -61,13 +66,15 @@
         .navbar-menu a {
             text-decoration: none;
             color: #666;
-            padding: 8px 10px;
-            font-size: 1.4rem;
+            padding: 5px 7px;
+            font-size: 1.2rem;
+            font-family: 'TheJamsil5Bold', Arial, sans-serif;
         }
 
         .navbar-menu a:hover {
             color: #007BFF;
         }
+
 
         .container {
             display: flex;
@@ -241,6 +248,7 @@
             background-color: #e8c962;
             color: white;
             cursor: pointer;
+            font-family: 'NEXON Lv1 Gothic OTF', Arial, sans-serif;
         }
         .post-actions {
             display: flex;
@@ -355,7 +363,7 @@
                         <div id="reply-form-{{ comment.id }}" class="reply-form" style="display: none;">
                             <form method="post" action="{% url 'add_reply' comment.id %}">
                                 {% csrf_token %}
-                                <textarea name="content" placeholder="답글을 입력하세요..."></textarea>
+                                <textarea name="content" placeholder="답글을 입력"></textarea>
                                 <button type="submit">답글 작성</button>
                             </form>
                         </div>
@@ -364,7 +372,7 @@
                 </div>
                 <form class="comment-form" method="post" action="{% url 'add_comment' post.id %}">
                     {% csrf_token %}
-                    <textarea name="content" placeholder="댓글을 입력하세요..."></textarea>
+                    <textarea name="content"></textarea>
                     <button type="submit">댓글 작성</button>
                 </form>
             </div>

@@ -7,99 +7,9 @@
     <link rel="stylesheet" href="{% static 'css/reset.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+    <link rel="stylesheet" href="{% static 'css/genres.css' %}">
     <title>Select Your Genres</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap">
-    <style>
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: #000;
-            color: #fff;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .genre-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            justify-content: center;
-            margin-top: 30px;
-            margin-bottom: 30px;
-        }
-
-        .genre-box {
-            padding: 15px 25px;
-            border: 2px solid #efff92;
-            border-radius: 10px;
-            text-align: center;
-            color: #fff;
-            cursor: pointer;
-            background-color: transparent;
-            font-size: 1.2em;
-            white-space: nowrap;
-            flex: 0 1 auto;
-            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, color 0.3s ease;
-        }
-
-        .genre-box.selected {
-            background-color: #f3d265;
-            border-color: #f3d265;
-            color: black;
-            transform: scale(1.1);
-        }
-
-        .genre-box:hover {
-            border-color: #ff00ff;
-            color: #ff00ff;
-            transform: scale(1.05);
-        }
-
-        .header {
-            text-align: center;
-            margin-top: 30px;
-            margin-bottom: 30px;
-            font-size: 2em;
-            color: #fff;
-        }
-
-        .submit-btn {
-            margin-top: 20px;
-            display: block;
-            width: 250px;
-            margin: 30px auto;
-            padding: 15px;
-            font-size: 1.2em;
-            color: #000;
-            background-color: #ffffff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .submit-btn:hover {
-            background-color: #ffbf00;
-        }
-
-        .genre-form {
-            text-align: center;
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 2em;
-            border-radius: 10px;
-            width: 80%;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .logo-text {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-    </style>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const genreBoxes = document.querySelectorAll('.genre-box');
@@ -118,7 +28,7 @@
                             selectedGenres.push(this.dataset.genre);
                             this.classList.add('selected');
                         } else {
-                            alert('You can select up to 5 genres.');
+                            alert('5개까지만 고를 수 있습니다.');
                         }
                     }
                     document.getElementById('selected-genres').value = selectedGenres.join(',');
@@ -133,7 +43,7 @@
             <img src="{% static 'img/loginLogo.png' %}" width="300px">
         </div>
         <div class="header">
-            <p>당신의 취향을 골라주세요!</p>
+            <p>당신의  취향을 5가지 골라주세요 !</p>
         </div>
         <form class="genre-form" method="post" action="{% url 'select_genres' %}">
             {% csrf_token %}

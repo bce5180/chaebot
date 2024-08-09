@@ -8,9 +8,15 @@
     <link rel="stylesheet" href="{% static 'css/basic.css' %}">
     <meta name="csrf-token" content="{{ csrf_token }}">
     <style>
+        @font-face {
+            font-family: 'TheJamsil5Bold';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+        }
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #111; /* Dark background for the theme */
+            background-color: #000000; /* Dark background for the theme */
             color: #fff; /* Light text color for visibility */
         }
 
@@ -18,7 +24,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 80vh; /* Full height minus navbar and some padding */
+            height: 80vh; 
+            font-family: 'TheJamsil5Bold', Arial, sans-serif;
         }
 
         .loading-overlay {
@@ -27,20 +34,6 @@
             border: 1px solid #111; /* Yellow border for visibility */
             border-radius: 10px;
             background-color: #222; /* Slightly lighter black for visibility */
-        }
-
-        .loading-spinner {
-            border: 5px solid #333; /* Lighter part of the spinner */
-            border-top: 5px solid #f1c40f; /* Yellow part of the spinner */
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         .progress-container {
@@ -57,6 +50,47 @@
             line-height: 20px; /* Center text vertically */
             width: 0%; /* Initial width */
             border-radius: 5px;
+        }
+
+        /* 음표 애니메이션 */
+        .note-container {
+            margin-top: 30px;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            40% {
+                transform: translateY(-30px) scale(1.2);
+            }
+            60% {
+                transform: translateY(-15px) scale(1.1);
+            }
+        }
+
+        .note {
+            font-size: 4em; /* 음표 크기를 키움 */
+            margin: 0 10px;
+            display: inline-block;
+            animation: bounce 1.5s infinite;
+            color: #f1c40f; /* Yellow color for the notes */
+        }
+
+        .note:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .note:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        .note:nth-child(4) {
+            animation-delay: 0.9s;
+        }
+
+        .note:nth-child(5) {
+            animation-delay: 1.2s;
         }
     </style>
 </head>
@@ -77,8 +111,17 @@
     </nav>  
     <div class="container">
         <div class="loading-overlay">
-            <div class="loading-spinner"></div>
             <h2>변환 중입니다. 잠시만 기다려주세요.</h2>
+
+            <!-- 음표 애니메이션 -->
+            <div class="note-container">
+                <span class="note">♪</span>
+                <span class="note">♫</span>
+                <span class="note">♪</span>
+                <span class="note">♫</span>
+                <span class="note">♪</span>
+            </div>
+
             <!-- Progress bar element -->
             <div class="progress-container">
                 <div class="progress-bar" id="progressBar">0%</div>

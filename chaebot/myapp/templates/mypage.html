@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <title>Mypage</title>
+    <style>
+
+        @font-face {
+            font-family: 'TheJamsil5Bold';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'NEXON Lv1 Gothic OTF';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/NEXON Lv1 Gothic OTF.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'NEXON Lv1 Gothic OTF', Arial, sans-serif;
+            margin-top: 100px;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar-logo img {
+            max-height: 100px;
+            max-width: 240px;
+        }
+
+        .navbar {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 2000;
+            height: auto;
+            min-height: 50px;
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 8px 10px;
+            }
+            body {
+                margin-top: 50px;
+            }
+        }
+
+        .navbar-logo a {
+            text-decoration: none;
+            color: #fffb80;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .navbar-menu a.active {
+            color: #000;
+            font-weight: bold;
+        }
+
+        .navbar-menu a {
+            text-decoration: none;
+            color: #666;
+            padding: 5px 7px;
+            font-size: 1.2rem;
+            font-family: 'TheJamsil5Bold', Arial, sans-serif;
+        }
+
+        .navbar-menu a:hover {
+            color: #3a3a3a;
+        }
+
+        .main-container {
+            display: flex;
+            flex-grow: 1;
+            padding: 20px;
+        }
+
+        .sidebar {
+            width: 200px;
+            background-color: #f1f1f1;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 10px;
+            margin-bottom: 10px;
+            color: #333;
+            text-decoration: none;
+            font-weight: bold;
+            font-family: 'TheJamsil5Bold';
+            transition: background-color 0.3s, color 0.3s;
+            border-radius: 5px;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #007BFF;
+            color: #fff;
+        }
+
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-left: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .button-group button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: #fff;
+            font-family: 'TheJamsil5Bold', Arial, sans-serif;
+        }
+
+        .button-group button.delete {
+            background-color: #FF4B4B;
+        }
+
+        .file-list {
+            margin-top: 20px;
+        }
+
+        .file-item {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-item h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .file-item p {
+            margin: 5px 0;
+        }
+
+        .file-item form {
+            margin-top: 10px;
+        }
+
+        .file-item form textarea {
+            width: 100%;
+            height: 50px;
+            resize: none;
+            margin-bottom: 10px;
+        }
+
+        .file-item button {
+            padding: 8px 15px;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: #fff;
+            font-family: 'TheJamsil5Bold', Arial, sans-serif;
+        }
+
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const links = document.querySelectorAll('.sidebar a');
+            const contents = document.querySelectorAll('.content > div');
+
+            links.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    links.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+
+                    contents.forEach(content => content.style.display = 'none');
+                    const target = this.getAttribute('href').substring(1);
+                    document.getElementById(target).style.display = 'block';
+                });
+            });
+
+            // Show the first content by default
+            links[0].classList.add('active');
+            contents[0].style.display = 'block';
+        });
+    </script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <a href="/"><img src="{% static 'img/logo.png' %}" alt="MP3 to Drum Sheet Converter"></a>
+        </div>
+        <div class="navbar-menu">
+            <a href="{% url 'index' %}">변환</a>
+            <a href="{% url 'chaetting_view' %}">Chaetting</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'mypage' %}" class="active">Mypage</a>
+                <a href="{% url 'logout' %}">로그아웃</a>
+            {% else %}
+                <a href="{% url 'login' %}">로그인</a>
+            {% endif %}
+        </div>
+    </nav> 
+
+    <div class="main-container">
+        <div class="sidebar">
+            <a href="#profile">회원정보 수정</a>
+            <a href="#uploads">지금까지 변환 목록</a>
+            <a href="#delete">회원 탈퇴</a>
+        </div>
+        <div class="content">
+            <div id="profile">
+                <h2>회원정보 수정</h2>
+                <form method="post" action="{% url 'update_profile' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="username">아이디</label>
+                        <input type="text" id="username" name="username" value="{{ user.username }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">이메일</label>
+                        <input type="email" id="email" name="email" value="{{ user.email }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="age">연령대</label>
+                        <select id="age" name="age">
+                            <option value="10대" {% if user.profile.age == '10대' %}selected{% endif %}>10대</option>
+                            <option value="20대" {% if user.profile.age == '20대' %}selected{% endif %}>20대</option>
+                            <option value="30대" {% if user.profile.age == '30대' %}selected{% endif %}>30대</option>
+                            <option value="40대" {% if user.profile.age == '40대' %}selected{% endif %}>40대</option>
+                            <option value="50대 이상" {% if user.profile.age == '50대 이상' %}selected{% endif %}>50대 이상</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">성별</label>
+                        <select id="gender" name="gender">
+                            <option value="남성" {% if user.profile.gender == '남성' %}selected{% endif %}>남성</option>
+                            <option value="여성" {% if user.profile.gender == '여성' %}selected{% endif %}>여성</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="interests">관심 분야</label>
+                        <input type="text" id="interests" name="interests" value="{{ user.profile.interests }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">비밀번호 변경 (선택사항)</label>
+                        <input type="password" id="password" name="password">
+                    </div>
+                    <div class="button-group">
+                        <button type="submit">프로필 업데이트</button>
+                    </div>
+                </form>
+            </div>
+            <div id="uploads" style="display:none;">
+                <h2>지금까지 변환 목록</h2>
+                <div class="file-list">
+                    {% for file in uploaded_files %}
+                    <div class="file-item">
+                        <h3>{{ file.song_name }}</h3>
+                        <p>업로드 날짜: {{ file.upload_date|date:"Y/m/d" }}</p>
+                        <p>PDF 파일: 
+                            {% if file.pdf_file %}
+                            <a href="{{ file.pdf_file.url }}" download>PDF 다운로드</a>
+                            {% else %}
+                            PDF 파일 없음
+                            {% endif %}
+                        </p>
+                        <form method="post" action="{% url 'update_note' file.id %}">
+                            {% csrf_token %}
+                            <textarea name="note" placeholder="메모를 입력하세요...">{{ file.note }}</textarea>
+                            <button type="submit">메모 저장</button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div id="delete" style="display:none;">
+                <h2>회원 탈퇴</h2>
+                <p>회원 탈퇴를 원하시면 아래 버튼을 클릭해주세요.</p>
+                <form method="post" action="{% url 'delete_account' %}">
+                    {% csrf_token %}
+                    <div class="button-group">
+                        <button type="submit" class="delete">회원 탈퇴</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

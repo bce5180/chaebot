@@ -55,4 +55,10 @@ urlpatterns = [
     path("waiting/", v.waiting, name="waiting"),
     #모델 백그라운드 재생
     path('process_conversion/', v.process_conversion, name='process_conversion'),
+    #마이페이지
+    path("mypage/", v.mypage, name="mypage"),
+    path('update_profile/', v.update_profile, name='update_profile'),
+    path('delete_account/', v.delete_account, name='delete_account'),
+    path('download_pdf/<int:conversion_id>/', v.download_pdf, name='download_pdf'),
+    path('update_note/<int:file_id>/', v.update_note, name='update_note'),
 ]
