@@ -663,7 +663,7 @@ def save_file_upload_genre(request):
 def generate_recommendations(user):
     # 유저의 관심 장르를 쉼표로 구분하여 리스트로 변환
     user_genres = user.genres.split(',')
-    
+
     # 유저의 성별, 나이대 기반 추천곡 필터링
     gender_age_recommendations = Track.objects.filter(
         usertrack__user__gender=user.gender,
@@ -671,15 +671,35 @@ def generate_recommendations(user):
     ).order_by('-selection_count')[:5]
 
     # 유저의 관심 장르 중 2개 랜덤 선택
-    selected_genres = random.sample(user_genres, 2)  # user.selected_genres는 리스트로 가정
+    selected_genres = random.sample(user_genres, 2)
 
     genre_recommendations = {}
-    for genre in selected_genres:
-        genre_recommendations[genre] = Track.objects.filter(
-            genre=genre
-        ).order_by('-selection_count')[:5]
 
-    return gender_age_recommendations, genre_recommendations, selected_genres
+    for genre in selected_genres:
+        tracks = Track.objects.filter(genre=genre).order_by('-selection_count')[:5]
+        genre_recommendations[genre] = list(tracks)
+
+    # 중복된 트랙 제거 (spotify_track_id와 genre를 기준으로)
+    seen = set()
+    unique_gender_age_recommendations = []
+    for track in gender_age_recommendations:
+        identifier = (track.spotify_track_id, track.genre)
+        if identifier not in seen:
+            unique_gender_age_recommendations.append(track)
+            seen.add(identifier)
+
+    for genre in genre_recommendations:
+        seen = set()
+        unique_tracks = []
+        for track in genre_recommendations[genre]:
+            identifier = (track.spotify_track_id, track.genre)
+            if identifier not in seen:
+                unique_tracks.append(track)
+                seen.add(identifier)
+        genre_recommendations[genre] = unique_tracks
+
+    return unique_gender_age_recommendations, genre_recommendations, selected_genres
+
 
 
 def recommendation_view(request):
@@ -688,13 +708,20 @@ def recommendation_view(request):
     # 추천곡을 생성
     gender_age_recommendations, genre_recommendations, selected_genres = generate_recommendations(user)
     
-    # selected_genres 출력
-    print("Selected genres:", selected_genres)
+    genre_1_tracks = genre_recommendations[selected_genres[0]]
+    genre_2_tracks = genre_recommendations[selected_genres[1]]
 
+    print(gender_age_recommendations)
+    print(genre_1_tracks)
+    print(genre_2_tracks)
+    
     context = {
         'user': user,
         'gender_age_recommendations': gender_age_recommendations,
-        'genre_recommendations': genre_recommendations,
-        'selected_genres': list(genre_recommendations.keys()),  # 선택된 장르 리스트를 템플릿에 전달
+        'genre_1_tracks': genre_1_tracks,
+        'genre_2_tracks': genre_2_tracks,
+        'selected_genres': selected_genres,  # 선택된 장르 리스트를 템플릿에 전달
     }
     return render(request, 'chaetting.html', context)
+
+
