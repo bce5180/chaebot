@@ -513,6 +513,8 @@ def search_spotify(request):
         logger.error(f"Error in search_spotify: {str(e)}")
         return JsonResponse({'error': str(e)}, status=500)
 
+
+#Track, userTrack db 저장
 @login_required
 @csrf_exempt
 def save_selected_track(request):
@@ -610,7 +612,7 @@ def save_filename(request):
         return JsonResponse({'error': 'Invalid request.'}, status=400)
     return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
-
+#fileupload db 저장
 @csrf_exempt
 @login_required
 def save_file_upload_genre(request):
