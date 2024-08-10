@@ -198,25 +198,48 @@
             padding: 15px;
         }
 
-        .slider .items div {
+        .slider-item {
+            display: flex;
+            align-items: center;
             background-color: #ffffff;
-            border-color: #000;
+            border: 1px solid #ccc;
             color: rgb(0, 0, 0);
-            padding: 20px;
-            border: none;
+            padding: 10px;
             border-radius: 5px;
             flex: 0 0 auto;
             scroll-snap-align: center;
-            width: 180px;
-            height: 90px;
-            text-align: center;
-            font-size: 1rem;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            width: 250px;
+            height: 100px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s;
         }
 
-        .slider .items div:hover {
+        .slider-item:hover {
             transform: scale(1.05);
+        }
+
+        .music-icon {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        .music-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .song-title {
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .artist-name {
+            font-size: 0.85rem;
+            color: #777;
+            margin: 5px 0 0 0;
         }
 
         .slider-container .arrow {
@@ -457,16 +480,40 @@
 
         window.onload = function() {
             showSlide(currentSlide);
-            fillItems('slider-1', ['곡 1', '곡 2', '곡 3', '곡 4', '곡 5', '곡 6', '곡 7', '곡 8', '곡 9', '곡 10']);
-            fillItems('slider-2', ['곡 11', '곡 12', '곡 13', '곡 14', '곡 15', '곡 16', '곡 17', '곡 18', '곡 19', '곡 20']);
-            fillItems('slider-3', ['곡 21', '곡 22', '곡 23', '곡 24', '곡 25', '곡 26', '곡 27', '곡 28', '곡 29', '곡 30']);
+            fillItems('slider-1', [
+                { title: '곡 1', artist: '가수 1' },
+                { title: '곡 2', artist: '가수 2' },
+                { title: '곡 3', artist: '가수 3' },
+                { title: '곡 4', artist: '가수 4' },
+                { title: '곡 5', artist: '가수 5' }
+            ]);
+            fillItems('slider-2', [
+                { title: '곡 6', artist: '가수 6' },
+                { title: '곡 7', artist: '가수 7' },
+                { title: '곡 8', artist: '가수 8' },
+                { title: '곡 9', artist: '가수 9' },
+                { title: '곡 10', artist: '가수 10' }
+            ]);
+            fillItems('slider-3', [
+                { title: '곡 11', artist: '가수 11' },
+                { title: '곡 12', artist: '가수 12' },
+                { title: '곡 13', artist: '가수 13' },
+                { title: '곡 14', artist: '가수 14' },
+                { title: '곡 15', artist: '가수 15' }
+            ]);
         };
 
         function fillItems(sliderId, items) {
             const slider = document.getElementById(sliderId).getElementsByClassName('items')[0];
             items.forEach(item => {
                 let div = document.createElement('div');
-                div.textContent = item;
+                div.className = 'slider-item'; // 추가된 클래스명
+                div.innerHTML = `
+                    <img src="{% static 'img/music.png' %}" alt="Music Icon" class="music-icon">
+                    <div class="music-info">
+                        <h4 class="song-title">${item.title}</h4>
+                        <p class="artist-name">${item.artist}</p>
+                    </div>`;
                 slider.appendChild(div);
             });
         }
@@ -520,30 +567,60 @@
         </div>
         <div class="slider-background-container">
             <div class="slider-container">
+                <!-- 성별 + 나이대 기반 추천 -->
                 <div id="slider-1" class="slider">
-                    <h2><span class="username-highlight">{{ user.username }}</span> 님을 위한<br>트렌디한 20대 여성들을 위한 필수 추천곡</h2>
+                    <h2><span class="username-highlight">{{ user.username }}</span> 님을 위한<br>트렌디한 {{ user.age_group }} {{ user.gender }}들을 위한 필수 추천곡</h2>
                     <div class="items">
-                        <!-- 아이템들이 들어갈 위치 -->
+                        {% for track in gender_age_recommendations %}
+                        <div class="slider-item">
+                            <img src="{{ track.album_image_url }}" alt="{{ track.name }}" class="music-icon">
+                            <div class="music-info">
+                                <h4 class="song-title">{{ track.name }}</h4>
+                                <p class="artist-name">{{ track.artist }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
                     <a class="arrow left" onclick="previousSlide()">&#10094;</a>
                     <a class="arrow right" onclick="nextSlide()">&#10095;</a>
                 </div>
+
+                <!-- 관심 장르 기반 추천 (첫 번째 장르) -->
                 <div id="slider-2" class="slider">
-                    <h2><span class="username-highlight">{{ user.username }}</span> 님을 위한<br>요즘 핫한 록 음악 모음</h2>
+                    <h2><span class="username-highlight">{{ user.username }}</span> 님을 위한<br>요즘 핫한 {{ selected_genres.0 }} 음악 모음</h2>
                     <div class="items">
-                        <!-- 아이템들이 들어갈 위치 -->
+                        {% for track in genre_recommendations.selected_genres.0 %}
+                        <div class="slider-item">
+                            <img src="{{ track.album_image_url }}" alt="{{ track.name }}" class="music-icon">
+                            <div class="music-info">
+                                <h4 class="song-title">{{ track.name }}</h4>
+                                <p class="artist-name">{{ track.artist }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
                     <a class="arrow left" onclick="previousSlide()">&#10094;</a>
                     <a class="arrow right" onclick="nextSlide()">&#10095;</a>
                 </div>
+
+                <!-- 관심 장르 기반 추천 (두 번째 장르) -->
                 <div id="slider-3" class="slider">
-                    <h2><span class="username-highlight">{{ user.username }}</span> 님을 위한<br>최신 트렌드 재즈 선곡</h2>
+                    <h2><span class="username-highlight">{{ user.username }}</span> 님을 위한<br>최신 트렌드 {{ selected_genres.1 }} 선곡</h2>
                     <div class="items">
-                        <!-- 아이템들이 들어갈 위치 -->
+                        {% for track in genre_recommendations.selected_genres.1 %}
+                        <div class="slider-item">
+                            <img src="{{ track.album_image_url }}" alt="{{ track.name }}" class="music-icon">
+                            <div class="music-info">
+                                <h4 class="song-title">{{ track.name }}</h4>
+                                <p class="artist-name">{{ track.artist }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
                     <a class="arrow left" onclick="previousSlide()">&#10094;</a>
                     <a class="arrow right" onclick="nextSlide()">&#10095;</a>
                 </div>
+
             </div>
         </div> 
         <div class="container">

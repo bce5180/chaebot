@@ -8,7 +8,6 @@
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <title>Mypage</title>
     <style>
-
         @font-face {
             font-family: 'TheJamsil5Bold';
             src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2');
@@ -112,8 +111,8 @@
         }
 
         .sidebar a:hover, .sidebar a.active {
-            background-color: #007BFF;
-            color: #fff;
+            background-color: #ddd541;
+            color: #000;
         }
 
         .content {
@@ -156,9 +155,10 @@
             cursor: pointer;
             border: none;
             border-radius: 5px;
-            background-color: #007BFF;
+            background-color: #5a5a5a;
             color: #fff;
             font-family: 'TheJamsil5Bold', Arial, sans-serif;
+            margin-top: 20px;
         }
 
         .button-group button.delete {
@@ -167,18 +167,38 @@
 
         .file-list {
             margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .date-group {
+            margin-bottom: 20px;
+        }
+
+        .date-group h3 {
+            margin-bottom: 10px;
+            color: #5a5a5a;
+            font-size: 1.4rem;
+            font-weight: bold;
         }
 
         .file-item {
-            margin-bottom: 20px;
-            padding: 10px;
+            padding: 15px;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 10px;
             background-color: #fff;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            margin-bottom: 20px; 
         }
 
-        .file-item h3 {
+        .file-item.saved-note {
+            background-color: #e3e0e0; /* 저장 후 배경색 */
+            border-radius: 15px; /* 테두리를 둥글게 */
+        }
+
+        .file-item h4 {
             margin: 0;
             font-size: 1.2rem;
             font-weight: bold;
@@ -197,6 +217,15 @@
             height: 50px;
             resize: none;
             margin-bottom: 10px;
+            background-color: #f0f0f0; /* 메모장 느낌의 배경색 */
+            font-family: 'Courier New', Courier, monospace; /* 메모장 느낌의 폰트 */
+            color: #666;
+        }
+
+        .file-item form textarea.editable {
+            background-color: #fff; /* 수정 가능할 때의 배경색 */
+            color: #000;
+            border: 1px solid #ccc;
         }
 
         .file-item button {
@@ -205,33 +234,129 @@
             cursor: pointer;
             border: none;
             border-radius: 5px;
-            background-color: #007BFF;
+            background-color: #5a5a5a;
             color: #fff;
             font-family: 'TheJamsil5Bold', Arial, sans-serif;
         }
 
+        .post-item {
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+
+        .post-item h4 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .post-item p {
+            margin: 5px 0;
+        }
+
+        .post-item small {
+            color: #666;
+        }
+
+        /* 알림 스타일 */
+        .notification-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .notification-item {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+
+        .notification-item p {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        #genres {
+            width: 100%;
+            height: auto;
+            min-height: 100px; /* 드롭다운의 최소 높이 설정 */
+            overflow: auto;    /* 항목이 많을 경우 스크롤 가능하게 설정 */
+        }
+
+
     </style>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const links = document.querySelectorAll('.sidebar a');
-            const contents = document.querySelectorAll('.content > div');
+    document.addEventListener('DOMContentLoaded', function () {
+    const links = document.querySelectorAll('.sidebar a');
+    const contents = document.querySelectorAll('.content > div');
 
-            links.forEach(link => {
-                link.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    links.forEach(l => l.classList.remove('active'));
-                    this.classList.add('active');
+    links.forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            links.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
 
-                    contents.forEach(content => content.style.display = 'none');
-                    const target = this.getAttribute('href').substring(1);
-                    document.getElementById(target).style.display = 'block';
-                });
-            });
-
-            // Show the first content by default
-            links[0].classList.add('active');
-            contents[0].style.display = 'block';
+            contents.forEach(content => content.style.display = 'none');
+            const target = this.getAttribute('href').substring(1);
+            document.getElementById(target).style.display = 'block';
         });
+    });
+
+    // Show the first content by default
+    links[0].classList.add('active');
+    contents[0].style.display = 'block';
+
+    const noteForms = document.querySelectorAll('.note-form');
+
+    noteForms.forEach(form => {
+        const item = form.closest('.file-item');
+        const textarea = item.querySelector('textarea');
+        const saveButton = item.querySelector('.save-note-btn');
+        const editButton = item.querySelector('.edit-note-btn');
+
+        editButton.addEventListener('click', function () {
+            textarea.classList.add('editable');
+            textarea.removeAttribute('readonly');
+            textarea.focus();
+            editButton.style.display = 'none';
+            saveButton.style.display = 'inline-block';
+        });
+
+        saveButton.addEventListener('click', function (e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    textarea.classList.remove('editable');
+                    textarea.setAttribute('readonly', 'readonly');
+                    item.classList.add('saved-note');
+                    editButton.style.display = 'inline-block';
+                    saveButton.style.display = 'none';
+                } else {
+                    alert('메모 저장에 실패했습니다. 다시 시도해주세요.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('메모 저장 중 오류가 발생했습니다.');
+            });
+        });
+    });
+});
+
     </script>
 </head>
 <body>
@@ -254,43 +379,46 @@
     <div class="main-container">
         <div class="sidebar">
             <a href="#profile">회원정보 수정</a>
-            <a href="#uploads">지금까지 변환 목록</a>
+            <a href="#uploads">변환 목록</a>
+            <a href="#my_posts">내가 쓴 글</a>
+            <a href="#notifications">알림</a>
             <a href="#delete">회원 탈퇴</a>
         </div>
         <div class="content">
             <div id="profile">
-                <h2>회원정보 수정</h2>
                 <form method="post" action="{% url 'update_profile' %}">
                     {% csrf_token %}
                     <div class="form-group">
-                        <label for="username">아이디</label>
-                        <input type="text" id="username" name="username" value="{{ user.username }}" readonly>
+                        <label for="user_id">아이디</label>
+                        <input type="text" id="user_id" name="user_id" value="{{ user.user_id }}">
                     </div>
                     <div class="form-group">
                         <label for="email">이메일</label>
                         <input type="email" id="email" name="email" value="{{ user.email }}">
                     </div>
                     <div class="form-group">
-                        <label for="age">연령대</label>
-                        <select id="age" name="age">
-                            <option value="10대" {% if user.profile.age == '10대' %}selected{% endif %}>10대</option>
-                            <option value="20대" {% if user.profile.age == '20대' %}selected{% endif %}>20대</option>
-                            <option value="30대" {% if user.profile.age == '30대' %}selected{% endif %}>30대</option>
-                            <option value="40대" {% if user.profile.age == '40대' %}selected{% endif %}>40대</option>
-                            <option value="50대 이상" {% if user.profile.age == '50대 이상' %}selected{% endif %}>50대 이상</option>
+                        <label for="age_group">연령대</label>
+                        <select id="age_group" name="age_group">
+                            <option value="어린이" {% if user.age_group == '0~9' %}selected{% endif %}>0~9</option>
+                            <option value="10대" {% if user.age_group == '10~19' %}selected{% endif %}>10~19</option>
+                            <option value="20대" {% if user.age_group == '20~29' %}selected{% endif %}>20~29</option>
+                            <option value="30대" {% if user.age_group == '30~39' %}selected{% endif %}>30~39</option>
+                            <option value="40대" {% if user.age_group == '40~49' %}selected{% endif %}>40~49</option>
+                            <option value="50대" {% if user.age_group == '50~59' %}selected{% endif %}>50~59</option>
+                            <option value="60대" {% if user.age_group == '60~69' %}selected{% endif %}>60~69</option>
+                            <option value="70대" {% if user.age_group == '70~79' %}selected{% endif %}>70~79</option>
+                            <option value="80대" {% if user.age_group == '80~89' %}selected{% endif %}>80~89</option>
+                            <option value="90대" {% if user.age_group == '90~99' %}selected{% endif %}>90~99</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="gender">성별</label>
-                        <select id="gender" name="gender">
-                            <option value="남성" {% if user.profile.gender == '남성' %}selected{% endif %}>남성</option>
-                            <option value="여성" {% if user.profile.gender == '여성' %}selected{% endif %}>여성</option>
+                        <label for="genres">관심 장르 (최대 5개 선택 가능합니다.)</label>
+                        <select id="genres" name="genres" multiple size="5">
+                            {% for genre in genres %}
+                                <option value="{{ genre }}" {% if genre in selected_genres %}selected{% endif %}>{{ genre }}</option>
+                            {% endfor %}
                         </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="interests">관심 분야</label>
-                        <input type="text" id="interests" name="interests" value="{{ user.profile.interests }}">
-                    </div>
+                    </div>                    
                     <div class="form-group">
                         <label for="password">비밀번호 변경 (선택사항)</label>
                         <input type="password" id="password" name="password">
@@ -301,30 +429,60 @@
                 </form>
             </div>
             <div id="uploads" style="display:none;">
-                <h2>지금까지 변환 목록</h2>
                 <div class="file-list">
-                    {% for file in uploaded_files %}
-                    <div class="file-item">
-                        <h3>{{ file.song_name }}</h3>
-                        <p>업로드 날짜: {{ file.upload_date|date:"Y/m/d" }}</p>
-                        <p>PDF 파일: 
-                            {% if file.pdf_file %}
-                            <a href="{{ file.pdf_file.url }}" download>PDF 다운로드</a>
-                            {% else %}
-                            PDF 파일 없음
-                            {% endif %}
-                        </p>
-                        <form method="post" action="{% url 'update_note' file.id %}">
-                            {% csrf_token %}
-                            <textarea name="note" placeholder="메모를 입력하세요...">{{ file.note }}</textarea>
-                            <button type="submit">메모 저장</button>
-                        </form>
+                    {% for date, files in uploaded_files_by_date.items %}
+                    <div class="date-group">
+                        <h3>{{ date }}</h3>
+                        {% for file in files %}
+                        <div class="file-item {% if file.note %}saved-note{% endif %}">
+                            <h4>{{ file.song_name }}</h4>
+                            <p>PDF 파일: 
+                                {% if file.pdf_file %}
+                                <a href="{{ file.pdf_file.url }}" download>PDF 다운로드</a>
+                                {% else %}
+                                PDF 파일 없음
+                                {% endif %}
+                            </p>
+                            <form method="post" action="{% url 'update_note' file.id %}" class="note-form">
+                                {% csrf_token %}
+                                <textarea name="note" placeholder="메모를 입력하세요..." {% if file.note %}readonly{% endif %}>{{ file.note }}</textarea>
+                                <button type="button" class="edit-note-btn" {% if not file.note %}style="display:none;"{% endif %}>메모 수정</button>
+                                <button type="submit" class="save-note-btn" {% if file.note %}style="display:none;"{% endif %}>메모 저장</button>
+                            </form>                            
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>                        
+            <div id="my_posts" style="display:none;">
+                <div class="post-list">
+                    {% for date, posts in posts_by_date.items %}
+                    <div class="date-group">
+                        <h3>{{ date }}</h3>
+                        {% for post in posts %}
+                        <div class="post-item">
+                            <h4><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h4>
+                            <p>{{ post.content|truncatewords:20 }}</p>
+                            <small>{{ post.created_at|date:"Y/m/d H:i" }}</small>
+                        </div>
+                        {% endfor %}
                     </div>
                     {% endfor %}
                 </div>
             </div>
+            <div id="notifications" style="display:none;">
+                <h2>알림</h2>
+                <ul class="notification-list">
+                    {% for notification in notifications %}
+                    <li class="notification-item">
+                        <p>{{ notification.message }}</p>
+                        <small>{{ notification.timestamp|date:"Y/m/d H:i" }}</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
             <div id="delete" style="display:none;">
-                <h2>회원 탈퇴</h2>
                 <p>회원 탈퇴를 원하시면 아래 버튼을 클릭해주세요.</p>
                 <form method="post" action="{% url 'delete_account' %}">
                     {% csrf_token %}

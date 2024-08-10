@@ -22,6 +22,21 @@ from dotenv import load_dotenv
 from django.conf import settings
 from .ai_model import convert_mp3_to_pdf
 import time
+from random import sample
+import random
+
+
+GENRES = [
+    "록",
+    "팝",
+    "메탈",
+    "재즈",
+    "펑크",
+    "얼터너티브",
+    "인디",
+    "힙합",
+    "레게",
+]
 
 
 # 홈화면
@@ -41,25 +56,92 @@ def waiting(request):
 
 @login_required
 def mypage(request):
+    # 유저의 업로드 파일을 날짜별로 그룹화
     uploaded_files = FileUpload.objects.filter(user=request.user).order_by('-upload_date')
-    return render(request, 'mypage.html', {'uploaded_files': uploaded_files})
+    uploaded_files_by_date = {}
+
+    for file in uploaded_files:
+        date = file.upload_date.strftime('%Y-%m-%d')
+        if date not in uploaded_files_by_date:
+            uploaded_files_by_date[date] = []
+        uploaded_files_by_date[date].append(file)
+    
+    # 내가 쓴 글을 날짜별로 그룹화
+    posts = Post.objects.filter(author=request.user).order_by('-created_at')
+    posts_by_date = {}
+
+    for post in posts:
+        date = post.created_at.strftime('%Y-%m-%d')
+        if date not in posts_by_date:
+            posts_by_date[date] = []
+        posts_by_date[date].append(post)
+
+    # 장르 데이터 가져오기
+    genres = [
+         "록",
+        "팝",
+        "메탈",
+        "재즈",
+        "펑크",
+        "얼터너티브",
+        "인디",
+        "힙합",
+        "레게",
+    ]
+    selected_genres = []  # 사용자가 선택한 장르를 불러와서 여기에 할당 (이 부분은 필요에 따라 조정)
+
+    return render(request, 'mypage.html', {
+        'uploaded_files_by_date': uploaded_files_by_date,
+        'posts_by_date': posts_by_date,
+        'genres': genres,  # 장르 리스트 전달
+        'selected_genres': selected_genres,  # 선택된 장르 전달
+    })
+
+
+
 
 @login_required
 def update_profile(request):
+    user = request.user
+    selected_genres = user.genres.split(', ') if user.genres else []
+
     if request.method == 'POST':
-        user = request.user
-        profile = user.profile
+        user.user_id = request.POST.get('user_id')  # 수정 가능하도록 설정
         user.email = request.POST.get('email')
-        profile.age = request.POST.get('age')
-        profile.gender = request.POST.get('gender')
-        profile.interests = request.POST.get('interests')
-        if request.POST.get('password'):
-            user.set_password(request.POST.get('password'))
-            update_session_auth_hash(request, user)
+        user.age_group = request.POST.get('age_group')
+        user.gender = request.POST.get('gender')
+        user.genres = ', '.join(request.POST.getlist('genres'))  # 선택한 장르를 저장
+
+        # 비밀번호 변경이 입력된 경우
+        password = request.POST.get('password')
+        if password:
+            user.set_password(password)
+
         user.save()
-        profile.save()
         messages.success(request, '프로필이 업데이트되었습니다.')
         return redirect('mypage')
+
+    uploaded_files_by_date = (
+        FileUpload.objects.filter(user=user)
+        .order_by('-upload_date')
+        .values('song_name', 'pdf_file', 'upload_date', 'note')
+    )
+    my_posts = Post.objects.filter(author=user).order_by('-created_at')
+    notifications = Notification.objects.filter(user=user).order_by('-timestamp')
+
+    return render(
+        request,
+        'mypage.html',
+        {
+            'genres': GENRES,
+            'selected_genres': selected_genres,
+            'uploaded_files_by_date': uploaded_files_by_date,
+            'my_posts': my_posts,
+            'notifications': notifications,
+            'user': user,
+        },
+    )
+
 
 @login_required
 def delete_account(request):
@@ -78,14 +160,20 @@ def download_pdf(request, file_id):
         messages.error(request, 'PDF 파일이 존재하지 않습니다.')
         return redirect('mypage')
 
+
 @login_required
 def update_note(request, file_id):
-    file = FileUpload.objects.get(id=file_id, user=request.user)
+    file = get_object_or_404(FileUpload, id=file_id, user=request.user)
+    
     if request.method == 'POST':
-        file.note = request.POST.get('note')
+        note = request.POST.get('note')
+        file.note = note
         file.save()
-        messages.success(request, '메모가 저장되었습니다.')
-    return redirect('mypage')
+        return JsonResponse({'success': True, 'file_id': file.id})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
+
+
 
 # 로그아웃
 def logout_view(request):
@@ -198,24 +286,6 @@ def age_gender(request):
             return redirect("signup")
 
     return render(request, "age_gender.html")
-
-
-GENRES = [
-    "록",
-    "팝 록",
-    "메탈",
-    "재즈",
-    "펑크 록",
-    "소울",
-    "펑크",
-    "얼터너티브 록",
-    "인디 록",
-    "힙합",
-    "레게",
-    "프로그레시브 록",
-    "포스트 록",
-    "하드코어 펑크",
-]
 
 
 # 장르 선택
@@ -443,61 +513,55 @@ def search_spotify(request):
         logger.error(f"Error in search_spotify: {str(e)}")
         return JsonResponse({'error': str(e)}, status=500)
 
-@csrf_exempt
 @login_required
+@csrf_exempt
 def save_selected_track(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            if not data:
-                raise ValueError("No data provided")
-
-            artist = data.get('artist')
-            track_name = data.get('track')
             spotify_track_id = data.get('spotify_track_id')
+            track_name = data.get('track')
+            artist_name = data.get('artist')
             album_image_url = data.get('album_image_url')
+            genre = data.get('genre')
 
             # 필수 필드 확인
-            if not artist:
-                return JsonResponse({'status': 'error', 'message': 'Artist is required'}, status=400)
-            if not track_name:
-                return JsonResponse({'status': 'error', 'message': 'Track name is required'}, status=400)
             if not spotify_track_id:
                 return JsonResponse({'status': 'error', 'message': 'Spotify track ID is required'}, status=400)
-            if not album_image_url:
-                return JsonResponse({'status': 'error', 'message': 'Album image URL is required'}, status=400)
+            if not track_name:
+                return JsonResponse({'status': 'error', 'message': 'Track name is required'}, status=400)
+            if not artist_name:
+                return JsonResponse({'status': 'error', 'message': 'Artist name is required'}, status=400)
+            if not genre:
+                return JsonResponse({'status': 'error', 'message': 'Genre is required'}, status=400)
 
-            # 트랙이 이미 존재하는지 확인
-            track, created = Track.objects.get_or_create(
-                spotify_track_id=spotify_track_id,
-                defaults={'name': track_name, 'artist': artist, 'album_image_url': album_image_url}
-            )
+            # 동일한 spotify_track_id와 genre를 가진 트랙이 이미 있는지 확인
+            existing_track = Track.objects.filter(spotify_track_id=spotify_track_id, genre=genre).first()
 
-            if not created:
-                # 트랙이 이미 존재하면 selection_count를 증가시킴
-                track.selection_count += 1
-                track.save()
+            if existing_track:
+                # 동일한 트랙이 이미 있으면 selection_count를 증가시키고 저장
+                existing_track.selection_count += 1
+                existing_track.save()
+                track = existing_track
             else:
-                # 새로 생성된 트랙이면 selection_count는 1로 설정됨
-                track.selection_count = 1
-                track.save()
+                # 동일한 트랙이 없으면 새로 생성하고 selection_count를 1로 설정
+                track = Track.objects.create(
+                    spotify_track_id=spotify_track_id,
+                    name=track_name,
+                    artist=artist_name,
+                    album_image_url=album_image_url,
+                    genre=genre,
+                    selection_count=1
+                )
 
-            # UserTrack에 정보 저장
-            user_track, user_track_created = UserTrack.objects.get_or_create(
+            # UserTrack에 데이터 저장
+            UserTrack.objects.create(
                 user=request.user,
                 track=track
             )
 
-            if not user_track_created:
-                # 이미 존재하면 시간 업데이트 (선택 시간 갱신)
-                user_track.timestamp = timezone.now()
-                user_track.save()
-
             return JsonResponse({'status': 'success'}, status=200)
-        except ValueError as ve:
-            return JsonResponse({'status': 'error', 'message': str(ve)}, status=400)
         except Exception as e:
-            # 여기에서 오류 메시지를 로그로 출력
             print(f"Error: {e}")
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     else:
@@ -516,7 +580,6 @@ def result(request):
 
 
 
-@login_required
 
 #파일 이름 사용자 정보대로 수정
 @login_required
@@ -546,3 +609,90 @@ def save_filename(request):
             return JsonResponse({'message': 'Filename saved successfully.'})
         return JsonResponse({'error': 'Invalid request.'}, status=400)
     return JsonResponse({'error': 'Invalid request method.'}, status=405)
+
+
+@csrf_exempt
+@login_required
+def save_file_upload_genre(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            genre = data.get('genre')
+            artist = data.get('artist')
+            track = data.get('track')
+
+            if not genre or not artist or not track:
+                return JsonResponse({'status': 'error', 'message': 'Genre, artist, and track are required'}, status=400)
+
+            # song_name 설정
+            song_name = track  # track 이름을 그대로 사용 (필요에 따라 변경 가능)
+
+            print(genre)
+
+            # 새로운 FileUpload 생성
+            file_upload = FileUpload.objects.create(
+                user=request.user,
+                song_name=song_name,
+                genre=genre,
+            )
+
+
+
+            # 파일 이름 설정 및 저장
+            pdf_filename = f"{song_name}.pdf"
+            pdf_path = os.path.join('pdfs', pdf_filename)
+
+            # PDF 파일 생성 (간단한 예제)
+            if not os.path.exists(pdf_path):
+                with open(pdf_path, 'w') as pdf_file:
+                    pdf_file.write('PDF content here...')  # 실제 PDF 생성 로직으로 대체해야 함
+
+            file_upload.pdf_file = pdf_path
+            file_upload.save()
+
+            return JsonResponse({'status': 'success', 'file_upload_id': file_upload.id}, status=200)
+
+        except Exception as e:
+            print(f"Error: {e}")
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+def generate_recommendations(user):
+    # 유저의 관심 장르를 쉼표로 구분하여 리스트로 변환
+    user_genres = user.genres.split(',')
+    
+    # 유저의 성별, 나이대 기반 추천곡 필터링
+    gender_age_recommendations = Track.objects.filter(
+        usertrack__user__gender=user.gender,
+        usertrack__user__age_group=user.age_group
+    ).order_by('-selection_count')[:5]
+
+    # 유저의 관심 장르 중 2개 랜덤 선택
+    selected_genres = random.sample(user_genres, 2)  # user.selected_genres는 리스트로 가정
+
+    genre_recommendations = {}
+    for genre in selected_genres:
+        genre_recommendations[genre] = Track.objects.filter(
+            genre=genre
+        ).order_by('-selection_count')[:5]
+
+    return gender_age_recommendations, genre_recommendations, selected_genres
+
+
+def recommendation_view(request):
+    user = request.user
+
+    # 추천곡을 생성
+    gender_age_recommendations, genre_recommendations, selected_genres = generate_recommendations(user)
+    
+    # selected_genres 출력
+    print("Selected genres:", selected_genres)
+
+    context = {
+        'user': user,
+        'gender_age_recommendations': gender_age_recommendations,
+        'genre_recommendations': genre_recommendations,
+        'selected_genres': list(genre_recommendations.keys()),  # 선택된 장르 리스트를 템플릿에 전달
+    }
+    return render(request, 'chaetting.html', context)

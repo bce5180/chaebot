@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
-
+from django.db.models import UniqueConstraint
 
 class CustomUser(AbstractUser):
     user_id = models.CharField(max_length=150, unique=True)
@@ -27,6 +27,8 @@ class FileUpload(models.Model):
     upload_date = models.DateTimeField(auto_now_add=True)
     processed_date = models.DateTimeField(null=True, blank=True)
     note = models.TextField(null=True, blank=True)  # 메모 필드 추가
+    genre = models.CharField(max_length=50, null=True, blank=True)  # 장르 필드 추가
+
 
     def __str__(self):
         return f"{self.song_name} - Uploaded by {self.user.username} on {self.upload_date.strftime('%Y-%m-%d %H:%M:%S')}"
@@ -116,13 +118,24 @@ class Reply(models.Model):
         return f"Reply by {self.author} on {self.comment}"
 
 class Track(models.Model):
-    spotify_track_id = models.CharField(max_length=50, unique=True)
+    spotify_track_id = models.CharField(max_length=50)
     name = models.CharField(max_length=255)
     artist = models.CharField(max_length=255)
     album_image_url = models.URLField()
-    selection_count = models.PositiveIntegerField(default=0)  # 선택 횟수 추가
+    selection_count = models.PositiveIntegerField(default=0)
+    genre = models.CharField(max_length=50, null=True, blank=True)
+    file_upload = models.ForeignKey(FileUpload, on_delete=models.CASCADE, null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['spotify_track_id', 'genre'], name='unique_track_genre')
+        ]
+
+    def __str__(self):
+        return f"{self.name} by {self.artist} ({self.genre})"
 
 class UserTrack(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     track = models.ForeignKey(Track, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
+

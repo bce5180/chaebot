@@ -188,8 +188,8 @@
         }
 
         .navbar-logo img {
-            max-height: 140px;
-            max-width: 320px;
+            max-height: 100px;
+            max-width: 240px;
         }
 
         .navbar {
@@ -199,19 +199,19 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 0px;
+            padding: 10px 0px;
             position: fixed;
             top: 0;
             left: 0;
             z-index: 2000;
             height: auto;
-            min-height: 60px;
+            min-height: 50px;
         }
 
         .navbar-logo a {
             text-decoration: none;
-            color: #007BFF;
-            font-size: 1.2rem;
+            color: #fffb80;
+            font-size: 1rem;
             font-weight: bold;
         }
 
@@ -223,8 +223,8 @@
         .navbar-menu a {
             text-decoration: none;
             color: #666;
-            padding: 8px 10px;
-            font-size: 1.5rem;
+            padding: 5px 7px;
+            font-size: 1.2rem;
             font-family: 'TheJamsil5Bold', Arial, sans-serif;
         }
 
@@ -294,16 +294,30 @@
             font-family: 'TheJamsil5Bold', Arial, sans-serif;
             font-size: 2.0rem; /* "변환하신 음악이 무엇인가요 ?" 폰트 크기 증가 */
         }
+
+        .genre-select {
+            width: 70%; /* 가수 제목 칸과 같은 너비 */
+            height: 40px;
+            font-size: 15px;
+            padding: 10px;
+            margin-bottom: 5px;
+            border: 2px solid #ebd382; /* 노란색 테두리 */
+            border-radius: 5px; /* 둥근 모서리 */
+            background-color: #000;
+            color: #ebd382;
+            transition: all 0.3s ease;
+        }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="navbar-logo">
+            {% load static %}
             <a href="/"><img src="{% static 'img/logo.png' %}" alt="MP3 to Drum Sheet Converter"></a>
         </div>
         <div class="navbar-menu">
             <a href="{% url 'index' %}" class="active">변환</a>
-            <a href="{% url 'chaetting_view' %}" class="active">Chaetting</a>
+            <a href="{% url 'chaetting_view' %}">Chaetting</a>
             {% if user.is_authenticated %}
                 <a href="{% url 'mypage' %}">Mypage</a>
                 <a href="{% url 'logout' %}">로그아웃</a>
@@ -322,7 +336,22 @@
         </div>
         <div class="section scrollable-section">
             <div class="save-container">
-                <h3>변환하신 음악이 무엇인지 알려주세요.</h3>
+                <h3>곡의 장르를 알려주세요 !</h3>
+                <select id="genre" name="genre" class="genre-select">
+                    <option value="록">록</option>
+                    <option value="팝">팝</option>
+                    <option value="메탈">메탈</option>
+                    <option value="재즈">재즈</option>
+                    <option value="펑크">펑크</option>
+                    <option value="얼터너티브">얼터너티브</option>
+                    <option value="인디">인디</option>
+                    <option value="힙합">힙합</option>
+                    <option value="레게">레게</option>
+                </select>
+            </div>
+
+            <div class="save-container">
+                <h3>변환하신 음악이 무엇인지 궁금해요 !</h3>
                 <div class="input-container">
                     <input type="text" id="artist" placeholder="가수 이름">
                     <input type="text" id="track" placeholder="노래 제목">
@@ -339,6 +368,19 @@
     </div>
     <script>
         let lastSelectedTrack = null;
+
+        document.getElementById('genre').addEventListener('change', function() {
+            const genre = this.value;
+            if (genre) {
+                saveData();
+            }
+        });
+
+        window.addEventListener('beforeunload', function (event) {
+            saveTrackData();  // 노래 정보를 저장
+            saveGenreData();  // 장르 정보를 저장
+        });
+
 
         function downloadPDF() {
             window.location.href = 'convert.pdf';
@@ -407,21 +449,81 @@
                 .catch(error => console.error('Error:', error));
         }
 
-        window.addEventListener('beforeunload', function (event) {
+        function saveTrackData() {
             const artist = document.getElementById('artist').value;
             const track = document.getElementById('track').value;
+            const genre = document.getElementById('genre').value;  // 장르 가져오기
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-            if (artist && track && lastSelectedTrack) {
+            if (artist && track && genre && lastSelectedTrack) {
                 const data = {
                     artist: artist,
                     track: track,
+                    genre: genre,  // 장르 추가
                     spotify_track_id: lastSelectedTrack.spotify_track_id,
                     album_image_url: lastSelectedTrack.album_image_url
                 };
 
-                navigator.sendBeacon('/save_selected_track/', JSON.stringify(data));
+                fetch('/save_selected_track/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Track saved successfully:', data);
+                })
+                .catch(error => {
+                    console.error('Error saving track:', error);
+                });
             }
-        });
+        }
+
+        function saveGenreData() {
+            const genre = document.getElementById('genre').value;
+            const track = document.getElementById('track').value;
+            const artist = document.getElementById('artist').value;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            if (genre && track && artist) {  // Ensure all necessary data is available
+                const data = {
+                    genre: genre,
+                    song_name: track,  // Track name should match the song_name in FileUpload
+                    artist: artist
+                };
+
+                fetch('/save_file_upload_genre/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Genre saved successfully:', data);
+                })
+                .catch(error => {
+                    console.error('Error saving genre:', error);
+                });
+            }
+        }
+
+
     </script>
 </body>
 </html>

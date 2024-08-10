@@ -51,6 +51,7 @@ urlpatterns = [
     path("upload/", v.upload_mp3, name="upload_mp3"),
     path('result/', v.result, name='result'),
     path('save_filename/', v.save_filename, name='save_filename'),
+    path('save_file_upload_genre/', v.save_file_upload_genre, name='save_file_upload_genre'),
     #대기화면
     path("waiting/", v.waiting, name="waiting"),
     #모델 백그라운드 재생
@@ -61,4 +62,6 @@ urlpatterns = [
     path('delete_account/', v.delete_account, name='delete_account'),
     path('download_pdf/<int:conversion_id>/', v.download_pdf, name='download_pdf'),
     path('update_note/<int:file_id>/', v.update_note, name='update_note'),
+    #추천
+    path('chaetting/', v.recommendation_view, name='chaetting_view'),
 ]
