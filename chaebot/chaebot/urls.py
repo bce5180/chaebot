@@ -18,12 +18,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from myapp import views as v
-
+from django.conf import settings  # 추가
+from django.conf.urls.static import static  # 추가
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", v.index, name="index"),  # 홈페이지로 바로 index 뷰를 연결
-    #user관리
+    # user관리
     path("signup/", v.signup, name="signup"),
     path("login/", v.login_view, name="login"),
     path("logout/", v.logout_view, name="logout"),
@@ -31,9 +32,9 @@ urlpatterns = [
     path("check_id/", v.check_id, name="check_id"),
     path("check_username/", v.check_username, name="check_username"),
     path("check_email/", v.check_email, name="check_email"),
-    #좋아하는 장르 선택
+    # 좋아하는 장르 선택
     path("select_genres/", v.select_genres, name="select_genres"),
-    #나이 성별 선택
+    # 나이 성별 선택
     path("age_gender/", v.age_gender, name="age_gender"),
     # chaetting
     path("chaetting_view/", v.chaetting_view, name="chaetting_view"),
@@ -44,24 +45,29 @@ urlpatterns = [
     path("reply/<int:reply_id>/like/", v.like_reply, name="like_reply"),
     path("post/<int:post_id>/comment/", v.add_comment, name="add_comment"),
     path("comment/<int:comment_id>/reply/", v.add_reply, name="add_reply"),
-    #스포티파이
+    # 스포티파이
     path('search_spotify/', v.search_spotify, name='search_spotify'),
     path('save_selected_track/', v.save_selected_track, name='save_selected_track'),
-    #파일저장
+    # 파일저장
     path("upload/", v.upload_mp3, name="upload_mp3"),
     path('result/', v.result, name='result'),
     path('save_filename/', v.save_filename, name='save_filename'),
     path('save_file_upload_genre/', v.save_file_upload_genre, name='save_file_upload_genre'),
-    #대기화면
+    # 대기화면
     path("waiting/", v.waiting, name="waiting"),
-    #모델 백그라운드 재생
+    # 모델 백그라운드 재생
     path('process_conversion/', v.process_conversion, name='process_conversion'),
-    #마이페이지
+    # 마이페이지
     path("mypage/", v.mypage, name="mypage"),
     path('update_profile/', v.update_profile, name='update_profile'),
     path('delete_account/', v.delete_account, name='delete_account'),
     path('download_pdf/<int:conversion_id>/', v.download_pdf, name='download_pdf'),
     path('update_note/<int:file_id>/', v.update_note, name='update_note'),
-    #추천
+    # 추천
     path('chaetting/', v.recommendation_view, name='chaetting_view'),
 ]
+
+# Static 및 Media 파일 URL 패턴 추가
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
