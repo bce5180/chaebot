@@ -1,20 +1,23 @@
 document.addEventListener("DOMContentLoaded", function () {
   var fileInput = document.getElementById("file-input");
   var findBtn = document.getElementById("find-btn");
-  var dropZone = document.getElementById("drop-zone");
+  var dropZone = document.getElementById("mp3-upload-box");
   var backgroundAnimation = document.querySelector(".background-animation");
-  var loadingOverlay = document.getElementById("loading-overlay");
   var uploadBtn = document.getElementById("upload-btn");
-  var counterElement = document.getElementById("conversion-counter");
-  // Django 템플릿 변수로부터 변환 수를 받아올 경우 서버에서 해당 값을 주입해야 합니다.
-  // 예: var finalCount = {{ conversion_count }};
-  var finalCount = 100; // 임시 값
-  let currentCount = 0;
-  const countElement = document.getElementById("conversion-count");
-  const targetCount = 924; // 최종 변환수, 서버로부터 받아올 수도 있음
+
+  // 이미지 경로를 HTML에서 가져오기
+  var imagePath = document.getElementById('file-name-display').getAttribute('data-image-url');
 
   function isMP3File(file) {
     return file.type === "audio/mp3" || file.name.endsWith(".mp3");
+  }
+
+  function displayFileName(fileName) {
+    const neonBox = document.getElementById('file-name-display');
+    if (neonBox) {
+      neonBox.innerHTML = `<img src="${imagePath}" alt="Music Upload Icon" class="upload-icon"> ${fileName}`;
+      neonBox.style.display = 'block';
+    }
   }
 
   if (findBtn) {
@@ -45,18 +48,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     dropZone.addEventListener("dragleave", function (event) {
       event.preventDefault();
-      dropZone.style.backgroundColor = "rgba(0,0,0,0.5)";
+      dropZone.style.backgroundColor = "transparent";
     });
 
     dropZone.addEventListener("drop", function (event) {
       event.preventDefault();
-      dropZone.style.backgroundColor = "rgba(0,0,0,0.5)";
+      dropZone.style.backgroundColor = "transparent";
       const files = event.dataTransfer.files;
       if (files.length > 0) {
         const file = files[0];
         if (isMP3File(file)) {
-          fileInput.files = files;
-          displayFileName(file.name);
+          fileInput.files = files; // 파일을 file input에 연결
+          displayFileName(file.name); // 파일명을 표시
         } else {
           alert("Please drop an MP3 file.");
         }
@@ -72,6 +75,15 @@ document.addEventListener("DOMContentLoaded", function () {
       document.querySelector(".container").style.opacity = 1;
     }, 2000);
   });
+
+
+  window.addEventListener("load", () => {
+    backgroundAnimation.style.clipPath = "circle(75% at 100% 50%)";
+    setTimeout(() => {
+      document.querySelector(".container").style.opacity = 1;
+    }, 2000);
+  });
+
 
   function getCsrfToken() {
     return document.querySelector('input[name="csrfmiddlewaretoken"]').value;
@@ -114,3 +126,11 @@ window.addEventListener("load", function () {
     document.querySelector(".content").style.display = "block";
   }, 2000); // 2초 후에 content 보이기
 });
+
+function displayFileName(fileName) {
+  const neonBox = document.getElementById('file-name-display');
+  if (neonBox) {
+    neonBox.innerHTML = `<img src="{% static 'img/music_upload.png' %}" class="upload-icon"> ${fileName}`;
+    neonBox.style.display = 'block';
+  }
+}

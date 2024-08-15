@@ -8,105 +8,6 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <meta name="csrf-token" content="{{ csrf_token }}">
-    <style>
-        /* Tab Menu Styles */
-        .tab-menu {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-            position: sticky;
-            top: 0;
-            padding: 10px 0;
-            z-index: 10;
-        }
-
-        .tab-button {
-            padding: 12px 24px;
-            cursor: pointer;
-            background-color: #f0f0f0;
-            margin: 0 10px;
-            border: none;
-            border-bottom: 4px solid transparent;
-            font-size: 16px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            color: #333;
-        }
-
-        .tab-button:hover {
-            background-color: #e0e0e0;
-        }
-
-        .tab-button.active {
-            background-color: #333;
-            color: #fff;
-            border-bottom: 4px solid #f39c12;
-        }
-
-        .upload-box {
-            display: none;
-            border: 7px dashed #000;
-            padding: 20px;
-            text-align: center;
-            border-radius: 10px;
-            margin-top: 10px;
-            transition: opacity 0.5s ease;
-        }
-
-        .youtube-url-box {
-            display: none;
-            padding: 20px;
-            text-align: center;
-            border-radius: 10px;
-            margin-top: 10px;
-            transition: opacity 0.5s ease;
-        }
-
-        /* Default display for MP3 upload box */
-        .upload-box.active {
-            display: block;
-        }
-
-        .youtube-url-box.active {
-            display: block;
-        }
-
-        /* Style for input to look like a button */
-        .youtube-url-input {
-            border: 7px dashed #000;
-            padding: 10px 20px;
-            border-radius: 5px;
-            background-color: #fff;
-            font-size: 16px;
-            text-align: center;
-            width: 400px;
-            height: 40px;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-        }
-
-        .youtube-url-input::placeholder {
-            color: #999;
-            text-align: center;
-        }
-
-        .youtube-url-input:focus {
-            outline: none;
-            border-color: #333;
-        }
-
-        /* Button group adjustment for YouTube tab */
-        .button-group {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        /* Hide file find button when YouTube URL tab is active */
-        .youtube-url-box.active ~ .button-group #find-btn {
-            display: none;
-        }
-    </style>
 </head>
 
 <body>
@@ -153,7 +54,7 @@
                     </form>
                 </div>
 
-                <div id="file-name-display" class="neon-box"></div>
+                <div id="file-name-display" class="neon-box" data-image-url="{% static 'img/music_upload.png' %}"></div>
                 <div class="button-group">
                     <button class="button" id="find-btn" type="button">파일 찾기</button>
                     <button class="button" id="convert-btn" type="button">변환</button>
