@@ -38,6 +38,7 @@ body, html {
     border-radius: 12px;
     width: 650px; /* Smaller width */
     margin: 0 auto;
+    height: 280px;
     color: #ffffff; /* Change text color to white for visibility */
 }
 

@@ -312,12 +312,13 @@
 <body>
     <nav class="navbar">
         <div class="navbar-logo">
+            {% load static %}
             <a href="/"><img src="{% static 'img/logo.png' %}" alt="MP3 to Drum Sheet Converter"></a>
         </div>
         <div class="navbar-menu">
             <a href="{% url 'index' %}" class="active">변환</a>
-            <a href="{% url 'chaetting_view' %}">커뮤니티</a>
             {% if user.is_authenticated %}
+                <a href="{% url 'chaetting_view' %}">커뮤니티</a>
                 <a href="{% url 'mypage' %}">마이페이지</a>
                 <a href="{% url 'logout' %}">로그아웃</a>
             {% else %}
