@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,107 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <meta name="csrf-token" content="{{ csrf_token }}">
+    <style>
+        /* Tab Menu Styles */
+        .tab-menu {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            padding: 10px 0;
+            z-index: 10;
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            margin: 0 10px;
+            border: none;
+            border-bottom: 4px solid transparent;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            color: #333;
+        }
+
+        .tab-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .tab-button.active {
+            background-color: #333;
+            color: #fff;
+            border-bottom: 4px solid #f39c12;
+        }
+
+        .upload-box {
+            display: none;
+            border: 7px dashed #000;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin-top: 10px;
+            transition: opacity 0.5s ease;
+        }
+
+        .youtube-url-box {
+            display: none;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin-top: 10px;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Default display for MP3 upload box */
+        .upload-box.active {
+            display: block;
+        }
+
+        .youtube-url-box.active {
+            display: block;
+        }
+
+        /* Style for input to look like a button */
+        .youtube-url-input {
+            border: 7px dashed #000;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background-color: #fff;
+            font-size: 16px;
+            text-align: center;
+            width: 400px;
+            height: 40px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .youtube-url-input::placeholder {
+            color: #999;
+            text-align: center;
+        }
+
+        .youtube-url-input:focus {
+            outline: none;
+            border-color: #333;
+        }
+
+        /* Button group adjustment for YouTube tab */
+        .button-group {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        /* Hide file find button when YouTube URL tab is active */
+        .youtube-url-box.active ~ .button-group #find-btn {
+            display: none;
+        }
+    </style>
 </head>
+
 <body>
     <nav class="navbar">
         <div class="navbar-logo">
@@ -17,38 +118,53 @@
             <a href="{% url 'index' %}" class="active">변환</a>
             <a href="{% url 'chaetting_view' %}">커뮤니티</a>
             {% if user.is_authenticated %}
-                <a href="{% url 'mypage' %}">마이페이지</a>
-                <a href="{% url 'logout' %}">로그아웃</a>
+            <a href="{% url 'mypage' %}">마이페이지</a>
+            <a href="{% url 'logout' %}">로그아웃</a>
             {% else %}
-                <a href="{% url 'login' %}">로그인</a>
+            <a href="{% url 'login' %}">로그인</a>
             {% endif %}
         </div>
-    </nav> 
-    
+    </nav>
+
     <div class="background-animation"></div>
     <div class="container">
         <div class="content-wrapper">
             <div class="upload-section">
-                <div class="upload-box" id="drop-zone">
+                <!-- Tab Menu -->
+                <div class="tab-menu">
+                    <button class="tab-button active" id="mp3-upload-tab">MP3 업로드</button>
+                    <button class="tab-button" id="youtube-link-tab">유튜브 링크</button>
+                </div>
+
+                <!-- MP3 Upload Box -->
+                <div class="upload-box active" id="mp3-upload-box">
                     <p id="drop-zone-text">.mp3 is available</p>
                     <form method="post" action="/upload/" enctype="multipart/form-data" id="upload-form">
                         {% csrf_token %}
                         <input type="file" id="file-input" class="file-input" name="file" accept=".mp3">
                     </form>
                 </div>
-                <div id="file-name-display" class="neon-box"></div>                               
+
+                <!-- YouTube URL Input Box -->
+                <div class="youtube-url-box" id="youtube-url-box">
+                    <form method="post" action="/upload-url/" id="youtube-url-form">
+                        {% csrf_token %}
+                        <input type="text" id="youtube-url-input" class="youtube-url-input" name="youtube_url" placeholder="유튜브 URL을 입력하세요">
+                    </form>
+                </div>
+
+                <div id="file-name-display" class="neon-box"></div>
                 <div class="button-group">
                     <button class="button" id="find-btn" type="button">파일 찾기</button>
                     <button class="button" id="convert-btn" type="button">변환</button>
                 </div>
-            </div>                                                        
+            </div>
         </div>
     </div>
 
-    <!-- Footer outside the main container to ensure it's at the bottom -->
     <div class="footer">
         <div class="conversion-counter">
-            누 적 변 환 수                   
+            누 적 변 환 수
             <div class="slots">
                 <div class="slot" id="slot1"></div>
                 <div class="slot" id="slot2"></div>
@@ -61,27 +177,29 @@
     {% load static %}
     <script src="{% static 'js/script.js' %}"></script>
 </body>
+
 </html>
+
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     function animateSlot(slotId, finalNumber) {
         let slot = document.getElementById(slotId);
-        let currentNumber = Math.floor(Math.random() * 10);  // 랜덤 숫자로 시작
+        let currentNumber = Math.floor(Math.random() * 10);
         slot.textContent = currentNumber;
-        let speed = 100; // 시작 속도 (밀리초)
-        const maxSpeed = 500; // 최대 속도
-        const step = 20; // 속도 감소 단계
+        let speed = 100;
+        const maxSpeed = 500;
+        const step = 20;
 
         function updateSlot() {
-            currentNumber = Math.floor(Math.random() * 10); // 0-9 무작위 숫자
+            currentNumber = Math.floor(Math.random() * 10);
             slot.textContent = currentNumber;
 
             if (speed < maxSpeed) {
-                speed += step; // 속도 점진적 증가
+                speed += step;
             }
 
             if (speed >= maxSpeed && currentNumber === finalNumber) {
-                clearInterval(timer); // 최종 숫자에서 멈춤
+                clearInterval(timer);
             }
         }
 
@@ -101,7 +219,6 @@ document.addEventListener("DOMContentLoaded", function() {
         fileInput.addEventListener('change', function() {
             const fileName = this.files[0] ? this.files[0].name : '선택된 파일 없음';
 
-            // innerHTML을 사용하여 이미지와 텍스트 함께 표시
             if (neonBox) {
                 neonBox.innerHTML = `<img src="{% static 'img/music_upload.png' %}" alt="Music Upload Icon" class="upload-icon"> ${fileName}`;
                 neonBox.style.display = 'block';
@@ -117,11 +234,42 @@ document.addEventListener("DOMContentLoaded", function() {
     const convertBtn = document.getElementById('convert-btn');
     if (convertBtn) {
         convertBtn.addEventListener('click', function() {
-            const uploadForm = document.getElementById('upload-form');
-            if (uploadForm) {
-                uploadForm.submit();
+            const activeTab = document.querySelector('.tab-button.active').id;
+            if (activeTab === 'mp3-upload-tab') {
+                const uploadForm = document.getElementById('upload-form');
+                if (uploadForm) {
+                    uploadForm.submit();
+                }
+            } else if (activeTab === 'youtube-link-tab') {
+                const youtubeForm = document.getElementById('youtube-url-form');
+                if (youtubeForm) {
+                    youtubeForm.submit();
+                }
             }
         });
     }
+
+    // Tab switching logic
+    const mp3UploadTab = document.getElementById('mp3-upload-tab');
+    const youtubeLinkTab = document.getElementById('youtube-link-tab');
+    const mp3UploadBox = document.getElementById('mp3-upload-box');
+    const youtubeUrlBox = document.getElementById('youtube-url-box');
+    const findBtn = document.getElementById('find-btn');
+
+    mp3UploadTab.addEventListener('click', function() {
+        mp3UploadTab.classList.add('active');
+        youtubeLinkTab.classList.remove('active');
+        mp3UploadBox.classList.add('active');
+        youtubeUrlBox.classList.remove('active');
+        findBtn.style.display = 'inline-block'; // 파일 찾기 버튼 다시 보이기
+    });
+
+    youtubeLinkTab.addEventListener('click', function() {
+        youtubeLinkTab.classList.add('active');
+        mp3UploadTab.classList.remove('active');
+        mp3UploadBox.classList.remove('active');
+        youtubeUrlBox.classList.add('active');
+        findBtn.style.display = 'none'; // 파일 찾기 버튼 숨기기
+    });
 });
 </script>

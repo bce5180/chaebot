@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-21u)!uz(_2w+m)55d*_*0&(emm4+l&iugympvu_)mmglu1x8&v
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['3.106.215.28']
+ALLOWED_HOSTS = ['3.106.215.28','127.0.0.1']
 
 
 # Application definition
@@ -51,11 +51,6 @@ INSTALLED_APPS = [
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
-]
-
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
 ]
 
 
