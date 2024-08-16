@@ -239,6 +239,24 @@
             font-family: 'TheJamsil5Bold', Arial, sans-serif;
         }
 
+        .pdf-download-btn {
+            background-color: #000;
+            color: #fff;
+            font-size: 0.9rem;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .pdf-download-btn:hover {
+            background-color: #333;
+            transform: scale(1.05);
+        }
+
         .post-item {
             padding: 15px;
             border: 1px solid #ccc;
@@ -450,9 +468,9 @@
                         {% for file in files %}
                         <div class="file-item {% if file.note %}saved-note{% endif %}">
                             <h4>{{ file.song_name }}</h4>
-                            <p>PDF 파일: 
+                            <p>
                                 {% if file.pdf_file %}
-                                <a href="{{ file.pdf_file.url }}" download>PDF 다운로드</a>
+                                <a href="{{ file.pdf_file.url }}" download class="pdf-download-btn">PDF 다운로드</a>
                                 {% else %}
                                 PDF 파일 없음
                                 {% endif %}

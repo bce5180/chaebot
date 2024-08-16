@@ -746,7 +746,9 @@ def recommendation_and_chaetting_view(request):
 
     # 게시물 관련 데이터
     posts = Post.objects.all().order_by('-created_at')
-    popular_posts = Post.objects.order_by("-created_at")[:5]
+    
+    # 좋아요 순으로 정렬된 인기 게시물 (예: 상위 5개)
+    popular_posts = Post.objects.annotate(like_count=Count('likes')).order_by('-like_count', '-created_at')[:5]
 
     context = {
         'user': user,
@@ -759,6 +761,7 @@ def recommendation_and_chaetting_view(request):
         'GENRES': GENRES,
     }
     return render(request, 'chaetting.html', context)
+
 
 
 @login_required
