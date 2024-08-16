@@ -78,7 +78,7 @@ def mypage(request):
 
     # 장르 데이터 가져오기
     genres = [
-         "록",
+        "록",
         "팝",
         "메탈",
         "재즈",
@@ -88,7 +88,10 @@ def mypage(request):
         "힙합",
         "레게",
     ]
-    selected_genres = []  # 사용자가 선택한 장르를 불러와서 여기에 할당 (이 부분은 필요에 따라 조정)
+    
+    # 사용자가 선택한 장르를 가져옵니다. 
+    # 예를 들어, User 모델에 genres 필드가 있다고 가정하면:
+    selected_genres = request.user.genres.split(',') if request.user.genres else []
 
     return render(request, 'mypage.html', {
         'uploaded_files_by_date': uploaded_files_by_date,
@@ -96,8 +99,6 @@ def mypage(request):
         'genres': genres,  # 장르 리스트 전달
         'selected_genres': selected_genres,  # 선택된 장르 전달
     })
-
-
 
 
 @login_required
@@ -371,21 +372,27 @@ def chaetting_view(request):
     posts = Post.objects.annotate(
         comment_count=Count("comments", distinct=True)
         + Count("comments__replies", distinct=True)
-    )
-    popular_posts = Post.objects.order_by("-created_at")[:5]  # 예시로 최신 5개 인기글
+    ).order_by('-created_at')  # 최신 순으로 정렬하여 게시물을 가져옴
+
+    print("불러온 게시물:", posts)  # 추가된 디버깅 출력
+
+    popular_posts = Post.objects.order_by("-created_at")[:5]  # 최신 5개 인기글
 
     context = {
-        "posts": posts,
+        "posts": posts,  # posts를 템플릿으로 전달
         "popular_posts": popular_posts,
-        "GENRES": GENRES,
+        "GENRES": GENRES,  # GENRES 전달
     }
     return render(request, "chaetting.html", context)
+
+
 
 
 # 포스트 생성
 @login_required
 def create_post(request):
     if request.method == "POST":
+        print(request.POST.get('genre'))  # 장르 값이 정상적으로 출력되는지 확인
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
@@ -394,8 +401,12 @@ def create_post(request):
             messages.success(request, "Post created successfully!")
             return redirect("chaetting_view")
         else:
-            messages.error(request, "Error creating post.")
+            print(form.errors)  # 서버 로그에서 오류를 확인
+            messages.error(request, form.errors)  # 브라우저에서도 오류를 확인
+            return redirect("chaetting_view")
     return redirect("chaetting_view")
+
+
 
 
 # 포스트 상세보기
@@ -725,3 +736,38 @@ def recommendation_view(request):
     return render(request, 'chaetting.html', context)
 
 
+@login_required
+def recommendation_and_chaetting_view(request):
+    # 추천 시스템 관련 데이터
+    user = request.user
+    gender_age_recommendations, genre_recommendations, selected_genres = generate_recommendations(user)
+    genre_1_tracks = genre_recommendations[selected_genres[0]]
+    genre_2_tracks = genre_recommendations[selected_genres[1]]
+
+    # 게시물 관련 데이터
+    posts = Post.objects.all().order_by('-created_at')
+    popular_posts = Post.objects.order_by("-created_at")[:5]
+
+    context = {
+        'user': user,
+        'gender_age_recommendations': gender_age_recommendations,
+        'genre_1_tracks': genre_1_tracks,
+        'genre_2_tracks': genre_2_tracks,
+        'selected_genres': selected_genres,
+        'posts': posts,
+        'popular_posts': popular_posts,
+        'GENRES': GENRES,
+    }
+    return render(request, 'chaetting.html', context)
+
+
+@login_required
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id, author=request.user)
+    
+    if request.method == "POST":
+        post.delete()
+        messages.success(request, "글이 삭제되었습니다.")
+        return redirect('mypage')
+
+    return render(request, 'confirm_delete.html', {'post': post})

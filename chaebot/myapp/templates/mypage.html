@@ -290,6 +290,22 @@
             overflow: auto;    /* 항목이 많을 경우 스크롤 가능하게 설정 */
         }
 
+        .delete-btn {
+            background-color: #FF4B4B;
+            color: #fff;
+            font-size: 0.9rem;
+            font-family: 'TheJamsil5Bold', Arial, sans-serif;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .delete-btn:hover {
+            background-color: #FF0000;
+            transform: scale(1.05);
+        }
 
     </style>
     <script>
@@ -463,12 +479,17 @@
                             <h4><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h4>
                             <p>{{ post.content|truncatewords:20 }}</p>
                             <small>{{ post.created_at|date:"Y/m/d H:i" }}</small>
+                            <!-- 삭제 버튼 추가 -->
+                            <form method="post" action="{% url 'delete_post' post.id %}" onsubmit="return confirm('정말 이 글을 삭제하시겠습니까?');">
+                                {% csrf_token %}
+                                <button type="submit" class="delete-btn">삭제</button>
+                            </form>
                         </div>
                         {% endfor %}
                     </div>
                     {% endfor %}
                 </div>
-            </div>
+            </div>            
             <div id="notifications" style="display:none;">
                 <h2>알림</h2>
                 <ul class="notification-list">

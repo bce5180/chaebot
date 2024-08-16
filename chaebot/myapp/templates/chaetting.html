@@ -535,7 +535,7 @@
         </div>
     </nav>  
     <main>
-        <div class="search-bar">
+        <!-- <div class="search-bar">
             <select id="search-type">
                 <option value="genre">장르</option>
                 <option value="title">제목</option>
@@ -543,7 +543,7 @@
             </select>
             <input type="text" placeholder="검색어를 입력하세요..." id="search-input">
             <button onclick="searchPosts()">검색</button>
-        </div>
+        </div> -->
         <div class="slider-background-container">
             <div class="slider-container">
                 <!-- 성별 + 나이대 기반 추천 -->
@@ -610,11 +610,17 @@
                 <div id="post-form" class="post-form">
                     <form method="post" action="{% url 'create_post' %}" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <select name="genre">
-                            {% for genre in GENRES %}
-                                <option value="{{ genre }}">{{ genre }}</option>
-                            {% endfor %}
-                        </select>
+                        <select name="genre" required>
+                            <option value="록">록</option>
+                            <option value="팝">팝</option>
+                            <option value="메탈">메탈</option>
+                            <option value="재즈">재즈</option>
+                            <option value="펑크">펑크</option>
+                            <option value="얼터너티브">얼터너티브</option>
+                            <option value="인디">인디</option>
+                            <option value="힙합">힙합</option>
+                            <option value="레게">레게</option>
+                        </select>                    
                         <input type="text" name="title" placeholder="제목을 입력하세요" required>
                         <textarea name="content" rows="5" placeholder="내용을 입력하세요" required></textarea>
                         <div class="file-input-wrapper">
@@ -640,8 +646,8 @@
                     <p>{{ post.content }}</p>
                     <small>
                         <img src="{% static 'img/bold_like.png' %}" alt="Like" class="like-comment-icons"> {{ post.total_likes }} |
-                        <img src="{% static 'img/comment.png' %}" alt="Comment" class="like-comment-icons"> {{ post.comment_count }} |
-                        {{ post.created_at|date:"Y/m/d" }} | {{ post.author.username }}
+                        <img src="{% static 'img/comment.png' %}" alt="Comment" class="like-comment-icons"> {{ post.comments.count }} |
+                        {{ post.created_at|date:"d/m/Y" }} | {{ post.author.username }}
                     </small>
                 </div>
                 {% endfor %}

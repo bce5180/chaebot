@@ -37,7 +37,7 @@ urlpatterns = [
     # 나이 성별 선택
     path("age_gender/", v.age_gender, name="age_gender"),
     # chaetting
-    path("chaetting_view/", v.chaetting_view, name="chaetting_view"),
+    path('chaetting/', v.recommendation_and_chaetting_view, name='chaetting_view'),
     path("create_post/", v.create_post, name="create_post"),
     path("post/<int:post_id>/", v.post_detail, name="post_detail"),
     path("post/<int:post_id>/like/", v.like_post, name="like_post"),
@@ -63,8 +63,7 @@ urlpatterns = [
     path('delete_account/', v.delete_account, name='delete_account'),
     path('download_pdf/<int:conversion_id>/', v.download_pdf, name='download_pdf'),
     path('update_note/<int:file_id>/', v.update_note, name='update_note'),
-    # 추천
-    path('chaetting/', v.recommendation_view, name='chaetting_view'),
+    path('delete_post/<int:post_id>/', v.delete_post, name='delete_post'),
 ]
 
 # Static 및 Media 파일 URL 패턴 추가
