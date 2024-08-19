@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+=<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -40,15 +40,15 @@
                 <!-- MP3 Upload Box -->
                 <div class="upload-box active" id="mp3-upload-box">
                     <p id="drop-zone-text">.mp3 is available</p>
-                    <form method="post" action="/upload/" enctype="multipart/form-data" id="upload-form">
+                    <form method="post" action="{% url 'process_conversion' %}" enctype="multipart/form-data" id="upload-form">
                         {% csrf_token %}
-                        <input type="file" id="file-input" class="file-input" name="file" accept=".mp3">
+                        <input type="file" id="file-input" class="file-input" name="mp3_file" accept=".mp3">
                     </form>
                 </div>
 
                 <!-- YouTube URL Input Box -->
                 <div class="youtube-url-box" id="youtube-url-box">
-                    <form method="post" action="/upload-url/" id="youtube-url-form">
+                    <form method="post" action="{% url 'process_conversion' %}" id="youtube-url-form">
                         {% csrf_token %}
                         <input type="text" id="youtube-url-input" class="youtube-url-input" name="youtube_url" placeholder="유튜브 URL을 입력하세요">
                     </form>

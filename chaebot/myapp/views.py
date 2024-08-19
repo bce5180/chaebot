@@ -20,7 +20,7 @@ import os
 import logging
 from dotenv import load_dotenv
 from django.conf import settings
-from .ai_model import convert_mp3_to_pdf
+from .ai_model import chaebot
 import time
 from random import sample
 import random
@@ -150,6 +150,7 @@ def delete_account(request):
     user.delete()
     messages.success(request, '회원 탈퇴가 완료되었습니다.')
     return redirect('index')
+
 
 @login_required
 def download_pdf(request, file_id):
@@ -350,17 +351,35 @@ def process_conversion(request):
         pdf_file_name = f"{file_upload.song_name}.pdf"
         pdf_file_path = os.path.join(settings.MEDIA_ROOT, 'pdfs', pdf_file_name)
 
-        # AI 모델 실행
-        convert_mp3_to_pdf(file_upload.mp3_file.path, pdf_file_path)
+        try:
+            # 입력에 따라 다른 함수 호출
+            if file_upload.mp3_file:
+                # mp3 파일로 변환 진행
+                bot = chaebot(mp3_file_path=file_upload.mp3_file.path)
+            elif file_upload.youtube_link:
+                # 유튜브 링크로 변환 진행
+                bot = chaebot(youtube_link=file_upload.youtube_link)
+            else:
+                return JsonResponse({"error": "No valid input provided for conversion"}, status=400)
 
-        # 파일 경로를 모델에 저장
-        file_upload.pdf_file.name = os.path.join('pdfs', pdf_file_name)
-        file_upload.save()
+            # 변환 과정 실행
+            bot.main()
 
-        # 인위적으로 지연 시간을 추가하여 로딩 화면이 충분히 표시되도록 함
-        time.sleep(5)  # 5초 지연
+            # 변환된 PDF 파일을 지정된 위치로 이동
+            if os.path.exists("drum_pattern.pdf"):
+                shutil.move("drum_pattern.pdf", pdf_file_path)
 
-        return JsonResponse({"status": "success"}, status=200)
+            # 파일 경로를 모델에 저장
+            file_upload.pdf_file.name = os.path.join('pdfs', pdf_file_name)
+            file_upload.save()
+
+            # 인위적으로 지연 시간을 추가하여 로딩 화면이 충분히 표시되도록 함
+            time.sleep(5)  # 5초 지연
+
+            return JsonResponse({"status": "success"}, status=200)
+        except Exception as e:
+            print(f"Error during conversion: {e}")
+            return JsonResponse({"error": "Conversion failed"}, status=500)
     else:
         return JsonResponse({"error": "Invalid request method"}, status=405)
 
