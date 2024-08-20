@@ -40,7 +40,7 @@
                 <!-- MP3 Upload Box -->
                 <div class="upload-box active" id="mp3-upload-box">
                     <p id="drop-zone-text">.mp3 is available</p>
-                    <form method="post" action="{% url 'process_conversion' %}" enctype="multipart/form-data" id="upload-form">
+                    <form method="post" action="{% url 'model_entry' %}" enctype="multipart/form-data" id="upload-form">
                         {% csrf_token %}
                         <input type="file" id="file-input" class="file-input" name="mp3_file" accept=".mp3">
                     </form>
@@ -48,7 +48,7 @@
 
                 <!-- YouTube URL Input Box -->
                 <div class="youtube-url-box" id="youtube-url-box">
-                    <form method="post" action="{% url 'process_conversion' %}" id="youtube-url-form">
+                    <form method="post" action="{% url 'model_entry' %}" id="youtube-url-form">
                         {% csrf_token %}
                         <input type="text" id="youtube-url-input" class="youtube-url-input" name="youtube_url" placeholder="유튜브 URL을 입력하세요">
                     </form>
@@ -137,6 +137,41 @@ document.addEventListener("DOMContentLoaded", function() {
         findBtn.style.display = 'none'; // 파일 찾기 버튼 숨기기
     });
 
+    // 공통 함수: 데이터 전송 및 변환 처리
+    function handleConversion(formData) {
+        // Display the waiting page
+        window.location.href = "{% url 'waiting' %}";
+
+        fetch("{% url 'model_entry' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                fetch("{% url 'process_conversion' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        // 작업 완료 후 결과 페이지로 이동
+                        window.location.href = "{% url 'result' %}";
+                    } else {
+                        console.error('변환 실패');
+                    }
+                });
+            } else {
+                alert("처리 중 문제가 발생했습니다.");
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
     // 파일 선택 및 변환 버튼 로직
     const convertBtn = document.getElementById('convert-btn');
     if (convertBtn) {
@@ -148,38 +183,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 const fileInput = document.getElementById('file-input');
                 if (fileInput && fileInput.files.length > 0) {
                     formData.append('mp3_file', fileInput.files[0]);
-
-                    // Display the waiting page
-                    window.location.href = "{% url 'waiting' %}";
-
-                    fetch("{% url 'model_entry' %}", {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            fetch("{% url 'process_conversion' %}", {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                                }
-                            }).then(response => {
-                                if (response.ok) {
-                                    // 작업 완료 후 결과 페이지로 이동
-                                    window.location.href = "{% url 'result' %}";
-                                } else {
-                                    console.error('변환 실패');
-                                }
-                            });
-                        } else {
-                            alert("파일 업로드 중 문제가 발생했습니다.");
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
+                    handleConversion(formData);  // 공통 함수 호출
                 } else {
                     alert("MP3 파일을 선택하세요.");
                 }
@@ -187,42 +191,48 @@ document.addEventListener("DOMContentLoaded", function() {
                 const youtubeInput = document.getElementById('youtube-url-input');
                 if (youtubeInput.value.trim()) {
                     formData.append('youtube_url', youtubeInput.value);
-
-                    // Display the waiting page
-                    window.location.href = "{% url 'waiting' %}";
-
-                    fetch("{% url 'model_entry' %}", {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            fetch("{% url 'process_conversion' %}", {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                                }
-                            }).then(response => {
-                                if (response.ok) {
-                                    window.location.href = "{% url 'result' %}";
-                                } else {
-                                    console.error('변환 실패');
-                                }
-                            });
-                        } else {
-                            alert("유튜브 링크 처리 중 문제가 발생했습니다.");
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
+                    handleConversion(formData);  // 공통 함수 호출
                 } else {
                     alert("유튜브 URL을 입력하세요.");
                 }
             }
         });
+    }
+
+    // 공통 함수: 데이터 전송 및 변환 처리
+    function handleConversion(formData) {
+        // Display the waiting page
+        window.location.href = "{% url 'waiting' %}";
+
+        fetch("{% url 'model_entry' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                fetch("{% url 'process_conversion' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                }).then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // 작업 완료 후 결과 페이지로 이동
+                        window.location.href = data.redirect_url;
+                    } else {
+                        console.error('변환 실패:', data.error);
+                    }
+                });
+            } else {
+                alert("처리 중 문제가 발생했습니다.");
+            }
+        })
+        .catch(error => console.error('Error:', error));
     }
 });
 

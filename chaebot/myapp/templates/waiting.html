@@ -145,10 +145,10 @@
         function updateProgress() {
             var elem = document.getElementById("progressBar"); 
             var width = 0;
-            var id = setInterval(frame, 100);
+            var id = setInterval(frame, 100); // 100ms마다 업데이트
 
             function frame() {
-                if (width >= 100) {
+                if (width >= 95) { // 최대 95%까지만 진행
                     clearInterval(id);
                 } else {
                     width++; 
@@ -166,11 +166,12 @@
                     'X-CSRFToken': getCsrfToken()
                 }
             })
-            .then(response => {
-                if (response.ok) {
-                    window.location.href = resultUrl;
+            .then(response => response.json()) // JSON 응답을 받음
+            .then(data => {
+                if (data.status === 'success') {
+                    window.location.href = data.redirect_url;
                 } else {
-                    alert('Error during conversion.');
+                    alert('Error during conversion: ' + data.error);
                 }
             })
             .catch(error => console.error('Error:', error));
