@@ -53,6 +53,7 @@ urlpatterns = [
     path('result/', v.result, name='result'),
     path('save_filename/', v.save_filename, name='save_filename'),
     path('save_file_upload_genre/', v.save_file_upload_genre, name='save_file_upload_genre'),
+    path('download_pdf/', v.download_pdf, name='download_pdf'),
     # 대기화면
     path("waiting/", v.waiting, name="waiting"),
     # 모델 백그라운드 재생

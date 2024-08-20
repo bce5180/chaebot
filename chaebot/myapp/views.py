@@ -24,6 +24,10 @@ from .ai_model import chaebot
 import time
 from random import sample
 import random
+import shutil
+from django.http import FileResponse, Http404
+
+
 
 
 GENRES = [
@@ -356,32 +360,47 @@ def process_conversion(request):
             if file_upload.mp3_file:
                 # mp3 파일로 변환 진행
                 bot = chaebot(mp3_file_path=file_upload.mp3_file.path)
-            elif file_upload.youtube_link:
+            elif file_upload.youtube_url:
                 # 유튜브 링크로 변환 진행
-                bot = chaebot(youtube_link=file_upload.youtube_link)
+                bot = chaebot(youtube_link=file_upload.youtube_url)
             else:
                 return JsonResponse({"error": "No valid input provided for conversion"}, status=400)
 
             # 변환 과정 실행
             bot.main()
+            new_pdf_file_name = f"{file_upload.id}_drum.pdf"
 
             # 변환된 PDF 파일을 지정된 위치로 이동
             if os.path.exists("drum_pattern.pdf"):
-                shutil.move("drum_pattern.pdf", pdf_file_path)
+                print("drum_pattern.pdf 파일이 생성되었습니다.")
+                # 새 PDF 파일 이름 설정 (예: "fileupload_id_drum.pdf")
+                new_pdf_file_path = os.path.join(settings.MEDIA_ROOT, 'pdfs', new_pdf_file_name)
 
-            # 파일 경로를 모델에 저장
-            file_upload.pdf_file.name = os.path.join('pdfs', pdf_file_name)
-            file_upload.save()
+                try:
+                    shutil.move(drum_pdf_path, new_pdf_file_path)
+                except Exception as e:
+                    print(f"PDF 파일 이동 중 오류 발생: {e}")
+                    return JsonResponse({"error": "PDF file move failed"}, status=500)
 
-            # 인위적으로 지연 시간을 추가하여 로딩 화면이 충분히 표시되도록 함
+
+                # 파일 경로를 모델에 저장
+                file_upload.pdf_file = os.path.join('pdfs', new_pdf_file_name)
+                file_upload.save()
+            else:
+                print("drum_pattern.pdf 파일이 존재하지 않습니다.")
+                return JsonResponse({"error": "PDF file not found"}, status=500)
+
             time.sleep(5)  # 5초 지연
 
-            return JsonResponse({"status": "success"}, status=200)
+            return JsonResponse({"status": "success", "redirect_url": reverse('result')}, status=200)
+        except FileNotFoundError as fnf_error:
+            print(f"FileNotFoundError: {fnf_error}")
+            return JsonResponse({"error": "File not found"}, status=500)
         except Exception as e:
             print(f"Error during conversion: {e}")
+            import traceback
+            traceback.print_exc()  # 스택 트레이스를 로그에 출력
             return JsonResponse({"error": "Conversion failed"}, status=500)
-    else:
-        return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
 
@@ -642,53 +661,6 @@ def save_filename(request):
         return JsonResponse({'error': 'Invalid request.'}, status=400)
     return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
-#fileupload db 저장
-@csrf_exempt
-@login_required
-def save_file_upload_genre(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            genre = data.get('genre')
-            artist = data.get('artist')
-            track = data.get('track')
-
-            if not genre or not artist or not track:
-                return JsonResponse({'status': 'error', 'message': 'Genre, artist, and track are required'}, status=400)
-
-            # song_name 설정
-            song_name = track  # track 이름을 그대로 사용 (필요에 따라 변경 가능)
-
-            print(genre)
-
-            # 새로운 FileUpload 생성
-            file_upload = FileUpload.objects.create(
-                user=request.user,
-                song_name=song_name,
-                genre=genre,
-            )
-
-
-
-            # 파일 이름 설정 및 저장
-            pdf_filename = f"{song_name}.pdf"
-            pdf_path = os.path.join('pdfs', pdf_filename)
-
-            # PDF 파일 생성 (간단한 예제)
-            if not os.path.exists(pdf_path):
-                with open(pdf_path, 'w') as pdf_file:
-                    pdf_file.write('PDF content here...')  # 실제 PDF 생성 로직으로 대체해야 함
-
-            file_upload.pdf_file = pdf_path
-            file_upload.save()
-
-            return JsonResponse({'status': 'success', 'file_upload_id': file_upload.id}, status=200)
-
-        except Exception as e:
-            print(f"Error: {e}")
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
-    else:
-        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
 def generate_recommendations(user):
     # 유저의 관심 장르를 쉼표로 구분하여 리스트로 변환
@@ -793,3 +765,65 @@ def delete_post(request, post_id):
         return redirect('mypage')
 
     return render(request, 'confirm_delete.html', {'post': post})
+
+
+
+@csrf_exempt
+@login_required
+def save_file_upload_genre(request):
+    if request.method == 'POST':
+        try:
+            if 'mp3_file' in request.FILES:
+                # MP3 파일 처리
+                mp3_file = request.FILES['mp3_file']
+                file_upload = FileUpload.objects.create(
+                    user=request.user,
+                    mp3_file=mp3_file,
+                    song_name=mp3_file.name
+                )
+
+            elif 'youtube_url' in request.POST:
+                # YouTube 링크 처리
+                youtube_url = request.POST.get('youtube_url')
+                if not youtube_url:
+                    return JsonResponse({'status': 'error', 'message': '유튜브 링크가 필요합니다.'}, status=400)
+
+                file_upload = FileUpload.objects.create(
+                    user=request.user,
+                    youtube_url=youtube_url,
+                    song_name="YouTube Track"  # 실제로는 YouTube에서 제목을 가져오는 로직을 추가 가능
+                )
+
+            else:
+                return JsonResponse({'status': 'error', 'message': '파일 또는 유튜브 링크가 필요합니다.'}, status=400)
+
+            # 세션에 file_upload_id 저장
+            request.session['file_upload_id'] = file_upload.id
+
+            return JsonResponse({'status': 'success', 'file_upload_id': file_upload.id}, status=200)
+
+        except Exception as e:
+            # 오류 메시지 및 상세 내용 출력
+            print(f"Error: {e}")
+            import traceback
+            traceback.print_exc()  # 자세한 스택 트레이스 출력
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+    
+
+@login_required
+def download_pdf(request):
+    file_upload_id = request.session.get('file_upload_id')
+    if not file_upload_id:
+        raise Http404("File upload ID not found in session.")
+
+    file_upload = get_object_or_404(FileUpload, id=file_upload_id, user=request.user)
+    pdf_file_path = os.path.join(settings.MEDIA_ROOT, file_upload.pdf_file.name)
+
+    if not os.path.exists(pdf_file_path):
+        raise Http404("PDF file not found.")
+
+    response = FileResponse(open(pdf_file_path, 'rb'), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{file_upload.song_name}.pdf"'
+    return response

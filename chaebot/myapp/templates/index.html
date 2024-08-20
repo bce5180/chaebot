@@ -1,4 +1,4 @@
-=<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -107,64 +107,28 @@ document.addEventListener("DOMContentLoaded", function() {
         let timer = setInterval(updateSlot, speed);
     }
 
+    // 예시로 3자리 숫자 375를 표시
     animateSlot("slot1", 3);
     animateSlot("slot2", 7);
     animateSlot("slot3", 5);
 
-    // 파일 선택 시 파일명 표시 및 박스 전환
-    const fileInput = document.getElementById('file-input');
-    const dropZone = document.getElementById('drop-zone');
-    const neonBox = document.getElementById('file-name-display');
-
-    if (fileInput) {
-        fileInput.addEventListener('change', function() {
-            const fileName = this.files[0] ? this.files[0].name : '선택된 파일 없음';
-
-            if (neonBox) {
-                neonBox.innerHTML = `<img src="{% static 'img/music_upload.png' %}" alt="Music Upload Icon" class="upload-icon"> ${fileName}`;
-                neonBox.style.display = 'block';
-            }
-
-            if (dropZone) {
-                dropZone.style.display = 'none';
-            }
-        });
-    }
-
-    // 변환 버튼 클릭 시 폼 제출
-    const convertBtn = document.getElementById('convert-btn');
-    if (convertBtn) {
-        convertBtn.addEventListener('click', function() {
-            const activeTab = document.querySelector('.tab-button.active').id;
-            if (activeTab === 'mp3-upload-tab') {
-                const uploadForm = document.getElementById('upload-form');
-                if (uploadForm) {
-                    uploadForm.submit();
-                }
-            } else if (activeTab === 'youtube-link-tab') {
-                const youtubeForm = document.getElementById('youtube-url-form');
-                if (youtubeForm) {
-                    youtubeForm.submit();
-                }
-            }
-        });
-    }
-
-    // Tab switching logic
+    // 탭 전환 관련 요소 선택
     const mp3UploadTab = document.getElementById('mp3-upload-tab');
     const youtubeLinkTab = document.getElementById('youtube-link-tab');
     const mp3UploadBox = document.getElementById('mp3-upload-box');
     const youtubeUrlBox = document.getElementById('youtube-url-box');
     const findBtn = document.getElementById('find-btn');
 
+    // MP3 업로드 탭 클릭 시
     mp3UploadTab.addEventListener('click', function() {
         mp3UploadTab.classList.add('active');
         youtubeLinkTab.classList.remove('active');
         mp3UploadBox.classList.add('active');
         youtubeUrlBox.classList.remove('active');
-        findBtn.style.display = 'inline-block'; // 파일 찾기 버튼 다시 보이기
+        findBtn.style.display = 'inline-block'; // 파일 찾기 버튼 보이기
     });
 
+    // 유튜브 링크 탭 클릭 시
     youtubeLinkTab.addEventListener('click', function() {
         youtubeLinkTab.classList.add('active');
         mp3UploadTab.classList.remove('active');
@@ -172,5 +136,94 @@ document.addEventListener("DOMContentLoaded", function() {
         youtubeUrlBox.classList.add('active');
         findBtn.style.display = 'none'; // 파일 찾기 버튼 숨기기
     });
+
+    // 파일 선택 및 변환 버튼 로직
+    const convertBtn = document.getElementById('convert-btn');
+    if (convertBtn) {
+        convertBtn.addEventListener('click', function() {
+            const activeTab = document.querySelector('.tab-button.active').id;
+            let formData = new FormData();
+
+            if (activeTab === 'mp3-upload-tab') {
+                const fileInput = document.getElementById('file-input');
+                if (fileInput && fileInput.files.length > 0) {
+                    formData.append('mp3_file', fileInput.files[0]);
+
+                    // Display the waiting page
+                    window.location.href = "{% url 'waiting' %}";
+
+                    fetch("{% url 'save_file_upload_genre' %}", {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            fetch("{% url 'process_conversion' %}", {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                                }
+                            }).then(response => {
+                                if (response.ok) {
+                                    // 작업 완료 후 결과 페이지로 이동
+                                    window.location.href = "{% url 'result' %}";
+                                } else {
+                                    console.error('변환 실패');
+                                }
+                            });
+                        } else {
+                            alert("파일 업로드 중 문제가 발생했습니다.");
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                } else {
+                    alert("MP3 파일을 선택하세요.");
+                }
+            } else if (activeTab === 'youtube-link-tab') {
+                const youtubeInput = document.getElementById('youtube-url-input');
+                if (youtubeInput.value.trim()) {
+                    formData.append('youtube_url', youtubeInput.value);
+
+                    // Display the waiting page
+                    window.location.href = "{% url 'waiting' %}";
+
+                    fetch("{% url 'save_file_upload_genre' %}", {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            fetch("{% url 'process_conversion' %}", {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                                }
+                            }).then(response => {
+                                if (response.ok) {
+                                    window.location.href = "{% url 'result' %}";
+                                } else {
+                                    console.error('변환 실패');
+                                }
+                            });
+                        } else {
+                            alert("유튜브 링크 처리 중 문제가 발생했습니다.");
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                } else {
+                    alert("유튜브 URL을 입력하세요.");
+                }
+            }
+        });
+    }
 });
+
 </script>

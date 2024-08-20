@@ -329,7 +329,6 @@
     <div class="content-wrapper">
         <div class="section">
             <div class="pdf-title">convert.pdf</div> <!-- PDF 파일 이름 추가 및 왼쪽 정렬 -->
-            <embed src="convert.pdf" type="application/pdf" width="100%" height="400px" />
             <div class="buttons">
                 <button onclick="downloadPDF()">PDF 다운로드</button>
             </div>
@@ -383,8 +382,34 @@
 
 
         function downloadPDF() {
-            window.location.href = 'convert.pdf';
+            fetch('/download_pdf/', {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.blob(); // PDF 파일을 blob 형태로 변환
+            })
+            .then(blob => {
+                // PDF 파일을 브라우저에서 다운로드
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'converted_drum_sheet.pdf'; // 원하는 파일명으로 지정
+                document.body.appendChild(a);
+                a.click();
+                a.remove(); // 다운로드 후 링크 제거
+                window.URL.revokeObjectURL(url); // 메모리 해제
+            })
+            .catch(error => {
+                console.error('Error downloading PDF:', error);
+            });
         }
+
 
         function selectTrack(trackId, trackName, artistNames, albumImageUrl) {
             document.getElementById('artist').value = artistNames;

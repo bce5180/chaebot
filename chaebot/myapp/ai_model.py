@@ -148,7 +148,12 @@ class chaebot:
 
     def predict(self):
         model = EfficientNetModel(num_classes=8)
-        model.load_state_dict(torch.load('best_model.pth', map_location=torch.device('cpu')))
+        try:
+            model.load_state_dict(torch.load('best_model.pth', map_location=torch.device('cpu')))
+        except Exception as e:
+            print(f"Error loading model state dict: {e}")
+            import traceback
+            traceback.print_exc()
         model = model.to(torch.device('cpu'))
         model.eval()  # 평가 모드로 전환
 

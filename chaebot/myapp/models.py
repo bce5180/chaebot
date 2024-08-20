@@ -23,24 +23,29 @@ class FileUpload(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     song_name = models.CharField(max_length=255, null=True, blank=True)
     mp3_file = models.FileField(upload_to="mp3s/", null=True, blank=True)
+    youtube_url = models.URLField(null=True, blank=True)  
     pdf_file = models.FileField(upload_to="pdfs/", null=True, blank=True)
     upload_date = models.DateTimeField(auto_now_add=True)
     processed_date = models.DateTimeField(null=True, blank=True)
-    note = models.TextField(null=True, blank=True)  # 메모 필드 추가
-    genre = models.CharField(max_length=50, null=True, blank=True)  # 장르 필드 추가
+    note = models.TextField(null=True, blank=True)
+    genre = models.CharField(max_length=50, null=True, blank=True)
 
 
     def __str__(self):
         return f"{self.song_name} - Uploaded by {self.user.username} on {self.upload_date.strftime('%Y-%m-%d %H:%M:%S')}"
 
     def save(self, *args, **kwargs):
-        # 노트: super().save() 호출 전 song_name과 pdf_file을 사용하여 이름을 설정
         initial = not self.pk  # 처음 저장인지 확인
 
-        super().save(*args, **kwargs)  # First save to get a file path
+        # 첫 번째 저장
+        super().save(*args, **kwargs)
+
+        # 파일명을 설정하는 로직을 첫 번째 저장 후에만 수행
         if initial and self.song_name and self.pdf_file:
             self.rename_pdf_file()
-        super().save(*args, **kwargs)  # Save again to update file path
+            # 파일명 변경 후 다시 저장 (필요한 경우에만)
+            super().save(*args, **kwargs)
+
 
 
 class KakaoUser(models.Model):
