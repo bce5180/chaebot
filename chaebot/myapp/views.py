@@ -367,21 +367,22 @@ def process_conversion(request):
                 return JsonResponse({"error": "No valid input provided for conversion"}, status=400)
 
             # 변환 과정 실행
-            bot.main()
+            # 변환 과정 실행
+            pdf_path = bot.main()
             new_pdf_file_name = f"{file_upload.id}_drum.pdf"
 
             # 변환된 PDF 파일을 지정된 위치로 이동
-            if os.path.exists("drum_pattern.pdf"):
-                print("drum_pattern.pdf 파일이 생성되었습니다.")
+            if pdf_path and os.path.exists(pdf_path):
+                print(f"{pdf_path} 파일이 생성되었습니다.")
                 # 새 PDF 파일 이름 설정 (예: "fileupload_id_drum.pdf")
                 new_pdf_file_path = os.path.join(settings.MEDIA_ROOT, 'pdfs', new_pdf_file_name)
 
                 try:
-                    shutil.move(drum_pdf_path, new_pdf_file_path)
+                    # PDF 파일을 지정된 위치로 이동
+                    shutil.move(pdf_path, new_pdf_file_path)
                 except Exception as e:
                     print(f"PDF 파일 이동 중 오류 발생: {e}")
                     return JsonResponse({"error": "PDF file move failed"}, status=500)
-
 
                 # 파일 경로를 모델에 저장
                 file_upload.pdf_file = os.path.join('pdfs', new_pdf_file_name)
@@ -521,29 +522,51 @@ def add_reply(request, comment_id):
 logger = logging.getLogger(__name__)
 
 def get_spotify_token():
-    load_dotenv()  # 환경 변수 로드
-    client_id = os.getenv('SPOTIFY_CLIENT_ID')
-    client_secret = os.getenv('SPOTIFY_CLIENT_SECRET')
-    client_creds = f"{client_id}:{client_secret}"
-    client_creds_b64 = base64.b64encode(client_creds.encode()).decode()
+    try:
+        load_dotenv()  # 환경 변수 로드
+        client_id = os.getenv('SPOTIFY_CLIENT_ID')
+        client_secret = os.getenv('SPOTIFY_CLIENT_SECRET')
 
-    auth_response = requests.post(
-        'https://accounts.spotify.com/api/token',
-        data={'grant_type': 'client_credentials'},
-        headers={'Authorization': f'Basic {client_creds_b64}'}
-    )
-    auth_data = auth_response.json()
-    if auth_response.status_code != 200:
-        logger.error(f"Failed to retrieve access token: {auth_data}")
-        raise Exception(f"Failed to retrieve access token: {auth_data}")
-    return auth_data['access_token']
+        if not client_id or not client_secret:
+            logger.error("Spotify Client ID or Client Secret is not set in environment variables.")
+            raise Exception("Spotify Client ID or Client Secret is missing")
+
+        logger.info("Successfully loaded Spotify client credentials.")
+
+        client_creds = f"{client_id}:{client_secret}"
+        client_creds_b64 = base64.b64encode(client_creds.encode()).decode()
+
+        logger.debug(f"Encoded client credentials: {client_creds_b64}")
+
+        auth_response = requests.post(
+            'https://accounts.spotify.com/api/token',
+            data={'grant_type': 'client_credentials'},
+            headers={'Authorization': f'Basic {client_creds_b64}'}
+        )
+
+        auth_data = auth_response.json()
+
+        if auth_response.status_code != 200:
+            logger.error(f"Failed to retrieve access token: {auth_data}")
+            raise Exception(f"Failed to retrieve access token: {auth_data}")
+
+        logger.info("Successfully retrieved Spotify access token.")
+        return auth_data['access_token']
+
+    except Exception as e:
+        logger.error(f"Error while retrieving Spotify access token: {str(e)}")
+        raise e
 
 def search_spotify(request):
     try:
+        logger.info("Starting Spotify search...")
         token = get_spotify_token()
+
         artist = request.GET.get('artist', '').strip()
         track = request.GET.get('track', '').strip()
-        
+
+        logger.debug(f"Search parameters - Artist: {artist}, Track: {track}")
+
         # 가수와 제목을 이용한 검색 쿼리 구성
         query = ''
         if artist and track:
@@ -553,11 +576,21 @@ def search_spotify(request):
         elif track:
             query = f'track:{track}'
         else:
+            logger.warning("Artist or track parameter is missing.")
             return JsonResponse({'error': 'Artist or track parameter is required'}, status=400)
+
+        logger.debug(f"Search query: {query}")
 
         headers = {'Authorization': f'Bearer {token}'}
         response = requests.get(f'https://api.spotify.com/v1/search?type=track&q={query}', headers=headers)
+
+        if response.status_code != 200:
+            logger.error(f"Spotify API search failed: {response.json()}")
+            raise Exception(f"Spotify API search failed: {response.json()}")
+
+        logger.info("Spotify search completed successfully.")
         return JsonResponse(response.json(), safe=False)
+
     except Exception as e:
         logger.error(f"Error in search_spotify: {str(e)}")
         return JsonResponse({'error': str(e)}, status=500)
@@ -770,7 +803,7 @@ def delete_post(request, post_id):
 
 @csrf_exempt
 @login_required
-def save_file_upload_genre(request):
+def model_entry(request):
     if request.method == 'POST':
         try:
             if 'mp3_file' in request.FILES:
@@ -827,3 +860,51 @@ def download_pdf(request):
     response = FileResponse(open(pdf_file_path, 'rb'), content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{file_upload.song_name}.pdf"'
     return response
+
+
+@csrf_exempt
+@login_required
+def save_file_upload_genre(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            genre = data.get('genre')
+            artist = data.get('artist')
+            track = data.get('track')
+
+            if not genre or not artist or not track:
+                return JsonResponse({'status': 'error', 'message': 'Genre, artist, and track are required'}, status=400)
+
+            # song_name 설정
+            song_name = track  # track 이름을 그대로 사용 (필요에 따라 변경 가능)
+
+            print(genre)
+
+            # 새로운 FileUpload 생성
+            file_upload = FileUpload.objects.create(
+                user=request.user,
+                song_name=song_name,
+                genre=genre,
+            )
+
+
+
+            # 파일 이름 설정 및 저장
+            pdf_filename = f"{song_name}.pdf"
+            pdf_path = os.path.join('pdfs', pdf_filename)
+
+            # PDF 파일 생성 (간단한 예제)
+            if not os.path.exists(pdf_path):
+                with open(pdf_path, 'w') as pdf_file:
+                    pdf_file.write('PDF content here...')  # 실제 PDF 생성 로직으로 대체해야 함
+
+            file_upload.pdf_file = pdf_path
+            file_upload.save()
+
+            return JsonResponse({'status': 'success', 'file_upload_id': file_upload.id}, status=200)
+
+        except Exception as e:
+            print(f"Error: {e}")
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)

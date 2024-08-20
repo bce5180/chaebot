@@ -66,6 +66,7 @@ class chaebot:
 
             # 유튜브 동영상 제목 가져오기
             video_title = info_dict.get('title', 'unknown_title')
+            print(video_title)
 
             # 제목이 20자 이상이면 20자까지만 저장
             self.title = video_title[:20]
@@ -193,6 +194,8 @@ class chaebot:
         self.title = self.title.strip()
 
     def make_pdf(self):
+
+        self.title = re.sub(r'[^A-Za-z0-9\s]', '', self.title)[:20]
 
         drum_lilypond_code = r'''
     \version "2.22.1"
@@ -353,6 +356,9 @@ class chaebot:
 
             # 8. 채보 과정 중에 생성된 temp 파일들은 삭제한다
             self.delete_temp_files()
+
+            pdf_path = "drum_pattern.pdf"  # 실제 PDF 파일 경로
+            return pdf_path
 
         except Exception as e:
             print(f"An error occurred: {e}")

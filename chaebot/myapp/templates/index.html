@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     // Display the waiting page
                     window.location.href = "{% url 'waiting' %}";
 
-                    fetch("{% url 'save_file_upload_genre' %}", {
+                    fetch("{% url 'model_entry' %}", {
                         method: 'POST',
                         body: formData,
                         headers: {
@@ -191,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     // Display the waiting page
                     window.location.href = "{% url 'waiting' %}";
 
-                    fetch("{% url 'save_file_upload_genre' %}", {
+                    fetch("{% url 'model_entry' %}", {
                         method: 'POST',
                         body: formData,
                         headers: {
