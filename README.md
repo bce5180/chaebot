@@ -15,7 +15,9 @@
 ## ✅ 시연영상
 
 
-[![Video Title](https://img.youtube.com/vi/h7LfdM11jUs/0.jpg)](https://youtu.be/h7LfdM11jUs)
+https://youtu.be/h7LfdM11jUs
+
+
 
 <br>
 <br>
