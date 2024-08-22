@@ -1,33 +1,34 @@
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/a1d1af9b-a602-4754-8fa9-1aa5447b4ac3" alt="example image" width="400" />
+  <img src="https://github.com/user-attachments/assets/4cbbd415-6835-4f0a-b1dd-4e1645258891" alt="example image" width="400" />
 </p>
+
+
 
 # 프로젝트
 
 chaebot
 
 
-## 🤷🏻‍♀️프로젝트 소개
+## 🤷🏻‍♀️ 프로젝트 소개
+
+악보의 부재로 불편함을 겪는 사람들을 위한 
 
 
-- 부동산의 가격을 예측하는데는 정보부재등 많은 어려움이 있고 부동산의 전문가들도 다세대(빌라)가격을 제시하는 시간이 많이 소요되고 정확하지 않아 복잡한 시장 분석에 시간과 비용을 들이지 않고도 정확하게 미래 시세 분석을 가능하게 하고 부동산 시장의 변동성에도 신속하게 대응하고 적응할 수 있는 AI 프로그램을 개발.
 
 
-
-## 📺와이어프레임
+## 📺 와이어프레임
 <img width="585" alt="스크린샷 2024-01-03 오후 9 07 50" src="https://github.com/nnaX000/AIauctionFlask/assets/103589683/58d6a507-5840-4022-8444-2d59dd8a72db">
 <img width="625" alt="스크린샷 2024-01-03 오후 9 08 51" src="https://github.com/nnaX000/AIauctionFlask/assets/103589683/06e9d98e-77bb-42b8-a5ab-ee50ac0a92d1">
 <img width="382" alt="스크린샷 2024-01-03 오후 9 10 28" src="https://github.com/nnaX000/AIauctionFlask/assets/103589683/4d58786f-107b-4759-b663-e9ec6733bd05">
 <img width="431" alt="스크린샷 2024-01-03 오후 9 11 47" src="https://github.com/nnaX000/AIauctionFlask/assets/103589683/d4549243-990e-43bd-91b0-57b73b615811">
 
 
-## ✅시연영상
+## ✅ 시연영상
+
+https://youtu.be/h7LfdM11jUs?si=eP9-G0KfUUAe5jiy
 
 
-https://youtu.be/2TEAM8fRNM0
-
-
-## 🛠️주요기능
+## 🛠️ 주요기능
 
 | 기능 | 설명 |
 |---|---|
@@ -42,11 +43,22 @@ https://youtu.be/2TEAM8fRNM0
 
 ## 👩🏻‍💻개발기간
 
-23.04.01~23.08.31
+24.03.01~24.08.23
+
 
 ## 🔨사용한 기술 스택
+
+▶️ 프론트앤드 & 백앤드 
 
 | 기술스택 | 구현 상세 |
 |---|---|
 | html, js, css | 프론트 UI |
 | python Flask | 카카오로그인, 스피드옥션 웹페이지 크롤링, 선형회귀 모델 기능을 포함한 서버구축 |
+
+
+▶️ AI 모델링
+
+//폴더 혹은 링크 삽입
+
+
+
