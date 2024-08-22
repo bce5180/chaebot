@@ -1,8 +1,10 @@
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/a1d1af9b-a602-4754-8fa9-1aa5447b4ac3" alt="example image" width="400" />
+</p>
+
 # 프로젝트
 
 chaebot
-![image](https://github.com/user-attachments/assets/a1d1af9b-a602-4754-8fa9-1aa5447b4ac3)
-
 
 
 ## 🤷🏻‍♀️프로젝트 소개
