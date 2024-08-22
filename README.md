@@ -15,9 +15,7 @@
 ## ✅ 시연영상
 
 
-<video src="https://youtu.be/h7LfdM11jUs?si=eP9-G0KfUUAe5jiy" controls>
-    Your browser does not support the video tag.
-</video>
+[![Video Title](https://img.youtube.com/vi/h7LfdM11jUs/0.jpg)](https://youtu.be/h7LfdM11jUs)
 
 <br>
 <br>
