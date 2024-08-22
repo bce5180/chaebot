@@ -14,7 +14,10 @@
 
 ## ✅ 시연영상
 
-https://youtu.be/h7LfdM11jUs?si=eP9-G0KfUUAe5jiy
+
+<video src="https://youtu.be/h7LfdM11jUs?si=eP9-G0KfUUAe5jiy" controls>
+    Your browser does not support the video tag.
+</video>
 
 <br>
 <br>
