@@ -51,7 +51,7 @@ https://youtu.be/h7LfdM11jUs?si=eP9-G0KfUUAe5jiy
 
 2️⃣ AI 모델링
 
-//폴더 혹은 링크 삽입
+Python, Pytorch
 
 <br>
 <br>
