@@ -15,7 +15,7 @@
 ## ✅ 시연영상
 
 
-https://youtu.be/h7LfdM11jUs
+https://www.youtube.com/watch?v=m6fPmnLPzp0
 
 
 
